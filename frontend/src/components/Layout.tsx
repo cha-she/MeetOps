@@ -1,5 +1,5 @@
-import { NavLink, useLocation } from "react-router-dom";
-import type { ReactNode } from "react";
+import { useState, type FormEvent, type ReactNode } from "react";
+import { NavLink, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import {
   LayoutDashboard,
   CalendarDays,
@@ -8,9 +8,13 @@ import {
   ShieldAlert,
   LineChart,
   Search,
-  Bell,
   Plus,
+  Menu,
+  X,
 } from "lucide-react";
+import NotificationsMenu from "./NotificationsMenu";
+import DataSourceBadge from "./DataSourceBadge";
+import { CURRENT_USER } from "../config";
 
 const navGroups: {
   heading: string;
@@ -42,6 +46,7 @@ const pageTitles: Record<string, string> = {
   "/decisions": "Decision Register",
   "/risks": "Risk Log",
   "/insights": "Insights",
+  "/search": "Search",
 };
 
 function Logo({ small = false }: { small?: boolean }) {
@@ -65,87 +70,133 @@ function Logo({ small = false }: { small?: boolean }) {
   );
 }
 
+function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
+  return (
+    <>
+      <div className="mb-8 flex items-center gap-3 px-2">
+        <Logo />
+        <div>
+          <div className="text-base font-extrabold tracking-tight text-white">MeetOps</div>
+          <div className="text-[11px] font-medium text-slate-400">Meeting Intelligence</div>
+        </div>
+      </div>
+
+      <NavLink
+        to="/upload"
+        onClick={onNavigate}
+        className="mb-6 flex items-center justify-center gap-2 rounded-xl bg-white/10 px-3 py-2.5 text-sm font-semibold text-white ring-1 ring-inset ring-white/10 transition hover:bg-white/[0.16]"
+      >
+        <Plus className="h-4 w-4" />
+        New meeting
+      </NavLink>
+
+      <nav className="flex flex-1 flex-col gap-6 overflow-y-auto">
+        {navGroups.map((group) => (
+          <div key={group.heading}>
+            <div className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+              {group.heading}
+            </div>
+            <div className="flex flex-col gap-1">
+              {group.items.map(({ to, label, icon: Icon, end }) => (
+                <NavLink
+                  key={to}
+                  to={to}
+                  end={end}
+                  onClick={onNavigate}
+                  className={({ isActive }) => `nav-link ${isActive ? "nav-link-active" : ""}`}
+                >
+                  {({ isActive }) => (
+                    <>
+                      {isActive && (
+                        <span className="absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-brand-gradient-soft" />
+                      )}
+                      <Icon className="h-[18px] w-[18px]" />
+                      {label}
+                    </>
+                  )}
+                </NavLink>
+              ))}
+            </div>
+          </div>
+        ))}
+      </nav>
+
+      <div className="mt-4 flex items-center gap-3 rounded-xl bg-white/5 p-3 ring-1 ring-inset ring-white/10">
+        <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-gradient text-xs font-bold text-white">
+          {CURRENT_USER.initials}
+        </span>
+        <div className="min-w-0">
+          <div className="truncate text-sm font-semibold text-white">{CURRENT_USER.name}</div>
+          <div className="truncate text-xs text-slate-400">{CURRENT_USER.role}</div>
+        </div>
+      </div>
+    </>
+  );
+}
+
 export default function Layout({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [query, setQuery] = useState(searchParams.get("q") ?? "");
+
   const title =
-    pageTitles[pathname] ??
-    (pathname.startsWith("/meetings/") ? "Meeting Detail" : "MeetOps");
+    pageTitles[pathname] ?? (pathname.startsWith("/meetings/") ? "Meeting Detail" : "MeetOps");
+
+  // Keep the search box in sync with the URL on the search page (back/forward
+  // navigation). Adjusting state while rendering is React's recommended way
+  // to derive state from props without an effect.
+  const urlQuery = pathname === "/search" ? searchParams.get("q") ?? "" : null;
+  const [lastUrlQuery, setLastUrlQuery] = useState(urlQuery);
+  if (urlQuery !== lastUrlQuery) {
+    setLastUrlQuery(urlQuery);
+    if (urlQuery !== null) setQuery(urlQuery);
+  }
+
+  function submitSearch(e: FormEvent) {
+    e.preventDefault();
+    const q = query.trim();
+    if (q) navigate(`/search?q=${encodeURIComponent(q)}`);
+  }
 
   return (
     <div className="flex min-h-screen">
-      {/* Sidebar */}
+      {/* Desktop sidebar */}
       <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col bg-sidebar-gradient px-4 py-6 lg:flex">
-        <div className="mb-8 flex items-center gap-3 px-2">
-          <Logo />
-          <div>
-            <div className="text-base font-extrabold tracking-tight text-white">
-              MeetOps
-            </div>
-            <div className="text-[11px] font-medium text-slate-400">
-              Meeting Intelligence
-            </div>
-          </div>
-        </div>
-
-        <NavLink
-          to="/upload"
-          className="mb-6 flex items-center justify-center gap-2 rounded-xl bg-white/10 px-3 py-2.5 text-sm font-semibold text-white ring-1 ring-inset ring-white/10 transition hover:bg-white/[0.16]"
-        >
-          <Plus className="h-4 w-4" />
-          New meeting
-        </NavLink>
-
-        <nav className="flex flex-1 flex-col gap-6 overflow-y-auto">
-          {navGroups.map((group) => (
-            <div key={group.heading}>
-              <div className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-                {group.heading}
-              </div>
-              <div className="flex flex-col gap-1">
-                {group.items.map(({ to, label, icon: Icon, end }) => (
-                  <NavLink
-                    key={to}
-                    to={to}
-                    end={end}
-                    className={({ isActive }) =>
-                      `nav-link ${isActive ? "nav-link-active" : ""}`
-                    }
-                  >
-                    {({ isActive }) => (
-                      <>
-                        {isActive && (
-                          <span className="absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-brand-gradient-soft" />
-                        )}
-                        <Icon className="h-[18px] w-[18px]" />
-                        {label}
-                      </>
-                    )}
-                  </NavLink>
-                ))}
-              </div>
-            </div>
-          ))}
-        </nav>
-
-        <div className="mt-4 flex items-center gap-3 rounded-xl bg-white/5 p-3 ring-1 ring-inset ring-white/10">
-          <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-gradient text-xs font-bold text-white">
-            CS
-          </span>
-          <div className="min-w-0">
-            <div className="truncate text-sm font-semibold text-white">
-              Chamodi Shehani
-            </div>
-            <div className="truncate text-xs text-slate-400">
-              Project Lead · Admin
-            </div>
-          </div>
-        </div>
+        <SidebarContent />
       </aside>
+
+      {/* Mobile drawer */}
+      {menuOpen && (
+        <div className="fixed inset-0 z-40 lg:hidden">
+          <div
+            className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
+            onClick={() => setMenuOpen(false)}
+          />
+          <aside className="absolute inset-y-0 left-0 flex w-72 flex-col bg-sidebar-gradient px-4 py-6 shadow-2xl">
+            <button
+              onClick={() => setMenuOpen(false)}
+              className="absolute right-3 top-3 rounded-lg p-1.5 text-slate-400 hover:bg-white/10 hover:text-white"
+              aria-label="Close menu"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <SidebarContent onNavigate={() => setMenuOpen(false)} />
+          </aside>
+        </div>
+      )}
 
       {/* Main column */}
       <div className="flex min-w-0 flex-1 flex-col lg:pl-64">
-        {/* Topbar */}
-        <header className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b border-slate-200/70 bg-white/70 px-4 backdrop-blur-xl sm:px-6">
+        <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-slate-200/70 bg-white/70 px-4 backdrop-blur-xl sm:px-6">
+          <button
+            onClick={() => setMenuOpen(true)}
+            className="rounded-xl border border-slate-200 bg-white p-2 text-slate-600 shadow-sm lg:hidden"
+            aria-label="Open menu"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
           <div className="flex items-center gap-2 lg:hidden">
             <Logo small />
             <span className="font-extrabold text-slate-900">MeetOps</span>
@@ -156,22 +207,23 @@ export default function Layout({ children }: { children: ReactNode }) {
           </h2>
 
           <div className="ml-auto flex items-center gap-3">
-            <div className="relative hidden sm:block">
+            <form onSubmit={submitSearch} className="relative hidden sm:block" role="search">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <input
-                className="input w-72 pl-9"
+                className="input w-56 pl-9 md:w-72"
                 placeholder="Search tasks, decisions, risks…"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                aria-label="Search"
               />
-            </div>
-            <button
-              className="relative rounded-xl border border-slate-200 bg-white p-2.5 text-slate-500 shadow-sm transition hover:bg-slate-50 hover:text-slate-700"
-              aria-label="Notifications"
+            </form>
+            <DataSourceBadge />
+            <NotificationsMenu />
+            <span
+              className="hidden h-9 w-9 items-center justify-center rounded-full bg-brand-gradient text-xs font-bold text-white sm:inline-flex"
+              title={CURRENT_USER.name}
             >
-              <Bell className="h-5 w-5" />
-              <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white" />
-            </button>
-            <span className="hidden h-9 w-9 items-center justify-center rounded-full bg-brand-gradient text-xs font-bold text-white sm:inline-flex">
-              CS
+              {CURRENT_USER.initials}
             </span>
           </div>
         </header>

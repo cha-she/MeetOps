@@ -1,6 +1,5 @@
-// Shared domain types for MeetOps.
-// These mirror the structured records the backend/ML pipeline will eventually produce
-// (see the proposal: Tasks, Decisions, Risks extracted from meeting transcripts).
+// Shared domain types for the MeetOps frontend.
+// They mirror the JSON returned by the FastAPI backend (camelCase keys).
 
 export type Category = "Task" | "Decision" | "Risk" | "Other";
 
@@ -10,73 +9,135 @@ export type RiskSeverity = "Low" | "Medium" | "High";
 
 export type MeetingSource = "audio" | "video" | "transcript";
 
-export type MeetingStatus = "Processing" | "Processed" | "Failed";
+export type MeetingStatus = "Queued" | "Processing" | "Processed" | "Failed";
 
-export interface Person {
-  id: string;
+// Stage keys reported by the backend while a meeting is being processed.
+export type PipelineStage =
+  | "upload"
+  | "transcribe"
+  | "preprocess"
+  | "classify"
+  | "extract"
+  | "save";
+
+export interface User {
+  id: number;
   name: string;
   initials: string;
   role: string;
 }
 
 export interface Meeting {
-  id: string;
+  id: number;
   title: string;
-  date: string; // ISO date
-  durationMin: number;
+  date: string; // ISO date (YYYY-MM-DD)
+  durationMin: number | null;
   source: MeetingSource;
   status: MeetingStatus;
-  participants: string[]; // person ids
+  pipelineStage: PipelineStage | null;
+  errorMessage: string | null;
+  participants: User[];
   taskCount: number;
   decisionCount: number;
   riskCount: number;
-  summary: string;
+  summary: string | null;
+  createdAt: string;
+}
+
+// Links an extracted record back to the transcript segment it came from.
+export interface EvidenceRef {
+  segmentId: number;
+  speaker: string | null;
+  timestamp: string | null; // "00:12:44"
+  quote: string;
 }
 
 export interface Task {
-  id: string;
+  id: number;
   description: string;
-  ownerId: string;
-  meetingId: string;
-  deadline: string; // ISO date
+  owner: User | null;
+  meetingId: number;
+  meetingTitle: string;
+  deadline: string | null; // ISO date
   status: TaskStatus;
   createdAt: string;
-  // Evidence trace back to the source segment
   evidence: EvidenceRef;
 }
 
 export interface Decision {
-  id: string;
+  id: number;
   statement: string;
-  ownerId: string;
-  meetingId: string;
+  owner: User | null;
+  meetingId: number;
+  meetingTitle: string;
   decidedAt: string;
   evidence: EvidenceRef;
 }
 
 export interface Risk {
-  id: string;
+  id: number;
   description: string;
-  meetingId: string;
+  meetingId: number;
+  meetingTitle: string;
   severity: RiskSeverity;
   raisedAt: string;
   recurring: boolean;
   evidence: EvidenceRef;
 }
 
-// Links an extracted record back to the original meeting segment (evidence traceability).
-export interface EvidenceRef {
-  speaker: string;
-  timestamp: string; // e.g. "00:12:44"
-  quote: string;
-}
-
 // A single classified utterance from a transcript.
 export interface TranscriptSegment {
-  id: string;
-  speaker: string;
-  timestamp: string;
+  id: number;
+  speaker: string | null;
+  timestamp: string | null;
+  startSec: number | null;
   text: string;
   category: Category;
-  confidence: number; // 0..1 model confidence
+  confidence: number | null; // 0..1 model confidence
+}
+
+export interface NameValue {
+  name: string;
+  value: number;
+}
+
+export interface InsightsSummary {
+  totals: {
+    meetings: number;
+    processedMeetings: number;
+    processingMeetings: number;
+    tasks: number;
+    openTasks: number;
+    overdueTasks: number;
+    decisions: number;
+    risks: number;
+    highRisks: number;
+  };
+  taskStatus: NameValue[];
+  riskSeverity: NameValue[];
+  itemsPerMeeting: { name: string; tasks: number; decisions: number; risks: number }[];
+  workload: { name: string; open: number; inProgress: number; completed: number }[];
+  recurringRisks: Risk[];
+  completionRate: number; // 0..100
+  avgItemsPerMeeting: number;
+  topOwner: string | null;
+}
+
+export type NotificationType = "overdue" | "due_soon" | "assigned" | "status_change";
+
+export interface Notification {
+  id: number;
+  type: NotificationType;
+  message: string;
+  taskId: number | null;
+  read: boolean;
+  createdAt: string;
+}
+
+export interface SearchResults {
+  query: string;
+  meetings: Meeting[];
+  tasks: Task[];
+  decisions: Decision[];
+  risks: Risk[];
 }

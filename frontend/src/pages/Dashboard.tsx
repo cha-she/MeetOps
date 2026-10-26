@@ -20,41 +20,32 @@ import {
   Cell,
   Legend,
 } from "recharts";
-import { meetings, tasks, decisions, risks, personById } from "../data/mockData";
+import type { ReactNode } from "react";
+import { api } from "../api/endpoints";
+import { useQuery } from "../api/hooks";
+import { CURRENT_USER } from "../config";
 import {
   Avatar,
   Badge,
+  EmptyState,
+  ErrorState,
+  QueryView,
+  Skeleton,
+  dueLabel,
   formatDate,
+  formatDuration,
+  formatLongDate,
   isOverdue,
   statusStyles,
-  daysUntil,
 } from "../components/ui";
-import type { ReactNode } from "react";
 
-const openTasks = tasks.filter((t) => t.status !== "Completed").length;
-const overdueTasks = tasks.filter((t) => isOverdue(t.deadline, t.status)).length;
-const highRisks = risks.filter((r) => r.severity === "High").length;
+const statusColors: Record<string, string> = {
+  Open: "#94a3b8",
+  "In Progress": "#3b82f6",
+  Completed: "#10b981",
+};
 
-const statusData = [
-  { name: "Open", value: tasks.filter((t) => t.status === "Open").length, color: "#94a3b8" },
-  { name: "In Progress", value: tasks.filter((t) => t.status === "In Progress").length, color: "#3b82f6" },
-  { name: "Completed", value: tasks.filter((t) => t.status === "Completed").length, color: "#10b981" },
-];
-
-// Extraction volume per processed meeting.
-const perMeeting = meetings
-  .filter((m) => m.status === "Processed")
-  .map((m) => ({
-    name: m.title.length > 16 ? m.title.slice(0, 15) + "…" : m.title,
-    Tasks: m.taskCount,
-    Decisions: m.decisionCount,
-    Risks: m.riskCount,
-  }));
-
-const upcoming = [...tasks]
-  .filter((t) => t.status !== "Completed")
-  .sort((a, b) => a.deadline.localeCompare(b.deadline))
-  .slice(0, 5);
+const tooltipStyle = { borderRadius: 12, border: "1px solid #e2e8f0", fontSize: 13 };
 
 function StatCard({
   label,
@@ -65,23 +56,20 @@ function StatCard({
   hint,
 }: {
   label: string;
-  value: number | string;
+  value: number | string | undefined;
   icon: ReactNode;
   accent: string;
   to: string;
   hint?: string;
 }) {
   return (
-    <Link
-      to={to}
-      className="card card-hover group relative overflow-hidden p-5"
-    >
+    <Link to={to} className="card card-hover group relative overflow-hidden p-5">
       <div className="flex items-start justify-between">
         <div className={`rounded-xl p-2.5 ${accent}`}>{icon}</div>
         <ArrowUpRight className="h-4 w-4 text-slate-300 transition group-hover:text-brand-500" />
       </div>
       <div className="mt-4 text-3xl font-extrabold tracking-tight text-slate-900">
-        {value}
+        {value === undefined ? <Skeleton className="h-8 w-12" /> : value}
       </div>
       <div className="mt-1 text-sm font-medium text-slate-500">{label}</div>
       {hint && <div className="mt-0.5 text-xs text-slate-400">{hint}</div>}
@@ -90,6 +78,15 @@ function StatCard({
 }
 
 export default function Dashboard() {
+  const insights = useQuery("insights", () => api.insights());
+  const recent = useQuery("meetings:recent", () => api.listMeetings({ limit: 4 }));
+  const upcoming = useQuery("tasks:upcoming", () =>
+    api.listTasks({ status: "", sort: "deadline", limit: 5 })
+  );
+
+  const t = insights.data?.totals;
+  const firstName = CURRENT_USER.name.split(" ")[0];
+
   return (
     <div className="space-y-6">
       {/* Hero banner */}
@@ -99,14 +96,14 @@ export default function Dashboard() {
         <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="text-xs font-semibold uppercase tracking-wider text-white/70">
-              Wednesday · 2 July 2026
+              {formatLongDate(new Date())}
             </div>
             <h1 className="mt-1 text-2xl font-extrabold tracking-tight sm:text-3xl">
-              Welcome back, Chamodi 👋
+              Welcome back, {firstName}
             </h1>
             <p className="mt-1.5 max-w-xl text-sm text-white/80">
-              MeetOps turned your recent meetings into structured tasks,
-              decisions, and risks — here's the latest.
+              MeetOps turns your meetings into structured tasks, decisions, and risks.
+              Here is the latest across your workspace.
             </p>
           </div>
           <Link
@@ -118,213 +115,226 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Stat cards */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard
-          label="Open Tasks"
-          value={openTasks}
-          hint={`${overdueTasks} overdue`}
-          icon={<ListChecks className="h-5 w-5 text-white" />}
-          accent="bg-gradient-to-br from-sky-500 to-blue-600"
-          to="/tasks"
-        />
-        <StatCard
-          label="Decisions Logged"
-          value={decisions.length}
-          hint="across all meetings"
-          icon={<Gavel className="h-5 w-5 text-white" />}
-          accent="bg-gradient-to-br from-emerald-500 to-teal-600"
-          to="/decisions"
-        />
-        <StatCard
-          label="Open Risks"
-          value={risks.length}
-          hint={`${highRisks} high severity`}
-          icon={<ShieldAlert className="h-5 w-5 text-white" />}
-          accent="bg-gradient-to-br from-amber-500 to-orange-600"
-          to="/risks"
-        />
-        <StatCard
-          label="Meetings Processed"
-          value={meetings.filter((m) => m.status === "Processed").length}
-          hint={`${meetings.filter((m) => m.status === "Processing").length} processing`}
-          icon={<CalendarDays className="h-5 w-5 text-white" />}
-          accent="bg-brand-gradient"
-          to="/meetings"
-        />
-      </div>
-
-      {/* Charts */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="card p-5 lg:col-span-2">
-          <div className="mb-4 flex items-center justify-between">
-            <h3 className="font-semibold text-slate-800">
-              Extracted items per meeting
-            </h3>
-            <span className="text-xs text-slate-400">Tasks · Decisions · Risks</span>
+      {insights.error && !insights.data ? (
+        <ErrorState error={insights.error} onRetry={insights.reload} />
+      ) : (
+        <>
+          {/* Stat cards */}
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            <StatCard
+              label="Open Tasks"
+              value={t?.openTasks}
+              hint={t ? `${t.overdueTasks} overdue` : undefined}
+              icon={<ListChecks className="h-5 w-5 text-white" />}
+              accent="bg-gradient-to-br from-sky-500 to-blue-600"
+              to="/tasks"
+            />
+            <StatCard
+              label="Decisions Logged"
+              value={t?.decisions}
+              hint="across all meetings"
+              icon={<Gavel className="h-5 w-5 text-white" />}
+              accent="bg-gradient-to-br from-emerald-500 to-teal-600"
+              to="/decisions"
+            />
+            <StatCard
+              label="Risks Logged"
+              value={t?.risks}
+              hint={t ? `${t.highRisks} high severity` : undefined}
+              icon={<ShieldAlert className="h-5 w-5 text-white" />}
+              accent="bg-gradient-to-br from-amber-500 to-orange-600"
+              to="/risks"
+            />
+            <StatCard
+              label="Meetings Processed"
+              value={t?.processedMeetings}
+              hint={t ? `${t.processingMeetings} processing` : undefined}
+              icon={<CalendarDays className="h-5 w-5 text-white" />}
+              accent="bg-brand-gradient"
+              to="/meetings"
+            />
           </div>
-          <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={perMeeting} barGap={4} barCategoryGap="24%">
-              <CartesianGrid strokeDasharray="3 3" stroke="#eef2f6" vertical={false} />
-              <XAxis
-                dataKey="name"
-                tick={{ fontSize: 12, fill: "#64748b" }}
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis
-                allowDecimals={false}
-                tick={{ fontSize: 12, fill: "#64748b" }}
-                axisLine={false}
-                tickLine={false}
-              />
-              <Tooltip
-                contentStyle={{
-                  borderRadius: 12,
-                  border: "1px solid #e2e8f0",
-                  fontSize: 13,
-                }}
-              />
-              <Legend wrapperStyle={{ fontSize: 12 }} />
-              <Bar dataKey="Tasks" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="Decisions" fill="#10b981" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="Risks" fill="#f59e0b" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
 
-        <div className="card p-5">
-          <h3 className="mb-4 font-semibold text-slate-800">Task status</h3>
-          <ResponsiveContainer width="100%" height={280}>
-            <PieChart>
-              <Pie
-                data={statusData}
-                dataKey="value"
-                nameKey="name"
-                innerRadius={62}
-                outerRadius={95}
-                paddingAngle={3}
-              >
-                {statusData.map((d) => (
-                  <Cell key={d.name} fill={d.color} />
-                ))}
-              </Pie>
-              <Tooltip
-                contentStyle={{
-                  borderRadius: 12,
-                  border: "1px solid #e2e8f0",
-                  fontSize: 13,
-                }}
-              />
-              <Legend wrapperStyle={{ fontSize: 12 }} />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
+          {/* Charts */}
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <div className="card p-5 lg:col-span-2">
+              <div className="mb-4 flex items-center justify-between">
+                <h3 className="font-semibold text-slate-800">Extracted items per meeting</h3>
+                <span className="text-xs text-slate-400">Tasks · Decisions · Risks</span>
+              </div>
+              {insights.data && insights.data.itemsPerMeeting.length === 0 ? (
+                <ChartEmpty />
+              ) : (
+                <ResponsiveContainer width="100%" height={280}>
+                  <BarChart
+                    data={insights.data?.itemsPerMeeting ?? []}
+                    barGap={4}
+                    barCategoryGap="24%"
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#eef2f6" vertical={false} />
+                    <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#64748b" }} axisLine={false} tickLine={false} />
+                    <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: "#64748b" }} axisLine={false} tickLine={false} />
+                    <Tooltip contentStyle={tooltipStyle} />
+                    <Legend wrapperStyle={{ fontSize: 12 }} />
+                    <Bar dataKey="tasks" name="Tasks" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="decisions" name="Decisions" fill="#10b981" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="risks" name="Risks" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+
+            <div className="card p-5">
+              <h3 className="mb-4 font-semibold text-slate-800">Task status</h3>
+              {insights.data && insights.data.totals.tasks === 0 ? (
+                <ChartEmpty />
+              ) : (
+                <ResponsiveContainer width="100%" height={280}>
+                  <PieChart>
+                    <Pie
+                      data={insights.data?.taskStatus ?? []}
+                      dataKey="value"
+                      nameKey="name"
+                      innerRadius={62}
+                      outerRadius={95}
+                      paddingAngle={3}
+                    >
+                      {(insights.data?.taskStatus ?? []).map((d) => (
+                        <Cell key={d.name} fill={statusColors[d.name] ?? "#cbd5e1"} />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={tooltipStyle} />
+                    <Legend wrapperStyle={{ fontSize: 12 }} />
+                  </PieChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Lower row: recent meetings + upcoming deadlines */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="card p-5 lg:col-span-2">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="font-semibold text-slate-800">Recent meetings</h3>
-            <Link
-              to="/meetings"
-              className="text-sm font-semibold text-brand-600 hover:text-brand-700"
-            >
+            <Link to="/meetings" className="text-sm font-semibold text-brand-600 hover:text-brand-700">
               View all
             </Link>
           </div>
-          <div className="divide-y divide-slate-100">
-            {meetings.slice(0, 4).map((m) => (
-              <Link
-                key={m.id}
-                to={`/meetings/${m.id}`}
-                className="flex items-center justify-between gap-4 py-3 transition hover:bg-slate-50 -mx-2 px-2 rounded-lg"
-              >
-                <div className="min-w-0">
-                  <div className="truncate font-medium text-slate-800">
-                    {m.title}
-                  </div>
-                  <div className="text-xs text-slate-400">
-                    {formatDate(m.date)} · {m.durationMin} min
-                  </div>
-                </div>
-                <div className="flex shrink-0 items-center gap-2">
-                  {m.status === "Processing" ? (
-                    <Badge className="bg-brand-50 text-brand-700 ring-brand-200">
-                      Processing…
-                    </Badge>
-                  ) : (
-                    <>
-                      <Badge className="bg-blue-50 text-blue-700 ring-blue-200">
-                        {m.taskCount} tasks
-                      </Badge>
-                      <Badge className="bg-emerald-50 text-emerald-700 ring-emerald-200">
-                        {m.decisionCount} dec
-                      </Badge>
-                      <Badge className="bg-amber-50 text-amber-700 ring-amber-200">
-                        {m.riskCount} risk
-                      </Badge>
-                    </>
-                  )}
-                </div>
-              </Link>
-            ))}
-          </div>
+          <QueryView
+            {...recent}
+            onRetry={recent.reload}
+            skeleton={<RowsSkeleton />}
+            isEmpty={(d) => d.length === 0}
+            empty={
+              <EmptyState
+                title="No meetings yet"
+                message="Upload a transcript to see it analysed here."
+                action={<Link to="/upload" className="btn-primary">Upload a meeting</Link>}
+              />
+            }
+          >
+            {(meetings) => (
+              <div className="divide-y divide-slate-100">
+                {meetings.map((m) => (
+                  <Link
+                    key={m.id}
+                    to={`/meetings/${m.id}`}
+                    className="-mx-2 flex items-center justify-between gap-4 rounded-lg px-2 py-3 transition hover:bg-slate-50"
+                  >
+                    <div className="min-w-0">
+                      <div className="truncate font-medium text-slate-800">{m.title}</div>
+                      <div className="text-xs text-slate-400">
+                        {formatDate(m.date)} · {formatDuration(m.durationMin)}
+                      </div>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-2">
+                      {m.status === "Processed" ? (
+                        <>
+                          <Badge className="bg-blue-50 text-blue-700 ring-blue-200">{m.taskCount} tasks</Badge>
+                          <Badge className="bg-emerald-50 text-emerald-700 ring-emerald-200">{m.decisionCount} dec</Badge>
+                          <Badge className="bg-amber-50 text-amber-700 ring-amber-200">{m.riskCount} risk</Badge>
+                        </>
+                      ) : m.status === "Failed" ? (
+                        <Badge className="bg-red-50 text-red-700 ring-red-200">Failed</Badge>
+                      ) : (
+                        <Badge className="bg-brand-50 text-brand-700 ring-brand-200">Processing…</Badge>
+                      )}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </QueryView>
         </div>
 
         <div className="card p-5">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="font-semibold text-slate-800">Upcoming deadlines</h3>
-            <Link
-              to="/tasks"
-              className="text-sm font-semibold text-brand-600 hover:text-brand-700"
-            >
+            <Link to="/tasks" className="text-sm font-semibold text-brand-600 hover:text-brand-700">
               All tasks
             </Link>
           </div>
-          <div className="space-y-3">
-            {upcoming.map((t) => {
-              const owner = personById(t.ownerId);
-              const overdue = isOverdue(t.deadline, t.status);
-              const days = daysUntil(t.deadline);
-              return (
-                <div key={t.id} className="flex items-start gap-3">
-                  <Avatar initials={owner.initials} />
-                  <div className="min-w-0 flex-1">
-                    <div className="truncate text-sm font-medium text-slate-800">
-                      {t.description}
-                    </div>
-                    <div className="mt-1 flex items-center gap-2">
-                      <Badge className={statusStyles[t.status]}>{t.status}</Badge>
-                      <span
-                        className={`inline-flex items-center gap-1 text-xs font-medium ${
-                          overdue ? "text-red-600" : "text-slate-400"
-                        }`}
-                      >
-                        {overdue && <AlertTriangle className="h-3 w-3" />}
-                        {overdue
-                          ? `Overdue by ${Math.abs(days)}d`
-                          : days === 0
-                          ? "Due today"
-                          : `Due in ${days}d`}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          <QueryView
+            {...upcoming}
+            onRetry={upcoming.reload}
+            skeleton={<RowsSkeleton />}
+            isEmpty={(d) => d.filter((x) => x.status !== "Completed").length === 0}
+            empty={<p className="py-6 text-center text-sm text-slate-400">No open tasks.</p>}
+          >
+            {(tasks) => (
+              <div className="space-y-3">
+                {tasks
+                  .filter((task) => task.status !== "Completed")
+                  .map((task) => {
+                    const overdue = isOverdue(task.deadline, task.status);
+                    return (
+                      <Link key={task.id} to={`/tasks?highlight=${task.id}`} className="flex items-start gap-3">
+                        <Avatar initials={task.owner?.initials ?? "?"} title={task.owner?.name ?? "Unassigned"} />
+                        <div className="min-w-0 flex-1">
+                          <div className="truncate text-sm font-medium text-slate-800">{task.description}</div>
+                          <div className="mt-1 flex items-center gap-2">
+                            <Badge className={statusStyles[task.status]}>{task.status}</Badge>
+                            <span
+                              className={`inline-flex items-center gap-1 text-xs font-medium ${
+                                overdue ? "text-red-600" : "text-slate-400"
+                              }`}
+                            >
+                              {overdue && <AlertTriangle className="h-3 w-3" />}
+                              {dueLabel(task.deadline, task.status)}
+                            </span>
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
+              </div>
+            )}
+          </QueryView>
         </div>
       </div>
+    </div>
+  );
+}
 
-      {/* Legend note for evaluators */}
-      <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 px-4 py-3 text-xs text-slate-500">
-        <span className="font-semibold text-slate-600">Demo note:</span> all data
-        shown is sample data. In production these views are populated by the
-        MeetOps pipeline (ASR → classification → information extraction) via the
-        FastAPI backend.
-      </div>
+function RowsSkeleton() {
+  return (
+    <div className="space-y-4 py-1">
+      {[0, 1, 2].map((i) => (
+        <div key={i}>
+          <Skeleton className="h-4 w-2/3" />
+          <Skeleton className="mt-2 h-3 w-1/3" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ChartEmpty() {
+  return (
+    <div className="flex h-[280px] items-center justify-center text-sm text-slate-400">
+      No data yet — upload a meeting to populate this chart.
     </div>
   );
 }
