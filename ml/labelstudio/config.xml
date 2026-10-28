@@ -1,0 +1,50 @@
+<!--
+  MeetOps Label Studio labelling interface.
+
+  Paste this XML into: Project > Settings > Labeling Interface > Code.
+
+  Each task shows one utterance with its meeting context. The annotator picks
+  exactly one category (required) and may optionally highlight OWNER / DEADLINE
+  / DECIDED_BY spans used later to evaluate the information-extraction module.
+-->
+<View>
+  <Style>
+    .meta { color: #64748b; font-size: 13px; margin-bottom: 6px; }
+    .utt  { font-size: 18px; line-height: 1.5; padding: 12px 14px; background: #f8fafc;
+            border-left: 4px solid #6366f1; border-radius: 6px; }
+    .hint { color: #94a3b8; font-size: 12px; margin-top: 8px; }
+  </Style>
+
+  <Header value="Classify this meeting utterance"/>
+
+  <View className="meta">
+    <Text name="meta" value="Meeting $meeting_id · Speaker $speaker · $timestamp · Dialogue act: $da_type"/>
+  </View>
+
+  <View className="utt">
+    <Text name="text" value="$text" granularity="word"/>
+  </View>
+
+  <View className="hint">
+    <Text name="hint" value="Pre-label: $prelabel (source: $prelabel_source, confidence $prelabel_confidence). Check it — do not trust it blindly."/>
+  </View>
+
+  <Header value="1. Category (required)"/>
+  <Choices name="label" toName="text" choice="single-radio" required="true" showInline="true">
+    <Choice value="Task"     hotkey="1" background="#3b82f6"/>
+    <Choice value="Decision" hotkey="2" background="#10b981"/>
+    <Choice value="Risk"     hotkey="3" background="#f59e0b"/>
+    <Choice value="Other"    hotkey="4" background="#94a3b8"/>
+  </Choices>
+
+  <Header value="2. Spans (optional — only for Task / Decision)"/>
+  <Labels name="spans" toName="text" showInline="true">
+    <Label value="OWNER"      hotkey="q" background="#2563eb"/>
+    <Label value="DEADLINE"   hotkey="w" background="#d97706"/>
+    <Label value="DECIDED_BY" hotkey="e" background="#059669"/>
+  </Labels>
+
+  <Header value="3. Notes (optional)"/>
+  <TextArea name="notes" toName="text" placeholder="Anything ambiguous about this utterance…"
+            rows="2" maxSubmissions="1" editable="true"/>
+</View>

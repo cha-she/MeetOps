@@ -1,0 +1,394 @@
+segment_id,meeting_id,speaker,start_time,end_time,text,label,owner_span,deadline_span,decided_by_span,notes,prelabel,prelabel_source,annotated_at
+ES2002a.B.dialog-act.dharshi.3,ES2002a,B (PM),55.98,60.35,Um well this is the kick-off meeting for our our project.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.17,ES2002a,B (PM),64.16,67.55,this is just what we're gonna be doing over the next twenty five minutes.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.6,ES2002a,B (PM),67.55,72.79,"Um so first of all, just to kind of make sure that we all know each other,",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.9,ES2002a,B (PM),72.79,74.42,I'm Laura and I'm the project manager.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.7,ES2002a,B (PM),74.42,77.29,Do you want to introduce yourself again?,Other,,,,,Other,default,2026-10-28
+ES2002a.A.dialog-act.dharshi.1,ES2002a,A (ID),77.44,80.87,"Hi, I'm David and I'm supposed to be an industrial designer.",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.3,ES2002a,D (ME),82.08,84.46,And I'm Andrew and I'm uh our marketing,Other,,,,,Other,default,2026-10-28
+ES2002a.C.dialog-act.dharshi.1,ES2002a,C (UI),85.99,88.71,Um I'm Craig and I'm User Interface.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.12,ES2002a,B (PM),92.79,96.34,so we're designing a new remote control and um,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.13,ES2002a,B (PM),96.34,98.57,Oh I have to record who's here actually.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.14,ES2002a,B (PM),98.57,101.76,"So that's David, Andrew and Craig, isn't it?",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.15,ES2002a,B (PM),104.89,106.58,And you all arrived on time.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.18,ES2002a,B (PM),108.96,111.72,Um yeah so des uh design a new remote control.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.19,ES2002a,B (PM),111.72,116.66,"Um, as you can see it's supposed to be original, trendy and user friendly.",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.21,ES2002a,B (PM),116.66,120.98,"Um so that's kind of our our brief, as it were.",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.22,ES2002a,B (PM),120.98,126.12,Um and so there are three different stages to the design.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.23,ES2002a,B (PM),126.12,131.36,Um I'm not really sure what what you guys have already received um in your emails.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.24,ES2002a,B (PM),131.36,132.03,What did you get?,Other,,,,,Other,default,2026-10-28
+ES2002a.A.dialog-act.dharshi.2,ES2002a,A (ID),132.57,136.68,"Um, I just got the project announcement about what the project is.",Other,,,,,Other,default,2026-10-28
+ES2002a.A.dialog-act.dharshi.3,ES2002a,A (ID),136.68,138.20,Designing a remote control.,Other,,,,,Other,default,2026-10-28
+ES2002a.A.dialog-act.dharshi.4,ES2002a,A (ID),138.20,140.77,"That's about it, didn't get anything else.",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.6,ES2002a,D (ME),138.96,140.56,"Mm-hmm. Yeah, that's that's it.",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.25,ES2002a,B (PM),140.10,141.53,Is that what everybody got?,Other,,,,,Other,default,2026-10-28
+ES2002a.A.dialog-act.dharshi.5,ES2002a,A (ID),140.77,141.98,Did you get the same thing?,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.28,ES2002a,B (PM),144.43,147.92,So we're gonna have like individual work and then a meeting about it.,Other,,,,,Decision,rule,2026-10-28
+ES2002a.B.dialog-act.dharshi.31,ES2002a,B (PM),147.92,151.79,And repeat that process three times.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.32,ES2002a,B (PM),151.79,158.41,Um and at this point we get try out the whiteboard over there.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.33,ES2002a,B (PM),159.59,165.91,So uh you get to draw your favourite animal and sum up your favourite characteristics of it.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.30,ES2002a,B (PM),165.91,167.31,So who would like to go first?,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.8,ES2002a,D (ME),166.67,167.81,I will go. That's fine.,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.11,ES2002a,D (ME),181.39,182.34,"This one here, right?",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.16,ES2002a,D (ME),187.46,191.68,My favourite animal is like,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.20,ES2002a,D (ME),213.16,216.46,charac favourite characteristics of it? Is that right?,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.23,ES2002a,D (ME),216.46,229.16,"Uh, right, well basically um high priority for any animal for me is that they be willing to take a lot of physical affection from their family.",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.24,ES2002a,D (ME),229.16,232.72,"And, yeah that they have lots of personality",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.25,ES2002a,D (ME),232.72,237.96,and uh be fit and in robust good health.,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.26,ES2002a,D (ME),237.96,239.85,So this is blue.,Other,,,,,Other,default,2026-10-28
+ES2002a.C.dialog-act.dharshi.4,ES2002a,C (UI),255.07,257.26,"Well, my favourite animal would be a monkey.",Other,,,,,Other,default,2026-10-28
+ES2002a.C.dialog-act.dharshi.7,ES2002a,C (UI),268.00,270.01,"Then they're small cute and furry,",Other,,,,,Other,default,2026-10-28
+ES2002a.C.dialog-act.dharshi.8,ES2002a,C (UI),270.01,273.99,"and uh when planet of the apes becomes real, I'm gonna be up there with them.",Other,,,,,Other,default,2026-10-28
+ES2002a.A.dialog-act.dharshi.9,ES2002a,A (ID),280.75,282.65,There's too much gear.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.42,ES2002a,B (PM),285.96,287.73,"You can take as long over this as you like,",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.103,ES2002a,B (PM),287.73,290.31,because we haven't got an awful lot to discuss.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.104,ES2002a,B (PM),290.59,291.76,we do we do,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.44,ES2002a,B (PM),291.76,293.37,"Don't feel like you're in a rush, anyway.",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.30,ES2002a,D (ME),296.02,298.03,I coulda told you a whole lot more about beagles.,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.31,ES2002a,D (ME),298.03,300.92,"Boy, let me tell you.",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.47,ES2002a,B (PM),298.97,300.43,We might have to get you up again then.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.48,ES2002a,B (PM),301.14,302.11,I don't know what mine is.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.49,ES2002a,B (PM),302.11,303.58,I'm gonna have to think on the spot now.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.50,ES2002a,B (PM),312.05,315.13,Is that a whale?,Other,,,,,Other,default,2026-10-28
+ES2002a.A.dialog-act.dharshi.16,ES2002a,A (ID),321.53,324.11,"I don't know, it's just the first animal I can think off the top of my head.",Other,,,,,Other,default,2026-10-28
+ES2002a.A.dialog-act.dharshi.17,ES2002a,A (ID),324.11,327.86,Um. Yes. Big reason is 'cause I'm allergic to most animals.,Other,,,,,Other,default,2026-10-28
+ES2002a.A.dialog-act.dharshi.18,ES2002a,A (ID),327.86,328.76,"Allergic to animal fur,",Other,,,,,Other,default,2026-10-28
+ES2002a.A.dialog-act.dharshi.19,ES2002a,A (ID),328.76,331.57,so um fish was a natural choice.,Other,,,,,Other,default,2026-10-28
+ES2002a.A.dialog-act.dharshi.21,ES2002a,A (ID),333.10,334.32,and I kind of like whales.,Other,,,,,Other,default,2026-10-28
+ES2002a.A.dialog-act.dharshi.22,ES2002a,A (ID),334.32,337.70,They come in and go eat everything in sight.,Other,,,,,Other,default,2026-10-28
+ES2002a.A.dialog-act.dharshi.23,ES2002a,A (ID),338.22,341.52,And they're quite harmless and mild and interesting.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.53,ES2002a,B (PM),343.63,346.39,"God, I still don't know what I'm gonna write about.",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.36,ES2002a,D (ME),349.66,350.84,"Superb sketch, by the way.",Other,,,,,Other,default,2026-10-28
+ES2002a.A.dialog-act.dharshi.24,ES2002a,A (ID),353.86,355.11,"Tail's a bit big, I think.",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.55,ES2002a,B (PM),354.91,357.54,I was gonna choose a dog as well.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.56,ES2002a,B (PM),357.54,360.21,But I'll just draw a different kind of dog.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.57,ES2002a,B (PM),360.21,364.23,M my favourite animal is my own dog at home.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.59,ES2002a,B (PM),367.01,368.63,"That doesn't really look like him, actually.",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.60,ES2002a,B (PM),373.30,374.72,"He looks more like a pig, actually.",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.40,ES2002a,D (ME),378.46,379.99,I see a dog in there.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.63,ES2002a,B (PM),380.06,380.97,Oh that's very good of you.,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.42,ES2002a,D (ME),382.82,383.68,Now I see a rooster.,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.43,ES2002a,D (ME),393.42,394.21,What kind is it?,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.66,ES2002a,B (PM),394.87,398.71,Um he's a mixture of uh various things.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.67,ES2002a,B (PM),398.71,403.23,"Um and what do I like about him, um",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.68,ES2002a,B (PM),403.23,405.71,That's just to suggest that his tail wags.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.70,ES2002a,B (PM),405.71,409.20,"Um he's very friendly and cheery and always pleased to see you,",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.71,ES2002a,B (PM),409.20,411.11,and very kind of affectionate,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.73,ES2002a,B (PM),415.12,421.48,and he's quite quite wee as well so you know he can doesn't take up too much space.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.75,ES2002a,B (PM),425.56,430.28,"and uh And he does a funny thing where he chases his tail as well,",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.76,ES2002a,B (PM),430.28,431.60,"which is quite amusing, so",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.46,ES2002a,D (ME),431.27,433.44,Is he aware that th it's his own cha tail he's chasing?,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.77,ES2002a,B (PM),433.83,434.67,It is. I think it is.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.78,ES2002a,B (PM),434.67,436.84,He only does it after he's had his dinner,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.79,ES2002a,B (PM),436.84,441.92,and um he'll just all of a sudden just get up and start chasing his tail 'round the living room.,Other,,,,,Other,default,2026-10-28
+ES2002a.A.dialog-act.dharshi.28,ES2002a,A (ID),442.02,443.21,It's an after dinner dog then.,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.49,ES2002a,D (ME),444.05,448.71,Probably when he was little he got lots of attention for doing it and has forever been conditioned.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.84,ES2002a,B (PM),450.70,452.30,"Right, um where did you find this?",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.85,ES2002a,B (PM),452.30,453.61,Just down here? Yeah.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.87,ES2002a,B (PM),458.92,462.97,Um what are we doing next? Uh um.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.88,ES2002a,B (PM),465.51,470.01,"Okay, uh we now need to discuss the project finance.",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.89,ES2002a,B (PM),470.01,476.53,"Um so according to the brief um we're gonna be selling this remote control for twenty five Euro,",Decision,,,,,Decision,summlink,2026-10-28
+ES2002a.B.dialog-act.dharshi.90,ES2002a,B (PM),476.53,482.77,um and we're aiming to make fifty million Euro.,Decision,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.91,ES2002a,B (PM),482.77,487.21,Um so we're gonna be selling this on an international scale.,Decision,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.92,ES2002a,B (PM),487.21,495.00,"And uh we don't want it to cost any more than uh twelve fifty Euros, so fifty percent of the selling price.",Decision,,,,,Decision,summlink,2026-10-28
+ES2002a.D.dialog-act.dharshi.52,ES2002a,D (ME),496.02,497.60,"Um, can we just go over that again?",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.53,ES2002a,D (ME),499.16,502.11,"Uh, so bas at twel",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.55,ES2002a,D (ME),505.28,509.26,"So cost like production cost is twelve fifty,",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.56,ES2002a,D (ME),509.26,513.06,but selling price is is that wholesale or retail?,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.57,ES2002a,D (ME),513.06,514.00,Like on the shelf.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.96,ES2002a,B (PM),517.97,518.91,That's a good question.,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.59,ES2002a,D (ME),518.31,520.65,Our sale our sale anyway.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.97,ES2002a,B (PM),519.67,521.58,I imagine it probably is our sale actually,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.98,ES2002a,B (PM),521.58,530.20,because it's probably up to the the um the retailer to uh sell it for whatever price they want. Um.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.106,ES2002a,B (PM),531.83,532.46,"But I I don't know,",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.100,ES2002a,B (PM),532.46,538.19,I mean do you think the fact that it's going to be sold internationally will have a bearing on how we design it at all?,Other,,,,,Decision,summlink,2026-10-28
+ES2002a.D.dialog-act.dharshi.66,ES2002a,D (ME),548.28,554.28,"Well right away I'm wondering if there's um th th uh, like with D_V_D_ players, if there are zones.",Risk,,,,,Decision,summlink,2026-10-28
+ES2002a.D.dialog-act.dharshi.67,ES2002a,D (ME),554.28,557.41,Um f frequencies or something,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.109,ES2002a,B (PM),554.46,556.62,"regions and stuff, yeah.",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.68,ES2002a,D (ME),557.41,561.17,"um as well as uh characters,",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.69,ES2002a,D (ME),561.17,565.35,um different uh keypad styles and s symbols.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.114,ES2002a,B (PM),568.30,571.01,I suppose it's depends on how complicated our remote control is.,Other,,,,,Other,default,2026-10-28
+ES2002a.A.dialog-act.dharshi.31,ES2002a,A (ID),571.74,574.91,It does make sense from maybe the design point of view,Other,,,,,Other,default,2026-10-28
+ES2002a.A.dialog-act.dharshi.32,ES2002a,A (ID),574.91,580.21,"'cause you have more complicated characters like European languages, then you need more buttons.",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.76,ES2002a,D (ME),583.50,587.78,And then a and then al the other thing international is on top of the price.,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.77,ES2002a,D (ME),587.78,596.78,"I'm thinking the price might might appeal to a certain market in one region, whereas in another it'll be different, so",Risk,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.118,ES2002a,B (PM),597.79,600.43,"What, just like in terms of like the wealth of the country?",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.119,ES2002a,B (PM),600.43,603.43,Like how much money people have to spend on things like?,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.80,ES2002a,D (ME),602.87,606.29,"Or just like, basic product podi positioning,",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.81,ES2002a,D (ME),606.29,611.16,"the twenty five Euro remote control might be a big hit in London,",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.82,ES2002a,D (ME),611.16,615.20,"might not be such a big hit in Greece,",Risk,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.120,ES2002a,B (PM),615.74,617.28,"Aye, I see what you mean, yeah.",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.85,ES2002a,D (ME),615.98,616.94,"something like that, yeah.",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.124,ES2002a,B (PM),621.49,624.87,I should be writing all this down. Um.,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.87,ES2002a,D (ME),655.45,660.71,"Right away I'm making some kind of assumptions about what what information we're given here,",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.88,ES2002a,D (ME),660.71,665.64,"thinking, 'kay trendy probably means something other than just basic,",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.89,ES2002a,D (ME),665.64,669.16,something other than just standard. Um,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.90,ES2002a,D (ME),670.31,672.15,"so I'm wondering right away,",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.92,ES2002a,D (ME),674.38,677.53,thi is this gonna to be like the premium product kinda thing or,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.128,ES2002a,B (PM),677.66,680.53,"Like how much does, you know, a remote control cost.",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.129,ES2002a,B (PM),681.66,687.09,"Well twenty five Euro, I mean that's um that's about like eighteen pounds or something,",Other,,,,,Decision,summlink,2026-10-28
+ES2002a.B.dialog-act.dharshi.132,ES2002a,B (PM),688.04,689.70,is it as much as that?,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.133,ES2002a,B (PM),689.70,691.58,Sixteen seventeen eighteen pounds.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.136,ES2002a,B (PM),694.16,695.53,"I've never bought a remote control,",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.137,ES2002a,B (PM),695.53,700.41,so I don't know how how good a remote control that would get you. Um.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.138,ES2002a,B (PM),702.02,705.01,"But yeah, I suppose it has to look kind of cool and gimmicky.",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.140,ES2002a,B (PM),711.43,713.81,Let me just scoot on ahead here.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.142,ES2002a,B (PM),714.96,721.44,Um well d Does anybody have anything to add to uh to the finance issue at all?,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.106,ES2002a,D (ME),722.77,727.01,Do we have any other background information on like how that compares to other,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.146,ES2002a,B (PM),728.32,729.45,"That would be useful, though,",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.148,ES2002a,B (PM),729.81,732.87,if you knew like what your money would get you now.,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.111,ES2002a,D (ME),753.67,759.58,"Yeah, interesting thing about discussing um production of a remote control for me is that l",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.112,ES2002a,D (ME),759.58,760.59,"as you point out,",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.113,ES2002a,D (ME),760.59,767.74,I just don't think of remote controls as somethin something people consciously assess in their purchasing habits.,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.114,ES2002a,D (ME),767.74,772.49,It's just like getting shoelaces with shoes or something.,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.115,ES2002a,D (ME),772.49,773.41,It just comes along.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.152,ES2002a,B (PM),772.80,774.17,Five minutes to end of meeting.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.151,ES2002a,B (PM),775.33,776.97,We're a bit behind.,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.116,ES2002a,D (ME),776.12,777.67,Do you know what I mean?,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.118,ES2002a,D (ME),779.25,786.49,"I I mean one one way of looking at it would be, well the people producing television sets, maybe they have to buy remote controls.",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.119,ES2002a,D (ME),786.49,793.63,Or another way is maybe people who have T_V_ sets are really fed up with their remote control and they really want a better one or something.,Other,,,,,Other,default,2026-10-28
+ES2002a.C.dialog-act.dharshi.17,ES2002a,C (UI),794.52,801.38,My parents went out and bought um remote controls because um they got fed up of having four or five different remote controls for each things the house.,Other,,,,,Other,default,2026-10-28
+ES2002a.C.dialog-act.dharshi.18,ES2002a,C (UI),801.38,804.33,So um for them it was just how many devices control.,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.125,ES2002a,D (ME),804.72,810.39,so in function one of the priorities might be to combine as many uses,Other,,,,,Risk,summlink,2026-10-28
+ES2002a.B.dialog-act.dharshi.155,ES2002a,B (PM),811.51,815.56,"Right, so do you think that should be like a main design aim of our remote control d you know,",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.156,ES2002a,B (PM),815.56,820.83,do your your satellite and your regular telly and your V_C_R_ and everything?,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.129,ES2002a,D (ME),821.05,828.28,maybe what we could use is a sort of like a example of a successful other piece technology is palm palm pilots.,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.130,ES2002a,D (ME),828.28,834.09,"They're gone from being just like little sort of scribble boards to cameras, M_P_ three players, telephones,",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.132,ES2002a,D (ME),836.31,840.68,"So, like, I wonder if we might add something new to the to the remote control market,",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.133,ES2002a,D (ME),840.68,844.06,"such as the lighting in your house, or um",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.159,ES2002a,B (PM),843.99,847.62,"Or even like, you know, notes about um what you wanna watch.",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.160,ES2002a,B (PM),847.62,850.33,Like you might put in there oh I want to watch such and such and look a,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.161,ES2002a,B (PM),850.33,851.55,Oh that's a good idea.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.162,ES2002a,B (PM),851.55,853.03,So extra functionalities.,Other,,,,,Risk,summlink,2026-10-28
+ES2002a.D.dialog-act.dharshi.139,ES2002a,D (ME),853.54,862.90,"Like, p personally for me, at home I've I've combined the um the audio video of my television set and my D_V_D_ player and my C_D_ player.",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.140,ES2002a,D (ME),862.90,864.62,So they w all work actually function together,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.141,ES2002a,D (ME),864.62,866.91,but I have different remote controls for each of them.,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.142,ES2002a,D (ME),866.91,870.27,So it's sort of ironic that that then they're in there,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.143,ES2002a,D (ME),874.02,876.45,"you know, the sound and everything it's just one system.",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.144,ES2002a,D (ME),876.45,877.77,But each one's got its own little,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.166,ES2002a,B (PM),886.62,889.88,we're gonna have to wrap up pretty quickly in the next couple of minutes.,Other,,,,,Decision,rule,2026-10-28
+ES2002a.B.dialog-act.dharshi.169,ES2002a,B (PM),889.88,891.96,Um I'll just check we've nothing else,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.171,ES2002a,B (PM),892.58,898.27,"Um so anything else anybody wants to add about what they don't like about remote controls they've used,",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.172,ES2002a,B (PM),898.27,902.62,what they would really like to be part of this new one at all?,Other,,,,,Other,default,2026-10-28
+ES2002a.A.dialog-act.dharshi.36,ES2002a,A (ID),903.08,903.98,And you keep losing them.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.173,ES2002a,B (PM),904.60,905.58,You keep losing them.,Other,,,,,Other,default,2026-10-28
+ES2002a.A.dialog-act.dharshi.37,ES2002a,A (ID),906.45,908.59,"Finding them is really a pain, you know.",Other,,,,,Other,default,2026-10-28
+ES2002a.A.dialog-act.dharshi.38,ES2002a,A (ID),908.59,910.62,"I mean it's usually quite small,",Other,,,,,Other,default,2026-10-28
+ES2002a.A.dialog-act.dharshi.39,ES2002a,A (ID),910.62,912.90,"or when you want it right, it slipped behind the couch",Other,,,,,Other,default,2026-10-28
+ES2002a.A.dialog-act.dharshi.40,ES2002a,A (ID),912.90,914.44,or it's kicked under the table.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.178,ES2002a,B (PM),914.71,920.04,"W You get those ones where you can, if you like, whistle or make a really high pitched noise they beep.",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.180,ES2002a,B (PM),920.50,922.53,"I mean is that something we'd want to include, do you think?",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.151,ES2002a,D (ME),927.64,932.01,I remember when the first remote control my my family had was on a cable.,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.152,ES2002a,D (ME),932.01,933.48,Actually had a cable between it and the T_V_,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.153,ES2002a,D (ME),933.48,937.36,"and big like buttons that sort of like, like on a blender or something.",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.160,ES2002a,D (ME),938.40,940.72,"when I think about what they are now, it's better,",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.161,ES2002a,D (ME),940.72,946.40,"but actually it's still kind of, I dunno, like a massive junky thing on the table.",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.183,ES2002a,B (PM),946.26,948.04,Still feels quite primitive.,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.158,ES2002a,D (ME),946.40,952.63,"Maybe we could think about how, could be more, you know, streamlined. S",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.184,ES2002a,B (PM),951.41,952.78,Maybe like a touch screen or something?,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.162,ES2002a,D (ME),953.06,954.20,"Something like that, yeah.",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.163,ES2002a,D (ME),954.20,956.35,Or whatever would be technologically reasonable.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.187,ES2002a,B (PM),957.42,959.30,Well I guess that's up to our industrial designer.,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.167,ES2002a,D (ME),959.24,961.34,"it could be that functionally that doesn't make it any better,",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.168,ES2002a,D (ME),961.34,963.91,but that just the appeal of of not having,Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.169,ES2002a,D (ME),963.91,969.56,"You know, these days there's a r pe things in people's homes are becoming more and more like chic, you know.",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.172,ES2002a,D (ME),975.57,976.83,be worth exploring anyway.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.193,ES2002a,B (PM),978.62,979.73,so just to wrap up,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.194,ES2002a,B (PM),979.73,981.67,the next meeting's gonna be in thirty minutes.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.195,ES2002a,B (PM),981.67,985.49,So that's about um about ten to twelve by my watch.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.196,ES2002a,B (PM),985.49,994.81,"Um so inbetween now and then, um as the industrial designer, you're gonna be working on you know the actual working design of it",Task,the industrial designer,inbetween now and then,,,Task,summlink,2026-10-28
+ES2002a.B.dialog-act.dharshi.197,ES2002a,B (PM),994.81,996.69,so y you know what you're doing there.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.199,ES2002a,B (PM),996.69,1000.99,"Um for user interface, technical functions,",Task,user interface,,,,Task,summlink,2026-10-28
+ES2002a.B.dialog-act.dharshi.200,ES2002a,B (PM),1000.99,1003.16,"I guess that's you know like what we've been talking about,",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.201,ES2002a,B (PM),1003.16,1004.08,what it'll actually do.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.202,ES2002a,B (PM),1004.08,1008.75,"Um and uh marketing executive,",Other,,,,,Task,summlink,2026-10-28
+ES2002a.B.dialog-act.dharshi.203,ES2002a,B (PM),1010.02,1016.48,"you'll be just thinking about what it actually what, you know, what requirements it has to has to fulfil",Task,you,,,,Task,summlink,2026-10-28
+ES2002a.B.dialog-act.dharshi.204,ES2002a,B (PM),1016.48,1019.31,"and you'll all get instructions emailed to you, I guess.",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.206,ES2002a,B (PM),1028.05,1031.66,"Yeah, so it's th the functional design stage is next, I guess.",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.208,ES2002a,B (PM),1036.47,1037.69,and that's the end of the meeting.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.209,ES2002a,B (PM),1039.12,1042.57,"So I got that little message a lot sooner than I thought I would, so",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.175,ES2002a,D (ME),1047.17,1050.09,"Before we wrap up, just to make sure we're all on the same page here,",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.177,ES2002a,D (ME),1052.89,1056.51,"We were given sort of an example of a coffee machine or something,",Other,,,,,Other,default,2026-10-28
+ES2002a.D.dialog-act.dharshi.181,ES2002a,D (ME),1060.99,1067.54,are we at ma right now on the assumption that our television remote control may have features which go beyond the television?,Risk,,,,,Risk,summlink,2026-10-28
+ES2002a.D.dialog-act.dharshi.182,ES2002a,D (ME),1067.54,1073.79,Or are we keeping sort of like a a design commitment to television features?,Other,,,,,Risk,summlink,2026-10-28
+ES2002a.D.dialog-act.dharshi.183,ES2002a,D (ME),1073.79,1074.44,I I don't know.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.214,ES2002a,B (PM),1073.97,1075.12,well just very quickly,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.215,ES2002a,B (PM),1075.12,1076.64,'cause this we're supposed to finish now.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.216,ES2002a,B (PM),1076.64,1079.10,"Um I guess that's up to us,",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.217,ES2002a,B (PM),1079.10,1082.39,"I mean you probably want some kind of unique selling point of it,",Other,,,,,Other,default,2026-10-28
+ES2002a.A.dialog-act.dharshi.44,ES2002a,A (ID),1084.36,1086.91,I think one factor would be production cost.,Other,,,,,Other,default,2026-10-28
+ES2002a.A.dialog-act.dharshi.45,ES2002a,A (ID),1087.57,1088.74,"Because there's a cap there,",Other,,,,,Other,default,2026-10-28
+ES2002a.A.dialog-act.dharshi.46,ES2002a,A (ID),1088.74,1094.90,so um depends on how much you can cram into that price. Um.,Risk,,,,,Other,default,2026-10-28
+ES2002a.A.dialog-act.dharshi.47,ES2002a,A (ID),1096.03,1098.43,I think that that's the main factor.,Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.225,ES2002a,B (PM),1099.43,1103.20,"Right, okay, we'll that's that's the end of the meeting, then. Um",Other,,,,,Other,default,2026-10-28
+ES2002a.B.dialog-act.dharshi.224,ES2002a,B (PM),1106.58,1109.39,thank you all for coming.,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.2,ES2003a,B (PM),2.67,5.63,I think we're ready to begin.,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.4,ES2003a,B (PM),6.65,7.55,"my name's Adam Duguid,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.5,ES2003a,B (PM),7.55,9.20,"we're here because of real reaction,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.6,ES2003a,B (PM),9.20,13.18,"um, we have in the group",Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.3,ES2003a,C (ME),15.21,16.81,Would you like me to spell that?,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.8,ES2003a,B (PM),19.33,20.56,go for it mate.,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.11,ES2003a,B (PM),24.90,26.16,And your role is?,Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.7,ES2003a,C (ME),26.30,28.26,I'm the Marketing Expert.,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.12,ES2003a,B (PM),28.50,30.19,"You're the Marketing Expert, okay.",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.14,ES2003a,B (PM),36.52,38.29,T_ R_ I_ K_.,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.15,ES2003a,B (PM),38.29,39.75,And your role in this is?,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.17,ES2003a,B (PM),47.69,49.09,"And, lastly we have?",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.18,ES2003a,B (PM),53.02,54.55,"And you're going to be the User Interface,",Other,,,,,Other,default,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.2,ES2003a,A (UI),54.24,56.06,"User Interface Defin Designer, yes.",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.22,ES2003a,B (PM),63.00,70.17,"This is the agenda for today's meeting. As you can see, w opening, acquaintance, tool training, project plan discussion, and closing.",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.23,ES2003a,B (PM),70.17,75.83,"Um, we already got n through opening, and partially through acquaintance.",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.25,ES2003a,B (PM),76.26,78.87,"the reason we're here, we're gonna design a new remote control,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.26,ES2003a,B (PM),78.87,81.40,as you probably all know.,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.27,ES2003a,B (PM),81.40,85.24,"The very broad overview is original, trendy, and user-friendly.",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.28,ES2003a,B (PM),85.24,89.05,"Course, we'll have to go into a bit more um detail than that,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.29,ES2003a,B (PM),89.05,95.87,but uh personally I think that the original is gonna be a very key aspect to this design.,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.30,ES2003a,B (PM),95.87,98.00,"Um, there's a lot of remote controls out there anyway,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.31,ES2003a,B (PM),98.00,100.18,so we're gonna need something that's really gonna set it apart.,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.32,ES2003a,B (PM),105.69,107.73,This is how today seems to be going to work.,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.33,ES2003a,B (PM),107.73,109.27,"We're gonna have the three kay phases,",Other,,,,,Decision,rule,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.34,ES2003a,B (PM),109.27,110.87,"as you've probably already been told,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.35,ES2003a,B (PM),110.87,114.50,"the functional, architectural, and the detailed design. Um",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.36,ES2003a,B (PM),119.10,123.67,"First one's gonna be covering the user requirement spec, technical functions, working design.",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.37,ES2003a,B (PM),123.67,126.98,"Second seems to be conceptual components, properties, materials,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.38,ES2003a,B (PM),126.98,131.85,and the last one is a detailed analysis of our design so far.,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.39,ES2003a,B (PM),131.85,134.72,"Of course, you've all got the similar emails, I believe,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.41,ES2003a,B (PM),138.15,139.33,What can I say?,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.42,ES2003a,B (PM),139.33,143.48,"Ebenezer, you wanna have a you wanna draw your favourite animal?",Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.13,ES2003a,C (ME),156.83,157.64,"I will make this quick,",Other,,,,,Task,rule,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.14,ES2003a,C (ME),157.64,158.90,since we don't have much time.,Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.16,ES2003a,C (ME),213.05,214.73,it's not the best picture in the world.,Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.17,ES2003a,C (ME),216.03,217.16,Here we have an elephant.,Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.18,ES2003a,C (ME),218.20,223.11,"First point, begins with an E_, same like Ebenezer.",Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.19,ES2003a,C (ME),223.11,227.52,"Also, elephants have a very good memory, much like myself,",Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.20,ES2003a,C (ME),227.52,228.78,and I can't remember,Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.22,ES2003a,C (ME),228.78,230.06,"back when I used to live back in Nigeria,",Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.21,ES2003a,C (ME),230.06,232.79,but I think I used to have a pet elephant.,Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.24,ES2003a,C (ME),234.76,237.11,"elephants are big, strong and gentle,",Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.25,ES2003a,C (ME),237.11,238.76,"and they have great memories,",Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.26,ES2003a,C (ME),238.76,241.71,"and they begin with the letter E_, just like Ebenezer.",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.46,ES2003a,B (PM),247.45,252.65,"Tarik, would you like to have a shot at a bit of artistry?",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.48,ES2003a,B (PM),256.72,257.93,you can clip them to your belt.,Other,,,,,Other,default,2026-10-28
+ES2003a.D.dialog-act.vkaraisk.6,ES2003a,D (ID),256.77,258.29,Do we take them off?,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.49,ES2003a,B (PM),259.01,262.62,You should also l um have your the lapel mic on as well.,Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.33,ES2003a,C (ME),266.48,267.49,we can clip them on.,Other,,,,,Other,default,2026-10-28
+ES2003a.D.dialog-act.vkaraisk.11,ES2003a,D (ID),273.52,274.03,where do I put the,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.51,ES2003a,B (PM),284.71,286.40,"the, it's just across there,",Other,,,,,Other,default,2026-10-28
+ES2003a.D.dialog-act.vkaraisk.12,ES2003a,D (ID),299.95,301.08,Is this supposed to be clipped as well?,Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.38,ES2003a,C (ME),303.94,305.76,Yeah. There you go.,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.57,ES2003a,B (PM),308.26,309.94,"You can probably just stick it in your pocket for now,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.58,ES2003a,B (PM),309.94,311.23,I wouldn't worry too much.,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.59,ES2003a,B (PM),311.23,312.85,Should have good range.,Other,,,,,Other,default,2026-10-28
+ES2003a.D.dialog-act.vkaraisk.13,ES2003a,D (ID),317.08,318.81,"Uh, destroying your elephant here.",Other,,,,,Other,default,2026-10-28
+ES2003a.D.dialog-act.vkaraisk.15,ES2003a,D (ID),393.91,396.29,"Uh, here we have a tiger. Uh",Other,,,,,Other,default,2026-10-28
+ES2003a.D.dialog-act.vkaraisk.16,ES2003a,D (ID),397.92,399.52,I've always loved tigers.,Other,,,,,Other,default,2026-10-28
+ES2003a.D.dialog-act.vkaraisk.18,ES2003a,D (ID),400.02,401.60,"they're big, they're biggest cats,",Other,,,,,Other,default,2026-10-28
+ES2003a.D.dialog-act.vkaraisk.19,ES2003a,D (ID),401.60,403.41,uh I did a project on cats in the wild,Other,,,,,Other,default,2026-10-28
+ES2003a.D.dialog-act.vkaraisk.20,ES2003a,D (ID),403.41,404.54,when I was a kid,Other,,,,,Other,default,2026-10-28
+ES2003a.D.dialog-act.vkaraisk.21,ES2003a,D (ID),404.54,406.54,"and uh it was my favourite cat,",Other,,,,,Other,default,2026-10-28
+ES2003a.D.dialog-act.vkaraisk.22,ES2003a,D (ID),406.54,410.01,"just 'cause it was looks the best, the stripes, orange.",Other,,,,,Other,default,2026-10-28
+ES2003a.D.dialog-act.vkaraisk.23,ES2003a,D (ID),410.01,411.06,My dad used to talk about,Other,,,,,Other,default,2026-10-28
+ES2003a.D.dialog-act.vkaraisk.25,ES2003a,D (ID),411.90,413.03,so he used to tell me all about them,Other,,,,,Other,default,2026-10-28
+ES2003a.D.dialog-act.vkaraisk.27,ES2003a,D (ID),413.84,415.05,when I was a kid.,Other,,,,,Other,default,2026-10-28
+ES2003a.D.dialog-act.vkaraisk.28,ES2003a,D (ID),415.05,421.56,And uh they're just the most feared of of uh animals in the wild.,Other,,,,,Other,default,2026-10-28
+ES2003a.D.dialog-act.vkaraisk.30,ES2003a,D (ID),422.30,424.13,that's why I like them.,Other,,,,,Other,default,2026-10-28
+ES2003a.D.dialog-act.vkaraisk.31,ES2003a,D (ID),424.13,425.54,Didn't say an anything about me really,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.62,ES2003a,B (PM),428.63,429.69,thank you very much.,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.63,ES2003a,B (PM),429.69,433.99,"Dave, if you'd like to uh have a dash.",Other,,,,,Other,default,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.3,ES2003a,A (UI),439.24,564.21,"Um Um, the monkey, um.",Other,,,,,Other,default,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.5,ES2003a,A (UI),565.58,567.88,in fact this is a somewhat oblique reference,Other,,,,,Other,default,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.9,ES2003a,A (UI),570.14,571.90,I have a three uh three y year old daughter,Other,,,,,Other,default,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.10,ES2003a,A (UI),571.90,575.35,who h who who who is affectionately known as Miss Monkey.,Other,,,,,Other,default,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.11,ES2003a,A (UI),575.35,577.97,"Um, monkeys have attitude.",Other,,,,,Other,default,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.12,ES2003a,A (UI),577.97,579.51,Which I think is a good thing.,Other,,,,,Other,default,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.13,ES2003a,A (UI),579.51,588.74,And I mean fr and from uh from the point of view of sort of the study of human evolution they and other primates are terribly interesting.,Other,,,,,Other,default,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.14,ES2003a,A (UI),588.74,592.69,"Um, so I like monkeys.",Other,,,,,Other,default,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.15,ES2003a,A (UI),592.69,597.92,And and th th th th thi thi this one seems to have perhaps more attitude than most.,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.65,ES2003a,B (PM),656.53,658.11,Hardly what I'd call the best drawing in the world,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.66,ES2003a,B (PM),658.11,659.64,but it'll do for now.,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.67,ES2003a,B (PM),659.64,662.03,"Also not quite as feared as your average tiger,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.68,ES2003a,B (PM),662.03,664.87,"but uh cats are one of my favourite animals,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.70,ES2003a,B (PM),666.76,670.15,"they're snotty as hell at the best of times,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.72,ES2003a,B (PM),670.15,674.43,"and uh, what can you say, you got to love those qualities in an animal.",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.74,ES2003a,B (PM),681.47,685.28,"I think we've all managed to master the whiteboard there by looks of it,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.77,ES2003a,B (PM),687.11,693.12,"Project finance. As you can see, twelve point five Euros per unit.",Decision,,,,,Decision,summlink,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.78,ES2003a,B (PM),693.12,696.46,"That's not a terrible lot as far as I'm aware,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.81,ES2003a,B (PM),696.46,699.14,and we're hoping to sell them for twenty five.,Decision,,,,,Decision,summlink,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.82,ES2003a,B (PM),699.14,702.35,If we're aiming for fifty million Euros we're gonna have to be selling an awful lot of them.,Risk,,,,,Decision,rule,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.42,ES2003a,C (ME),706.82,710.55,"that was an amount, so that's the amount made,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.86,ES2003a,B (PM),712.51,718.87,"and if you're making twelve point five Euros on each one, then, awful lot need to be sold.",Risk,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.88,ES2003a,B (PM),722.26,725.84,Now we better actually just get on with the uh the meat of the project.,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.90,ES2003a,B (PM),726.50,728.59,I'm gonna guess that we've all used remote controls.,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.91,ES2003a,B (PM),730.78,735.08,Any ideas of where you think a new remote control could go into this market?,Other,,,,,Other,default,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.17,ES2003a,A (UI),738.58,749.41,"one thing I'm aware of is, th there uh um at the sort of v very high price end of the market there's there's a em emerging market for sort of touch screen L_C_D_ remotes",Other,,,,,Risk,summlink,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.18,ES2003a,A (UI),749.41,754.72,"that can be uh programmed in m much more sophisticated ways than sort of conventional models,",Other,,,,,Other,default,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.20,ES2003a,A (UI),757.99,762.00,"you can redesign the interface to your own needs,",Other,,,,,Other,default,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.21,ES2003a,A (UI),762.00,764.39,"you can programme in macros,",Other,,,,,Other,default,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.23,ES2003a,A (UI),766.17,769.66,"um um I mean you get in these sort of three in one, five in one, whatevers,",Other,,,,,Other,default,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.24,ES2003a,A (UI),769.66,777.67,"but you can get integration between the different uh the the the diff the different things that it's designed to control, to a much greater extent,",Other,,,,,Other,default,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.25,ES2003a,A (UI),777.67,790.71,"and you can have one uh you know one macro to turn the uh you know turn the T_V_ to the right channel, get the uh re uh rewind the tape in the V_C_R_ and get it to play once it's rewound, for instance.",Other,,,,,Other,default,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.26,ES2003a,A (UI),790.71,806.40,Um b it occurs to me there might be a niche for uh for a remote that aimed towards some of that sort of functionality but using a just conventional push button design.,Other,,,,,Other,default,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.27,ES2003a,A (UI),806.40,811.36,And therefore putting it into a um well much lower price bracket.,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.94,ES2003a,B (PM),813.44,814.47,"yeah, tha that's true,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.95,ES2003a,B (PM),814.47,819.89,"with the price range we're looking at, going for a touch screen would probably be possibly out of our",Risk,,,,,Risk,summlink,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.28,ES2003a,A (UI),819.18,820.42,"Absolutely prohibitive,",Other,,,,,Risk,summlink,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.97,ES2003a,B (PM),821.20,825.70,But you think uh again something to control multiple units in uh a simple fashion.,Other,,,,,Risk,summlink,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.32,ES2003a,A (UI),827.51,830.72,"I mean you get ones that you can switch between multiple units,",Other,,,,,Risk,summlink,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.33,ES2003a,A (UI),830.72,836.06,but something that could um operate between multiple units in a more integrated fashion.,Other,,,,,Other,default,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.35,ES2003a,A (UI),837.06,844.61,and ideally something into which it would have some at least limited facility for um running macros.,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.98,ES2003a,B (PM),845.65,854.29,"Would the the idea something along the lines of, one on button would turn on say the video recorder, the T_V_, maybe the sound system as well, all in one go, is that kind of",Other,,,,,Risk,summlink,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.38,ES2003a,A (UI),861.37,869.67,"you pr uh you press uh say the play button for the D_V_D_ player and it turns the T_V_ on and onto the right channel as well, um",Other,,,,,Risk,summlink,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.100,ES2003a,B (PM),870.89,875.32,"Okay, that sounds like a a good strong idea. Um",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.101,ES2003a,B (PM),877.70,879.72,Any takes on this?,Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.48,ES2003a,C (ME),879.99,885.76,"um I've noticed that uh gaming c is becoming quite popular with television,",Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.49,ES2003a,C (ME),885.76,886.64,um when I was younger,Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.50,ES2003a,C (ME),886.64,894.52,"we used to e play games using our cable, using the cable subscribed the cable providers,",Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.51,ES2003a,C (ME),894.52,897.19,"but our remote controls would get worn out really easily,",Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.52,ES2003a,C (ME),897.19,903.30,"and the remote control was not a great kind of keyboar, um keypad, for playing games.",Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.53,ES2003a,C (ME),903.30,904.84,So perhaps one that was more um,Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.54,ES2003a,C (ME),906.44,910.00,specialised for game playing or interactive television.,Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.55,ES2003a,C (ME),910.00,912.94,"They they've recently brought out this new remote control,",Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.56,ES2003a,C (ME),912.94,917.64,"for people to set their favourite channels, or um to record things.",Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.57,ES2003a,C (ME),917.64,924.71,"Instead of people entering in what time things start, you simply stri slide a bar to say what time it begins,",Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.58,ES2003a,C (ME),924.71,927.10,"and slide another bar to say what time it ends,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.106,ES2003a,B (PM),928.54,930.05,"I've seen the bar-code design before,",Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.62,ES2003a,C (ME),933.87,937.79,Y you don't have to be uh really clever to use a remote control.,Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.63,ES2003a,C (ME),937.79,942.58,"I think for gaming, you know you want you want some big buttons for up, down, left and right, shoot.",Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.65,ES2003a,C (ME),944.45,948.53,"Uh, you wanna be able to change angles in interactive television,",Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.66,ES2003a,C (ME),948.53,952.37,"so you need buttons to change the television angle, the camera angles and stuff like that.",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.110,ES2003a,B (PM),953.76,955.11,"we're beginning to run out of time now,",Other,,,,,Risk,rule,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.112,ES2003a,B (PM),955.48,956.58,"we've got a couple of ideas,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.114,ES2003a,B (PM),958.53,961.02,"we'll have to work fast,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.116,ES2003a,B (PM),962.63,964.75,"as you can see we've got thirty minutes until the next meeting,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.117,ES2003a,B (PM),964.75,970.20,"so we'll have to try and decide on some of the basic functionality,",Task,we,,,,Task,summlink,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.118,ES2003a,B (PM),970.20,972.60,"um, how the user interface might work,",Other,,,,,Task,summlink,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.119,ES2003a,B (PM),972.60,977.86,that'll be a key aspect especially if the idea of um some kind of macros facility,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.120,ES2003a,B (PM),977.86,979.40,"because you have to program it,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.121,ES2003a,B (PM),979.40,983.98,"you have to have a lot of response back, or at least some kind. Um",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.122,ES2003a,B (PM),986.88,990.50,And we're gonna maybe n try and have to figure out,Other,,,,,Other,default,2026-10-28
+ES2003a.C.dialog-act.vkaraisk.68,ES2003a,C (ME),991.23,992.37,What the user wants uh.,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.123,ES2003a,B (PM),992.08,994.44,"what the user wants, yes.",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.125,ES2003a,B (PM),996.83,1001.20,"Has anybody got anything they'd like to add at this stage, anything they think that might have been missed so far?",Other,,,,,Other,default,2026-10-28
+ES2003a.D.dialog-act.vkaraisk.37,ES2003a,D (ID),1002.50,1003.99,"when you're talking about gaming and stuff,",Other,,,,,Other,default,2026-10-28
+ES2003a.D.dialog-act.vkaraisk.38,ES2003a,D (ID),1003.99,1009.30,"do you think they should have some sort of stick on it, rather than buttons?",Other,,,,,Risk,summlink,2026-10-28
+ES2003a.D.dialog-act.vkaraisk.39,ES2003a,D (ID),1010.16,1012.97,"Like uh control pads, you know of games,",Other,,,,,Risk,summlink,2026-10-28
+ES2003a.D.dialog-act.vkaraisk.41,ES2003a,D (ID),1013.80,1015.55,or is that a bit ridiculous?,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.126,ES2003a,B (PM),1016.96,1017.99,"I I don't see why not,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.127,ES2003a,B (PM),1017.99,1020.24,"almost everybody is probably used to a console by now,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.128,ES2003a,B (PM),1020.24,1023.29,"and all of them incorporate small keypads on them,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.129,ES2003a,B (PM),1023.29,1026.12,"in fact even the mobile phones these days are beginning to use them as well,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.130,ES2003a,B (PM),1026.12,1031.32,so it's probably an interface that most people are used to. Um,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.131,ES2003a,B (PM),1033.18,1037.74,"and that could allow n easy navigation, used as a joystick as well.",Other,,,,,Risk,summlink,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.42,ES2003a,A (UI),1045.78,1055.30,"Mm-hmm. The other key feature that uh that would be a good idea built into it is t is is to make something you know fairly sort of ergonomic,",Other,,,,,Decision,summlink,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.43,ES2003a,A (UI),1055.30,1060.06,something that just fits fits as comfortably as possible into the hand.,Other,,,,,Decision,summlink,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.44,ES2003a,A (UI),1060.06,1074.55,"But of course, uh al al also allows for the possibility of a more sort of slightly unconventional or attractive uh sha shape for it overall,.",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.134,ES2003a,B (PM),1077.06,1081.24,"small, stylish, and something that's just a little different.",Other,,,,,Other,default,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.47,ES2003a,A (UI),1080.04,1083.86,"Something sort of sort of sl slightly sort of biomorphic in form,",Other,,,,,Decision,summlink,2026-10-28
+ES2003a.A.dialog-act.vkaraisk.48,ES2003a,A (UI),1083.86,1088.16,uh which it would need to be to sort of conform to the shape of the hand more efficiently anyway.,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.136,ES2003a,B (PM),1089.74,1092.20,That's definitely something that we should be able to do quite easily.,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.137,ES2003a,B (PM),1093.27,1095.67,I would I would have hoped so anyway.,Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.139,ES2003a,B (PM),1100.31,1102.71,"I'd say we finish this one up,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.142,ES2003a,B (PM),1104.20,1107.94,"I'll write up what we've um kind of quickly done,",Task,I,,,,Task,rule,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.143,ES2003a,B (PM),1107.94,1109.16,and I'll get that out to everybody.,Task,I,,,,Task,rule,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.147,ES2003a,B (PM),1118.69,1124.76,"Um, as far as I'm aware we leave the microphones here, um unless we get told otherwise,",Other,,,,,Other,default,2026-10-28
+ES2003a.B.dialog-act.vkaraisk.148,ES2003a,B (PM),1124.76,1126.69,and just take the laptops with us.,Other,,,,,Other,default,2026-10-28

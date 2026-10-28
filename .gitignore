@@ -22,6 +22,7 @@ __pycache__/
 # ---- Data, models and media (large / private) ----
 ml/data/raw/
 ml/data/processed/
+ml/labelstudio/tasks_*.json
 ml/models/*.joblib
 ml/models/*.pkl
 backend/uploads/
