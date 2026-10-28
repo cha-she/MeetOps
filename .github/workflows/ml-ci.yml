@@ -1,0 +1,27 @@
+name: ML CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "ml/**"
+      - "scripts/**"
+      - ".github/workflows/ml-ci.yml"
+  pull_request:
+    paths:
+      - "ml/**"
+      - "scripts/**"
+
+jobs:
+  test:
+    name: pytest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: ml/pyproject.toml
+      - run: pip install -e "ml[dev]"
+      - run: python -m pytest ml/tests

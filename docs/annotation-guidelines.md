@@ -167,6 +167,7 @@ macro-F1 evaluation. Do not try to "balance" the data by relabelling.
 | `ml/data/processed/ami_utterances.csv` | All parsed utterances (unlabelled) |
 | `ml/data/processed/ami_prelabels.csv` | Same, with weak pre-labels from AMI summary links and rules |
 | `ml/data/labeled/train_v1.csv` | Manually verified training labels (enriched sample across meetings) |
+| `ml/data/labeled/train_v2.csv` | v1 plus a Risk-focused second batch (400 rows) |
 | `ml/data/labeled/test_v1.csv` | Manually verified test labels (two complete meetings, natural distribution) |
 
 Column reference for the labelled file: `segment_id, meeting_id, speaker,

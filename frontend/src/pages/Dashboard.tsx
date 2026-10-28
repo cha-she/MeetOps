@@ -23,6 +23,7 @@ import {
 import type { ReactNode } from "react";
 import { api } from "../api/endpoints";
 import { useQuery } from "../api/hooks";
+import { useReducedMotion } from "../hooks/useReducedMotion";
 import { CURRENT_USER } from "../config";
 import {
   Avatar,
@@ -78,6 +79,7 @@ function StatCard({
 }
 
 export default function Dashboard() {
+  const animate = !useReducedMotion();
   const insights = useQuery("insights", () => api.insights());
   const recent = useQuery("meetings:recent", () => api.listMeetings({ limit: 4 }));
   const upcoming = useQuery("tasks:upcoming", () =>
@@ -176,9 +178,9 @@ export default function Dashboard() {
                     <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: "#64748b" }} axisLine={false} tickLine={false} />
                     <Tooltip contentStyle={tooltipStyle} />
                     <Legend wrapperStyle={{ fontSize: 12 }} />
-                    <Bar dataKey="tasks" name="Tasks" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="decisions" name="Decisions" fill="#10b981" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="risks" name="Risks" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="tasks" name="Tasks" fill="#3b82f6" radius={[4, 4, 0, 0]} isAnimationActive={animate} />
+                    <Bar dataKey="decisions" name="Decisions" fill="#10b981" radius={[4, 4, 0, 0]} isAnimationActive={animate} />
+                    <Bar dataKey="risks" name="Risks" fill="#f59e0b" radius={[4, 4, 0, 0]} isAnimationActive={animate} />
                   </BarChart>
                 </ResponsiveContainer>
               )}
@@ -198,6 +200,7 @@ export default function Dashboard() {
                       innerRadius={62}
                       outerRadius={95}
                       paddingAngle={3}
+                      isAnimationActive={animate}
                     >
                       {(insights.data?.taskStatus ?? []).map((d) => (
                         <Cell key={d.name} fill={statusColors[d.name] ?? "#cbd5e1"} />

@@ -15,6 +15,7 @@ import {
 import { Repeat } from "lucide-react";
 import { api } from "../api/endpoints";
 import { useQuery } from "../api/hooks";
+import { useReducedMotion } from "../hooks/useReducedMotion";
 import { Badge, EmptyState, PageHeader, QueryView, Skeleton } from "../components/ui";
 
 const tooltipStyle = { borderRadius: 12, border: "1px solid #e2e8f0", fontSize: 13 };
@@ -22,6 +23,7 @@ const severityColors: Record<string, string> = { High: "#ef4444", Medium: "#f59e
 
 export default function Insights() {
   const insights = useQuery("insights", () => api.insights());
+  const animate = !useReducedMotion();
 
   return (
     <div className="space-y-6">
@@ -65,7 +67,7 @@ export default function Insights() {
                   <h3 className="mb-4 font-semibold text-slate-800">Extracted item mix</h3>
                   <ResponsiveContainer width="100%" height={240}>
                     <PieChart>
-                      <Pie data={categoryData} dataKey="value" nameKey="name" innerRadius={55} outerRadius={90} paddingAngle={3}>
+                      <Pie data={categoryData} dataKey="value" nameKey="name" innerRadius={55} outerRadius={90} paddingAngle={3} isAnimationActive={animate}>
                         {categoryData.map((c) => (
                           <Cell key={c.name} fill={c.color} />
                         ))}
@@ -80,7 +82,7 @@ export default function Insights() {
                   <h3 className="mb-4 font-semibold text-slate-800">Risk severity</h3>
                   <ResponsiveContainer width="100%" height={240}>
                     <PieChart>
-                      <Pie data={d.riskSeverity} dataKey="value" nameKey="name" innerRadius={55} outerRadius={90} paddingAngle={3}>
+                      <Pie data={d.riskSeverity} dataKey="value" nameKey="name" innerRadius={55} outerRadius={90} paddingAngle={3} isAnimationActive={animate}>
                         {d.riskSeverity.map((s) => (
                           <Cell key={s.name} fill={severityColors[s.name] ?? "#cbd5e1"} />
                         ))}
@@ -130,9 +132,9 @@ export default function Insights() {
                       <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: "#64748b" }} axisLine={false} tickLine={false} />
                       <Tooltip contentStyle={tooltipStyle} />
                       <Legend wrapperStyle={{ fontSize: 12 }} />
-                      <Bar dataKey="open" name="Open" stackId="a" fill="#94a3b8" />
-                      <Bar dataKey="inProgress" name="In Progress" stackId="a" fill="#3b82f6" />
-                      <Bar dataKey="completed" name="Completed" stackId="a" fill="#10b981" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="open" name="Open" stackId="a" fill="#94a3b8" isAnimationActive={animate} />
+                      <Bar dataKey="inProgress" name="In Progress" stackId="a" fill="#3b82f6" isAnimationActive={animate} />
+                      <Bar dataKey="completed" name="Completed" stackId="a" fill="#10b981" radius={[4, 4, 0, 0]} isAnimationActive={animate} />
                     </BarChart>
                   </ResponsiveContainer>
                 )}
