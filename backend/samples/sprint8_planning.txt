@@ -1,0 +1,14 @@
+[00:00:05] Chanya: Good morning everyone, let's get started with Sprint 8 planning.
+[00:00:20] Chanya: Two things on the agenda today: the backend API and the evaluation demo.
+[00:01:10] Ravindu: I'll finish the upload endpoint and the processing pipeline by Friday.
+[00:01:45] Chanya: Great. Kasun, can you connect the dashboard to the live API this week?
+[00:02:05] Kasun: Yes, I can have the task tracker reading from the API before the next standup.
+[00:02:40] Nethmi: The problem is the Risk class, we still have far fewer examples than the other classes.
+[00:03:10] Nethmi: I'm worried the model will miss the risks that are phrased indirectly.
+[00:03:30] Chanya: Okay, so we go with the version three model for the demo and keep improving after.
+[00:04:00] Dilini: Agreed, the demo uses version three, no more model changes before the review.
+[00:04:30] Ishara: I'll prepare the test transcripts and the evaluation checklist by Wednesday.
+[00:05:00] Ravindu: One more thing, if the PostgreSQL container isn't ready we won't be able to show the real database.
+[00:05:20] Chanya: Let's make sure the Docker setup is tested on the demo laptop before Thursday.
+[00:05:50] Dilini: We need the slide deck finished by the end of the week.
+[00:06:15] Chanya: Thanks everyone, same time next week.
