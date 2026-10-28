@@ -112,6 +112,10 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--max-tasks", type=int, help="Cap the number of tasks written")
     ap.add_argument("--other-ratio", type=float, default=1.0,
                     help="enriched mode: Other samples per minority-class utterance (default 1.0)")
+    ap.add_argument("--focus", nargs="*", choices=MINORITY,
+                    help="enriched mode: only these pre-labels count as minority (e.g. --focus Risk)")
+    ap.add_argument("--exclude-labeled", nargs="*", type=Path,
+                    help="Labelled CSV files whose segment_ids must not be sampled again")
     ap.add_argument("--seed", type=int, default=42, help="Random seed for reproducible sampling")
     ap.add_argument("--include-noise", action="store_true", help="Also include backchannels / fragments")
     args = ap.parse_args(argv)
@@ -123,9 +127,16 @@ def main(argv: list[str] | None = None) -> int:
     chosen = select_meetings(all_meetings, args)
     chosen_set = set(chosen)
 
+    already: set[str] = set()
+    for path in args.exclude_labeled or []:
+        with path.open(newline="", encoding="utf-8") as f:
+            already.update(r["segment_id"] for r in csv.DictReader(f))
+
     pool = [
         r for r in rows
-        if r["meeting_id"] in chosen_set and (args.include_noise or r.get("is_candidate") == "1")
+        if r["meeting_id"] in chosen_set
+        and r["segment_id"] not in already
+        and (args.include_noise or r.get("is_candidate") == "1")
     ]
 
     rng = random.Random(args.seed)
@@ -134,7 +145,8 @@ def main(argv: list[str] | None = None) -> int:
         if args.max_tasks:
             selected = selected[: args.max_tasks]
     else:
-        minority = [r for r in pool if r["prelabel"] in MINORITY]
+        focus = tuple(args.focus) if args.focus else MINORITY
+        minority = [r for r in pool if r["prelabel"] in focus]
         others = [r for r in pool if r["prelabel"] not in MINORITY]
         if args.max_tasks:
             # Respect the cap while keeping the requested minority:other ratio.

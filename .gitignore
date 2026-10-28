@@ -23,8 +23,7 @@ __pycache__/
 ml/data/raw/
 ml/data/processed/
 ml/labelstudio/tasks_*.json
-ml/models/*.joblib
-ml/models/*.pkl
+ml/models/
 backend/uploads/
 *.db
 *.sqlite
