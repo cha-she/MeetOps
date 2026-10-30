@@ -1,0 +1,17 @@
+[00:00:06] Dilini: Good morning everyone, thanks for making it. Let's start with the website redesign kickoff.
+[00:00:25] Dilini: The client wants the new site live before the Avurudu campaign in April.
+[00:01:02] Kasun: I've looked at the current site. Most pages can be reused, but the booking form has to be rebuilt from scratch.
+[00:01:30] Ravindu: The problem is the booking form still talks to their old reservation system, and nobody has documentation for its API.
+[00:01:55] Dilini: Ravindu, can you contact their IT team and get the API documentation by Friday?
+[00:02:10] Ravindu: Sure, I'll email them after this meeting.
+[00:02:40] Nethmi: For the design, I'd suggest we keep their brand colours but move to a mobile-first layout.
+[00:03:05] Kasun: Agreed, most of their traffic is from phones anyway.
+[00:03:20] Dilini: Okay, so we go with a mobile-first layout and keep the current brand colours.
+[00:03:50] Ishara: I'm worried about testing time. If the API documentation comes late, we won't be able to test the booking flow properly before launch.
+[00:04:15] Dilini: Fair point. Ishara, please prepare a test plan for the booking flow by next Wednesday.
+[00:04:30] Ishara: Okay, I'll have a draft ready.
+[00:04:55] Kasun: I can build the new landing page this week so the client sees progress early.
+[00:05:20] Chanya: Let's also make sure the client signs off the sitemap before we start building other pages.
+[00:05:45] Dilini: Good idea. Nethmi, could you send the sitemap to the client today?
+[00:06:00] Nethmi: Yes, I'll send it this afternoon.
+[00:06:25] Dilini: Alright, I think that's all for today. Thanks everyone.

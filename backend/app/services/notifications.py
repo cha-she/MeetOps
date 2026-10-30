@@ -1,11 +1,11 @@
 """
-Notifications are derived from the task table.
+Per-user notifications.
 
-``refresh`` is called whenever the notification list is requested: it creates
-an "overdue" or "due_soon" notification for every open task that needs one
-and does not already have one (one notification per task and type).
-Notifications about assignments and status changes are written by the task
-endpoints as the change happens.
+``refresh`` runs whenever a user opens the notification list. It creates an
+"overdue" or "due_soon" notification for each of that user's open, confirmed
+tasks that needs one and does not already have one. Assignment, status-change
+and review notifications are written by the endpoints and the pipeline as
+things happen.
 """
 
 from __future__ import annotations
@@ -18,30 +18,30 @@ from sqlalchemy.orm import Session
 from .. import models
 
 
-def _days_until(d: date | None) -> int | None:
-    return None if d is None else (d - date.today()).days
-
-
-def refresh(db: Session) -> None:
+def refresh(db: Session, user: models.User) -> None:
     existing = {
         (task_id, type_)
-        for task_id, type_ in db.execute(select(models.Notification.task_id, models.Notification.type))
+        for task_id, type_ in db.execute(
+            select(models.Notification.task_id, models.Notification.type).where(models.Notification.user_id == user.id))
     }
-    open_tasks = db.scalars(select(models.Task).where(models.Task.status != "Completed")).all()
-    for t in open_tasks:
-        days = _days_until(t.deadline)
-        if days is None:
-            continue
-        owner = t.owner.name if t.owner else "Unassigned"
+    tasks = db.scalars(select(models.Task).where(
+        models.Task.owner_id == user.id, models.Task.status != "Completed",
+        models.Task.review_status != "rejected", models.Task.deadline.is_not(None))).all()
+    today = date.today()
+    for t in tasks:
+        days = (t.deadline - today).days
         if days < 0 and (t.id, "overdue") not in existing:
             n = abs(days)
-            db.add(models.Notification(type="overdue", task_id=t.id,
-                                       message=f"“{t.description}” is overdue by {n} day{'' if n == 1 else 's'} ({owner})."))
+            add(db, user.id, "overdue", f"“{t.description}” is overdue by {n} day{'' if n == 1 else 's'}.",
+                task_id=t.id, meeting_id=t.meeting_id)
         elif 0 <= days <= 2 and (t.id, "due_soon") not in existing:
             when = "today" if days == 0 else "tomorrow" if days == 1 else "in 2 days"
-            db.add(models.Notification(type="due_soon", task_id=t.id, message=f"“{t.description}” is due {when}."))
+            add(db, user.id, "due_soon", f"“{t.description}” is due {when}.", task_id=t.id, meeting_id=t.meeting_id)
     db.commit()
 
 
-def add(db: Session, type_: str, message: str, task_id: int | None = None) -> None:
-    db.add(models.Notification(type=type_, message=message, task_id=task_id))
+def add(db: Session, user_id: int | None, type_: str, message: str, task_id: int | None = None,
+        meeting_id: int | None = None) -> None:
+    if user_id is None:
+        return
+    db.add(models.Notification(user_id=user_id, type=type_, message=message, task_id=task_id, meeting_id=meeting_id))

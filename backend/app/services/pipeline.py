@@ -5,7 +5,7 @@ Meeting processing pipeline.
 
 Runs in a background task after the upload request returns, updating
 ``meeting.pipeline_stage`` as it goes so the dashboard can show progress.
-Audio/video transcription (Whisper) is scheduled for semester 2; for now
+Audio/video transcription (Whisper) is scheduled for the next phase; for now
 those uploads stop at the transcribe stage with a clear message.
 """
 
@@ -20,8 +20,8 @@ from sqlalchemy import select
 from .. import models
 from ..config import settings
 from ..database import SessionLocal
-from . import audit, extraction, summary
-from .classifier import get_classifier
+from . import audit, extraction, notifications, organise, summary
+from .classifier import get_classifier, model_name
 
 log = logging.getLogger("meetops.pipeline")
 
@@ -50,14 +50,14 @@ def process_meeting(meeting_id: int, transcript_text: str | None) -> None:
             meeting = db.get(models.Meeting, meeting_id)
             meeting.status = "Failed"
             meeting.error_message = str(exc)[:500]
-            audit.log(db, "meeting", meeting.id, "failed", meeting.error_message)
+            audit.log(db, "meeting", meeting.id, "failed", meeting.error_message, meeting_id=meeting.id)
             db.commit()
     finally:
         db.close()
 
 
 def _run(db, meeting: models.Meeting, transcript_text: str | None) -> None:
-    users = db.scalars(select(models.User)).all()
+    users = db.scalars(select(models.User).where(models.User.is_active.is_(True))).all()
 
     _set_stage(db, meeting, "transcribe")
     if meeting.source != "transcript":
@@ -73,40 +73,44 @@ def _run(db, meeting: models.Meeting, transcript_text: str | None) -> None:
 
     _set_stage(db, meeting, "classify")
     clf = get_classifier()
-    preds = clf.predict([u.text for u in utterances])
+    preds = clf.predict([u.text for u in utterances], use_rules=settings.use_rules)
 
     segments = []
     for pos, (u, p) in enumerate(zip(utterances, preds)):
         seg = models.Segment(meeting_id=meeting.id, position=pos, speaker=u.speaker, start_sec=u.start_time,
-                             text=u.text, category=p.label, confidence=p.confidence)
+                             text=u.text, category=p.label, confidence=p.confidence,
+                             model_label=p.model_label, rule=p.rule)
         db.add(seg)
         segments.append(seg)
     db.flush()
 
-    # Participants = speakers that match a known user
+    # Participants = speakers that match an account
     speakers = {u.speaker for u in utterances if u.speaker and u.speaker != "Unknown"}
-    meeting.participants = [m for m in (extraction.match_user(s, users) for s in speakers) if m]
+    meeting.participants = [m for m in (extraction.match_user(s, users) for s in sorted(speakers)) if m]
 
     _set_stage(db, meeting, "extract")
+    drafts = organise.build_drafts(segments, meeting.date, users)
     new_risks: list[models.Risk] = []
-    for seg in segments:
-        if seg.category == "Task":
-            f = extraction.task_fields(seg.text, seg.speaker, meeting.date, users)
-            db.add(models.Task(meeting_id=meeting.id, segment_id=seg.id, description=extraction.tidy(seg.text),
-                               owner_id=f.owner.id if f.owner else None, deadline=f.deadline, status="Open"))
-        elif seg.category == "Decision":
-            owner = extraction.match_user(seg.speaker, users)
-            db.add(models.Decision(meeting_id=meeting.id, segment_id=seg.id, statement=extraction.tidy(seg.text),
-                                   owner_id=owner.id if owner else None, decided_at=meeting.date))
-        elif seg.category == "Risk":
-            r = models.Risk(meeting_id=meeting.id, segment_id=seg.id, description=extraction.tidy(seg.text),
-                            severity=extraction.risk_severity(seg.text), raised_at=meeting.date)
+    for d in drafts:
+        common = dict(meeting_id=meeting.id, segment_id=d.segment.id,
+                      confidence=round(d.confidence, 3) if d.confidence is not None else None,
+                      review_status=d.review_status, source="ai")
+        if d.kind == "Task":
+            db.add(models.Task(description=d.description, owner_id=d.owner.id if d.owner else None,
+                               deadline=d.deadline, deadline_text=d.deadline_text, status="Open", **common))
+        elif d.kind == "Decision":
+            db.add(models.Decision(statement=d.description, owner_id=d.owner.id if d.owner else None,
+                                   decided_at=meeting.date, **common))
+        else:
+            r = models.Risk(description=d.description, severity=d.severity or "Medium", raised_at=meeting.date,
+                            raised_by=d.segment.speaker, **common)
             db.add(r)
             new_risks.append(r)
     db.flush()
 
     # Recurring risks: similar to a risk raised in an earlier meeting
-    old = db.scalars(select(models.Risk).where(models.Risk.meeting_id != meeting.id)).all()
+    old = db.scalars(select(models.Risk).where(models.Risk.meeting_id != meeting.id,
+                                               models.Risk.review_status != "rejected")).all()
     for i, j in summary.recurring_pairs([r.description for r in new_risks], [r.description for r in old]):
         new_risks[i].recurring = True
         old[j].recurring = True
@@ -116,10 +120,23 @@ def _run(db, meeting: models.Meeting, transcript_text: str | None) -> None:
     if meeting.duration_min is None:
         times = [u.start_time for u in utterances if u.start_time is not None]
         meeting.duration_min = int(max(times) // 60) + 1 if times else None
+    meeting.model_name = model_name()
     meeting.status = "Processed"
     meeting.pipeline_stage = None
     meeting.error_message = None
+
+    db.flush()
+    tasks = [t for t in meeting.tasks]
+    for t in tasks:
+        if t.owner_id and t.review_status == "confirmed":
+            notifications.add(db, t.owner_id, "assigned", f"You were assigned “{t.description}” in {meeting.title}.",
+                              task_id=t.id, meeting_id=meeting.id)
+    suggested = sum(i.review_status == "suggested" for i in tasks + list(meeting.decisions) + list(meeting.risks))
+    if suggested and meeting.uploaded_by_id:
+        notifications.add(db, meeting.uploaded_by_id, "review",
+                          f"{meeting.title}: {suggested} extracted item{'s' if suggested != 1 else ''} need your review.",
+                          meeting_id=meeting.id)
     audit.log(db, "meeting", meeting.id, "processed",
-              f"{len(segments)} segments, {sum(s.category == 'Task' for s in segments)} tasks, "
-              f"{sum(s.category == 'Decision' for s in segments)} decisions, {len(new_risks)} risks ({clf.name})")
+              f"{len(segments)} segments → {len(tasks)} tasks, {len(meeting.decisions)} decisions, "
+              f"{len(new_risks)} risks ({meeting.model_name})", meeting_id=meeting.id)
     db.commit()

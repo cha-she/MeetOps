@@ -1,4 +1,4 @@
-"""Lazy access to the trained utterance classifier from the ml package."""
+"""Lazy access to the trained utterance classifier (model + rule layer) from the ml package."""
 
 from __future__ import annotations
 
@@ -17,6 +17,7 @@ def get_classifier() -> Classifier:
 
 def model_name() -> str | None:
     try:
-        return get_classifier().name
+        name = get_classifier().name
     except FileNotFoundError:
         return None
+    return f"{name} + rules" if settings.use_rules else name

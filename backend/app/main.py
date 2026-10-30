@@ -16,7 +16,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from . import __version__, schemas
 from .config import settings
 from .database import init_db
-from .routers import decisions, insights, meetings, notifications, risks, search, tasks, users
+from .routers import auth, decisions, insights, meetings, notifications, risks, search, tasks, users
 from .services.classifier import model_name
 
 
@@ -31,11 +31,11 @@ app = FastAPI(title=settings.app_name, version=__version__, lifespan=lifespan)
 app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins, allow_credentials=True,
                    allow_methods=["*"], allow_headers=["*"])
 
-for r in (meetings, tasks, decisions, risks, users, insights, search, notifications):
+for r in (auth, meetings, tasks, decisions, risks, users, insights, search, notifications):
     app.include_router(r.router, prefix="/api")
 
 
 @app.get("/api/health", response_model=schemas.Health, tags=["health"])
 def health():
-    return schemas.Health(status="ok", version=__version__,
-                          database=settings.database_url.split(":", 1)[0], model=model_name())
+    return schemas.Health(status="ok", version=__version__, database=settings.database_url.split(":", 1)[0],
+                          model=model_name(), rules=settings.use_rules)

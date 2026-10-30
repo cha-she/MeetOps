@@ -24,5 +24,7 @@ jobs:
           cache: pip
           cache-dependency-path: backend/requirements.txt
       - run: pip install -e ml -r backend/requirements.txt
+      - name: Train the classifier (models are not stored in Git)
+        run: python -m meetops_ml.train --version v3 --train ml/data/labeled/train_v2.csv --features full --folds 2
       - run: python -m pytest
         working-directory: backend

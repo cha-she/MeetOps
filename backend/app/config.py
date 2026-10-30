@@ -5,6 +5,8 @@ DATABASE_URL
     SQLAlchemy connection string. Default: a SQLite file next to this package
     (zero setup for development). For PostgreSQL (docker-compose.yml):
     postgresql+psycopg://meetops:meetops@localhost:5432/meetops
+SECRET_KEY
+    Signs login tokens. Set a long random value outside development.
 """
 
 from __future__ import annotations
@@ -27,6 +29,11 @@ class Settings(BaseSettings):
     cors_origins: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
     pipeline_stage_delay: float = 0.4      # seconds between stages so the UI progress is visible
     max_upload_mb: int = 25
+
+    secret_key: str = "dev-only-change-me"  # override in backend/.env for any shared deployment
+    token_hours: int = 12
+    use_rules: bool = True                  # rule layer after the classifier
+    auto_confirm_confidence: float = 0.8    # model-only predictions at or above this are confirmed automatically
 
 
 settings = Settings()
