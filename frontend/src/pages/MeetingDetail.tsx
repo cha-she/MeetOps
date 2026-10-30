@@ -1,335 +1,339 @@
-import { useEffect, useState } from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
   ArrowLeft,
+  Bot,
   CalendarDays,
   Clock,
-  Quote,
-  ListChecks,
   Gavel,
+  ListChecks,
+  MoreHorizontal,
+  Plus,
+  Repeat,
   ShieldAlert,
-  Loader2,
+  Sparkles,
+  Trash2,
+  Wand2,
 } from "lucide-react";
 import { api } from "../api/endpoints";
-import { useQuery } from "../api/hooks";
+import { invalidate, useQuery } from "../api/hooks";
+import { useMe } from "../auth/AuthContext";
+import { canDeleteMeeting, canEditMeetingItems } from "../auth/permissions";
+import { CategoryChip, ConfidenceMeter, OwnerMenu, ReviewBadge, ReviewButtons, SeverityBadge, categoryTone } from "../components/items";
+import { NewTaskDialog, TASK_REFRESH, TaskList } from "../components/tasks";
 import {
-  Avatar,
+  AvatarStack,
   Badge,
+  ConfirmDialog,
   EmptyState,
   ErrorState,
-  EvidenceBlock,
-  ListSkeleton,
-  QueryView,
+  Menu,
+  Panel,
+  RowsSkeleton,
+  Segmented,
   Skeleton,
-  categoryStyles,
+  Tabs,
+  cn,
+  dotClass,
   formatDate,
   formatDuration,
-  severityStyles,
-  sourceLabel,
-  statusStyles,
 } from "../components/ui";
-import type { Category } from "../types";
+import { useMutation } from "../hooks/useMutation";
+import type { Category, Decision, Meeting, Risk, TranscriptSegment } from "../types";
 
-type Tab = "transcript" | "tasks" | "decisions" | "risks";
+const RULE_TEXT: Record<string, string> = {
+  request: "a request with a follow-up action",
+  commitment: "a first-person commitment",
+  assignment: "work assigned to people in the room",
+  need_to_with_deadline: "a need with a deadline",
+  agreement: "agreement language",
+  concern: "a stated concern or problem",
+  fragment: "a fragment",
+  meeting_management: "meeting management",
+  open_question: "an open question",
+};
 
-const categoryFilters: (Category | "All")[] = ["All", "Task", "Decision", "Risk", "Other"];
+const REFRESH = [...TASK_REFRESH, "decisions", "risks", "segments"];
+
+function TranscriptLine({ seg, highlighted, editable, onReclassify }: { seg: TranscriptSegment; highlighted: boolean; editable: boolean; onReclassify: (c: Category) => void }) {
+  const changed = seg.rule && seg.modelLabel && seg.modelLabel !== seg.category;
+  return (
+    <div id={`seg-${seg.id}`} className={cn("group flex gap-3 rounded-md px-3 py-2 transition", highlighted ? "bg-accent-soft ring-1 ring-accent/30" : "hover:bg-hover/50")}>
+      <div className="w-[76px] shrink-0 pt-0.5">
+        <div className="truncate text-[12px] font-semibold text-fg">{seg.speaker ?? "—"}</div>
+        <div className="font-mono text-2xs text-faint">{seg.timestamp ?? ""}</div>
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-[13px] leading-relaxed text-fg">{seg.text}</p>
+        {(seg.category !== "Other" || seg.corrected || changed) && (
+          <div className="mt-1 flex flex-wrap items-center gap-2">
+            {seg.category !== "Other" && <CategoryChip category={seg.category} />}
+            {seg.corrected ? (
+              <span className="text-2xs text-faint">corrected by a person</span>
+            ) : (
+              <>
+                {!changed && <ConfidenceMeter value={seg.confidence} />}
+                {changed && (
+                  <span className="inline-flex items-center gap-1 text-2xs text-faint" title={`The model said ${seg.modelLabel}; the rule layer changed it because the sentence is ${RULE_TEXT[seg.rule!] ?? seg.rule}.`}>
+                    <Wand2 className="h-3 w-3" /> model said {seg.modelLabel} · rule: {seg.rule?.replace(/_/g, " ")}
+                  </span>
+                )}
+              </>
+            )}
+          </div>
+        )}
+      </div>
+      {editable && (
+        <div className="opacity-0 transition group-hover:opacity-100 focus-within:opacity-100">
+          <Menu
+            align="right"
+            width={190}
+            header="This line is a…"
+            trigger={() => (
+              <button className="icon-btn h-7 w-7" aria-label="Correct the label">
+                <MoreHorizontal className="h-4 w-4" />
+              </button>
+            )}
+            items={(["Task", "Decision", "Risk", "Other"] as Category[]).map((c) => ({
+              label: c === "Other" ? "Nothing to record (Other)" : c,
+              icon: <span className={cn("h-2 w-2 rounded-full", dotClass[categoryTone[c]])} />,
+              checked: c === seg.category,
+              disabled: c === seg.category,
+              onSelect: () => onReclassify(c),
+            }))}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DecisionRow({ d, editable }: { d: Decision; editable: boolean }) {
+  const { run, busy } = useMutation();
+  return (
+    <div className="border-b border-line px-4 py-2.5 last:border-0">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-[13px] font-medium">{d.statement}</span>
+        <ReviewBadge status={d.reviewStatus} source={d.source} />
+      </div>
+      <div className="mt-1 flex flex-wrap items-center gap-3">
+        <OwnerMenu value={d.owner} empty="Not recorded" disabled={!editable} onChange={(id) => run(() => api.updateDecision(d.id, { ownerId: id }), { refresh: REFRESH })} />
+        {d.evidence && (
+          <a href={`#seg-${d.evidence.segmentId}`} className="text-2xs text-faint hover:text-accent-text">
+            {d.evidence.timestamp ?? "line"}
+          </a>
+        )}
+      </div>
+      {d.reviewStatus === "suggested" && editable && (
+        <div className="mt-1.5 flex items-center gap-3">
+          <ReviewButtons size="sm" busy={busy} onConfirm={() => run(() => api.updateDecision(d.id, { reviewStatus: "confirmed" }), { refresh: REFRESH })} onReject={() => run(() => api.updateDecision(d.id, { reviewStatus: "rejected" }), { success: "Decision rejected", refresh: REFRESH })} />
+          <ConfidenceMeter value={d.confidence} source={d.source} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function RiskRow({ r, editable }: { r: Risk; editable: boolean }) {
+  const { run, busy } = useMutation();
+  return (
+    <div className="border-b border-line px-4 py-2.5 last:border-0">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-[13px] font-medium">{r.description}</span>
+        <SeverityBadge severity={r.severity} />
+        {r.recurring && (
+          <Badge tone="violet">
+            <Repeat className="h-3 w-3" /> Recurring
+          </Badge>
+        )}
+        <ReviewBadge status={r.reviewStatus} source={r.source} />
+      </div>
+      <div className="mt-1 flex flex-wrap items-center gap-3">
+        <OwnerMenu value={r.owner} empty="No owner" disabled={!editable} onChange={(id) => run(() => api.updateRisk(r.id, { ownerId: id }), { refresh: REFRESH })} />
+        {r.evidence && (
+          <a href={`#seg-${r.evidence.segmentId}`} className="text-2xs text-faint hover:text-accent-text">
+            {r.raisedBy ? `${r.raisedBy} · ` : ""}
+            {r.evidence.timestamp ?? "line"}
+          </a>
+        )}
+      </div>
+      {r.reviewStatus === "suggested" && editable && (
+        <div className="mt-1.5 flex items-center gap-3">
+          <ReviewButtons size="sm" busy={busy} onConfirm={() => run(() => api.updateRisk(r.id, { reviewStatus: "confirmed" }), { refresh: REFRESH })} onReject={() => run(() => api.updateRisk(r.id, { reviewStatus: "rejected" }), { success: "Risk rejected", refresh: REFRESH })} />
+          <ConfidenceMeter value={r.confidence} source={r.source} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Header({ m }: { m: Meeting }) {
+  const me = useMe();
+  const navigate = useNavigate();
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const { run, busy } = useMutation();
+  return (
+    <div className="mb-5">
+      <Link to="/meetings" className="mb-3 inline-flex items-center gap-1 text-[12px] text-muted hover:text-fg">
+        <ArrowLeft className="h-3.5 w-3.5" /> Meetings
+      </Link>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-xl font-semibold tracking-tight">{m.title}</h1>
+          <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-muted">
+            <span className="inline-flex items-center gap-1.5"><CalendarDays className="h-3.5 w-3.5" /> {formatDate(m.date, true)}</span>
+            {m.durationMin !== null && <span className="inline-flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" /> {formatDuration(m.durationMin)}</span>}
+            {m.department && <span>{m.department.name}</span>}
+            {m.uploadedBy && <span>Uploaded by {m.uploadedBy.name}</span>}
+            {m.modelName && <span className="inline-flex items-center gap-1.5" title="Classifier used for this meeting"><Bot className="h-3.5 w-3.5" /> {m.modelName}</span>}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {m.participants.length > 0 && <AvatarStack people={m.participants} max={6} />}
+          {m.suggestedCount > 0 && (
+            <Link to={`/review?meeting=${m.id}`} className="btn-secondary">
+              <Sparkles className="h-4 w-4 text-amber-500" /> Review {m.suggestedCount}
+            </Link>
+          )}
+          {canDeleteMeeting(me, m) && (
+            <button className="icon-btn" title="Delete meeting" onClick={() => setConfirmDelete(true)}>
+              <Trash2 className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+      </div>
+      <ConfirmDialog
+        open={confirmDelete}
+        danger
+        busy={busy}
+        title="Delete this meeting?"
+        message="The transcript and every task, decision and risk extracted from it are deleted. This cannot be undone."
+        confirmLabel="Delete meeting"
+        onClose={() => setConfirmDelete(false)}
+        onConfirm={async () => {
+          await run(() => api.deleteMeeting(m.id), { success: "Meeting deleted", refresh: REFRESH });
+          navigate("/meetings");
+        }}
+      />
+    </div>
+  );
+}
 
 export default function MeetingDetail() {
   const { id = "" } = useParams();
-  const [searchParams] = useSearchParams();
-  const highlightSegment = searchParams.get("segment");
+  const [params] = useSearchParams();
+  const highlight = params.get("segment");
+  const me = useMe();
+  const [tab, setTab] = useState<"tasks" | "decisions" | "risks">("tasks");
+  const [filter, setFilter] = useState<"all" | "items">("all");
+  const [newTask, setNewTask] = useState(false);
+  const { run } = useMutation();
 
-  const [tab, setTab] = useState<Tab>("transcript");
-  const [catFilter, setCatFilter] = useState<Category | "All">("All");
-
-  const meeting = useQuery(`meeting:${id}`, () => api.getMeeting(id));
+  const meeting = useQuery(`meetings:detail:${id}`, () => api.getMeeting(id), { refreshMs: 15000 });
   const segments = useQuery(`segments:${id}`, () => api.getSegments(id));
-  const tasks = useQuery(`tasks:m${id}`, () => api.listTasks({ meetingId: Number(id) }));
-  const decisions = useQuery(`decisions:m${id}`, () => api.listDecisions({ meetingId: Number(id) }));
-  const risks = useQuery(`risks:m${id}`, () => api.listRisks({ meetingId: Number(id) }));
+  const tasks = useQuery(`tasks:meeting:${id}`, () => api.listTasks({ meetingId: Number(id) }));
+  const decisions = useQuery(`decisions:meeting:${id}`, () => api.listDecisions({ meetingId: Number(id) }));
+  const risks = useQuery(`risks:meeting:${id}`, () => api.listRisks({ meetingId: Number(id) }));
 
-  // Scroll to a highlighted segment when arriving from an evidence link.
+  const m = meeting.data;
+  const processing = m && (m.status === "Queued" || m.status === "Processing");
   useEffect(() => {
-    if (!highlightSegment || !segments.data) return;
-    const el = document.getElementById(`segment-${highlightSegment}`);
-    el?.scrollIntoView({ behavior: "smooth", block: "center" });
-  }, [highlightSegment, segments.data]);
+    if (m?.status === "Processed") invalidate(`segments:${id}`, `tasks:meeting:${id}`, `decisions:meeting:${id}`, `risks:meeting:${id}`);
+  }, [m?.status, id]);
 
-  if (meeting.loading && !meeting.data) {
-    return (
-      <div>
-        <Skeleton className="mb-4 h-4 w-32" />
-        <div className="card p-6">
-          <Skeleton className="h-7 w-1/2" />
-          <Skeleton className="mt-3 h-4 w-1/3" />
-          <Skeleton className="mt-6 h-16 w-full" />
-        </div>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (!highlight || !segments.data) return;
+    document.getElementById(`seg-${highlight}`)?.scrollIntoView({ block: "center", behavior: "smooth" });
+  }, [highlight, segments.data]);
 
-  if (meeting.error && !meeting.data) {
-    if (meeting.error.status === 404) {
-      return (
-        <EmptyState
-          title="Meeting not found"
-          message="This meeting does not exist or was deleted."
-          action={<Link to="/meetings" className="btn-ghost">Back to meetings</Link>}
-        />
-      );
-    }
-    return <ErrorState error={meeting.error} onRetry={meeting.reload} />;
-  }
+  const shown = useMemo(() => (segments.data ?? []).filter((s) => filter === "all" || s.category !== "Other"), [segments.data, filter]);
 
-  const m = meeting.data!;
-  const processing = m.status === "Queued" || m.status === "Processing";
+  if (meeting.error && !m) return <ErrorState error={meeting.error} onRetry={meeting.reload} />;
+  if (!m) return <div className="space-y-3"><Skeleton className="h-7 w-1/3" /><Skeleton className="h-4 w-1/2" /><div className="panel"><RowsSkeleton rows={8} /></div></div>;
 
-  const tabs: { key: Tab; label: string; count?: number; icon: typeof ListChecks }[] = [
-    { key: "transcript", label: "Transcript", count: segments.data?.length, icon: Quote },
-    { key: "tasks", label: "Tasks", count: tasks.data?.length, icon: ListChecks },
-    { key: "decisions", label: "Decisions", count: decisions.data?.length, icon: Gavel },
-    { key: "risks", label: "Risks", count: risks.data?.length, icon: ShieldAlert },
-  ];
+  const editable = canEditMeetingItems(me, m);
+  const reclassify = (seg: TranscriptSegment, c: Category) =>
+    run(() => api.reclassifySegment(seg.id, c), { success: c === "Other" ? "Removed from the registers" : `Marked as ${c} and added to the register`, refresh: REFRESH });
 
   return (
     <div>
-      <Link
-        to="/meetings"
-        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-slate-800"
-      >
-        <ArrowLeft className="h-4 w-4" /> Back to meetings
-      </Link>
+      <Header m={m} />
 
-      {/* Header */}
-      <div className="card p-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900">{m.title}</h1>
-            <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-500">
-              <span className="inline-flex items-center gap-1.5">
-                <CalendarDays className="h-4 w-4" />
-                {formatDate(m.date)}
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <Clock className="h-4 w-4" />
-                {formatDuration(m.durationMin)}
-              </span>
-              <span>{sourceLabel[m.source]} source</span>
-              {processing && (
-                <Badge className="bg-brand-50 text-brand-700 ring-brand-200">
-                  <Loader2 className="h-3 w-3 animate-spin" /> Processing
-                </Badge>
-              )}
-              {m.status === "Failed" && (
-                <Badge className="bg-red-50 text-red-700 ring-red-200">Failed</Badge>
-              )}
-            </div>
-          </div>
-          <div className="flex -space-x-2">
-            {m.participants.map((p) => (
-              <Avatar key={p.id} initials={p.initials} title={p.name} className="ring-2 ring-white" />
-            ))}
-          </div>
+      {processing && (
+        <div className="panel mb-5 flex items-center gap-3 border-blue-500/30 bg-blue-500/5 p-4 text-[13px]">
+          <span className="h-2 w-2 animate-pulse rounded-full bg-blue-500" />
+          Processing: {m.pipelineStage ?? m.status}…
         </div>
+      )}
+      {m.status === "Failed" && <div className="panel mb-5 border-red-500/30 bg-red-500/5 p-4 text-[13px] text-red-700 dark:text-red-300">{m.errorMessage}</div>}
 
-        <div className="mt-4 rounded-lg bg-slate-50 p-4">
-          <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
-            Summary
-          </div>
-          {m.summary ? (
-            <p className="text-sm leading-relaxed text-slate-600">{m.summary}</p>
+      <div className="grid gap-5 xl:grid-cols-[1fr_440px]">
+        <Panel
+          title="Transcript"
+          actions={
+            <Segmented
+              value={filter}
+              onChange={setFilter}
+              options={[
+                { value: "all", label: "All lines", count: segments.data?.length },
+                { value: "items", label: "Extracted", count: (segments.data ?? []).filter((s) => s.category !== "Other").length },
+              ]}
+            />
+          }
+          className="order-2 xl:order-1"
+        >
+          {segments.data ? (
+            shown.length ? (
+              <div className="max-h-[calc(100vh-220px)] space-y-0.5 overflow-y-auto p-2">
+                {shown.map((s) => (
+                  <TranscriptLine key={s.id} seg={s} highlighted={String(s.id) === highlight} editable={editable} onReclassify={(c) => reclassify(s, c)} />
+                ))}
+              </div>
+            ) : (
+              <EmptyState compact title="No transcript lines" />
+            )
           ) : (
-            <p className="text-sm italic text-slate-400">
-              {processing
-                ? "The summary will appear once processing finishes."
-                : "No summary available for this meeting."}
-            </p>
+            <RowsSkeleton rows={8} />
           )}
-        </div>
-        {m.status === "Failed" && m.errorMessage && (
-          <div className="mt-3 rounded-lg border border-red-100 bg-red-50 p-3 text-sm text-red-700">
-            {m.errorMessage}
-          </div>
-        )}
-      </div>
+          {editable && segments.data && segments.data.length > 0 && (
+            <div className="border-t border-line px-4 py-2 text-2xs text-faint">Hover a line and use ⋯ to correct its label. Corrections update the registers and are saved for retraining.</div>
+          )}
+        </Panel>
 
-      {/* Tabs */}
-      <div className="mt-6 flex flex-wrap gap-2 border-b border-slate-200">
-        {tabs.map((t) => {
-          const active = tab === t.key;
-          return (
-            <button
-              key={t.key}
-              onClick={() => setTab(t.key)}
-              className={`-mb-px flex items-center gap-2 border-b-2 px-4 py-2.5 text-sm font-semibold transition ${
-                active
-                  ? "border-brand-600 text-brand-700"
-                  : "border-transparent text-slate-500 hover:text-slate-800"
-              }`}
-            >
-              <t.icon className="h-4 w-4" />
-              {t.label}
-              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500">
-                {t.count ?? "–"}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-
-      <div className="mt-5">
-        {tab === "transcript" && (
-          <>
-            <div className="mb-4 flex flex-wrap gap-2">
-              {categoryFilters.map((c) => (
-                <button
-                  key={c}
-                  onClick={() => setCatFilter(c)}
-                  className={`rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-inset transition ${
-                    catFilter === c
-                      ? "bg-brand-600 text-white ring-brand-600"
-                      : "bg-white text-slate-500 ring-slate-200 hover:bg-slate-50"
-                  }`}
-                >
-                  {c}
+        <div className="order-1 space-y-5 xl:order-2">
+          {m.summary && (
+            <Panel title="Summary" icon={<Sparkles className="h-4 w-4 text-faint" />}>
+              <p className="p-4 text-[13px] leading-relaxed text-muted">{m.summary}</p>
+            </Panel>
+          )}
+          <Panel
+            title={
+              <Tabs
+                value={tab}
+                onChange={setTab}
+                tabs={[
+                  { value: "tasks", label: <><ListChecks className="h-3.5 w-3.5" /> Tasks</>, count: tasks.data?.length },
+                  { value: "decisions", label: <><Gavel className="h-3.5 w-3.5" /> Decisions</>, count: decisions.data?.length },
+                  { value: "risks", label: <><ShieldAlert className="h-3.5 w-3.5" /> Risks</>, count: risks.data?.length },
+                ]}
+              />
+            }
+            actions={
+              tab === "tasks" && editable ? (
+                <button className="btn-ghost btn-sm" onClick={() => setNewTask(true)}>
+                  <Plus className="h-3.5 w-3.5" /> Add
                 </button>
-              ))}
-            </div>
-            <QueryView
-              {...segments}
-              onRetry={segments.reload}
-              skeleton={<ListSkeleton rows={5} />}
-              isEmpty={(d) => d.length === 0}
-              empty={
-                <EmptyState
-                  title="No transcript segments"
-                  message={
-                    processing
-                      ? "Segments appear here as soon as the transcript has been processed."
-                      : "This meeting has no transcript segments."
-                  }
-                />
-              }
-            >
-              {(all) => {
-                const shown = catFilter === "All" ? all : all.filter((s) => s.category === catFilter);
-                if (shown.length === 0) {
-                  return <EmptyState title="No segments" message={`No segments were classified as ${catFilter}.`} />;
-                }
-                return (
-                  <div className="space-y-3">
-                    {shown.map((s) => {
-                      const highlighted = String(s.id) === highlightSegment;
-                      return (
-                        <div
-                          id={`segment-${s.id}`}
-                          key={s.id}
-                          className={`card flex gap-4 p-4 ${highlighted ? "ring-2 ring-brand-400" : ""}`}
-                        >
-                          <div className="w-24 shrink-0 text-right">
-                            <div className="truncate text-sm font-semibold text-slate-700">
-                              {s.speaker ?? "Speaker"}
-                            </div>
-                            <div className="font-mono text-xs text-slate-400">{s.timestamp ?? ""}</div>
-                          </div>
-                          <div className="flex-1">
-                            <p className="text-sm text-slate-700">{s.text}</p>
-                            <div className="mt-2 flex items-center gap-2">
-                              <Badge className={categoryStyles[s.category]}>{s.category}</Badge>
-                              {s.confidence !== null && (
-                                <span className="text-xs text-slate-400">
-                                  {(s.confidence * 100).toFixed(0)}% confidence
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                );
-              }}
-            </QueryView>
-          </>
-        )}
-
-        {tab === "tasks" && (
-          <QueryView
-            {...tasks}
-            onRetry={tasks.reload}
-            isEmpty={(d) => d.length === 0}
-            empty={<EmptyState title="No tasks" message="No tasks were extracted from this meeting." />}
+              ) : undefined
+            }
           >
-            {(list) => (
-              <div className="space-y-3">
-                {list.map((t) => (
-                  <div key={t.id} className="card p-4">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="font-medium text-slate-800">{t.description}</div>
-                      <Badge className={statusStyles[t.status]}>{t.status}</Badge>
-                    </div>
-                    <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-500">
-                      <span className="inline-flex items-center gap-1.5">
-                        <Avatar initials={t.owner?.initials ?? "?"} className="h-5 w-5 text-[10px]" />
-                        {t.owner?.name ?? "Unassigned"}
-                      </span>
-                      <span>Due {formatDate(t.deadline)}</span>
-                    </div>
-                    <EvidenceBlock evidence={t.evidence} />
-                  </div>
-                ))}
-              </div>
-            )}
-          </QueryView>
-        )}
-
-        {tab === "decisions" && (
-          <QueryView
-            {...decisions}
-            onRetry={decisions.reload}
-            isEmpty={(d) => d.length === 0}
-            empty={<EmptyState title="No decisions" message="No decisions were extracted from this meeting." />}
-          >
-            {(list) => (
-              <div className="space-y-3">
-                {list.map((d) => (
-                  <div key={d.id} className="card p-4">
-                    <div className="font-medium text-slate-800">{d.statement}</div>
-                    <div className="mt-2 text-sm text-slate-500">
-                      {d.owner ? `Decided by ${d.owner.name}` : "Decision owner not identified"} ·{" "}
-                      {formatDate(d.decidedAt)}
-                    </div>
-                    <EvidenceBlock evidence={d.evidence} tone="emerald" />
-                  </div>
-                ))}
-              </div>
-            )}
-          </QueryView>
-        )}
-
-        {tab === "risks" && (
-          <QueryView
-            {...risks}
-            onRetry={risks.reload}
-            isEmpty={(d) => d.length === 0}
-            empty={<EmptyState title="No risks" message="No risks were raised in this meeting." />}
-          >
-            {(list) => (
-              <div className="space-y-3">
-                {list.map((r) => (
-                  <div key={r.id} className="card p-4">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="font-medium text-slate-800">{r.description}</div>
-                      <Badge className={severityStyles[r.severity]}>{r.severity}</Badge>
-                    </div>
-                    <EvidenceBlock evidence={r.evidence} tone="amber" />
-                  </div>
-                ))}
-              </div>
-            )}
-          </QueryView>
-        )}
+            {tab === "tasks" && (tasks.data ? <TaskList compact tasks={tasks.data} showMeeting={false} empty={<EmptyState compact title="No tasks" message="Mark a transcript line as a Task, or add one." />} /> : <RowsSkeleton rows={4} />)}
+            {tab === "decisions" && (decisions.data ? (decisions.data.length ? decisions.data.map((d) => <DecisionRow key={d.id} d={d} editable={editable} />) : <EmptyState compact title="No decisions" />) : <RowsSkeleton rows={3} />)}
+            {tab === "risks" && (risks.data ? (risks.data.length ? risks.data.map((r) => <RiskRow key={r.id} r={r} editable={editable} />) : <EmptyState compact title="No risks" />) : <RowsSkeleton rows={3} />)}
+          </Panel>
+        </div>
       </div>
+
+      {newTask && <NewTaskDialog open onClose={() => setNewTask(false)} meetings={[m]} defaultMeetingId={m.id} />}
     </div>
   );
 }

@@ -1,93 +1,174 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Gavel, Search } from "lucide-react";
-import { api } from "../api/endpoints";
+import { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { Download, Gavel, Pencil } from "lucide-react";
+import { api, type DecisionFilters } from "../api/endpoints";
 import { useQuery } from "../api/hooks";
-import {
-  Avatar,
-  EmptyState,
-  EvidenceBlock,
-  PageHeader,
-  QueryView,
-  formatDate,
-} from "../components/ui";
+import { useMe } from "../auth/AuthContext";
+import { mayEditItem } from "../auth/permissions";
+import { ConfidenceMeter, EvidenceQuote, OwnerMenu, ReviewBadge, ReviewButtons, useUsers } from "../components/items";
+import { DateRange, Dialog, EmptyState, Field, FilterSelect, PageHeader, QueryView, RowsSkeleton, SearchInput, downloadCsv, formatDate } from "../components/ui";
+import { LIST_REFRESH_INTERVAL_MS } from "../config";
+import { useMutation } from "../hooks/useMutation";
+import type { Decision, ReviewStatus } from "../types";
+
+const REFRESH = ["decisions", "insights", "review", "meetings", "activity"];
+
+function EditDecision({ decision, onClose }: { decision: Decision; onClose: () => void }) {
+  const [statement, setStatement] = useState(decision.statement);
+  const { run, busy } = useMutation();
+  async function save() {
+    const ok = await run(() => api.updateDecision(decision.id, { statement: statement.trim() }), { success: "Decision updated", refresh: REFRESH });
+    if (ok) onClose();
+  }
+  return (
+    <Dialog
+      open
+      onClose={onClose}
+      title="Edit decision"
+      footer={
+        <>
+          <button className="btn-secondary" onClick={onClose}>Cancel</button>
+          <button className="btn-primary" disabled={busy || statement.trim().length < 3} onClick={save}>Save</button>
+        </>
+      }
+    >
+      <Field label="Decision" hint="Saving also confirms a suggested decision.">
+        <textarea className="field" rows={3} value={statement} onChange={(e) => setStatement(e.target.value)} autoFocus />
+      </Field>
+      <EvidenceQuote evidence={decision.evidence} meetingId={decision.meetingId} className="mt-3" />
+    </Dialog>
+  );
+}
 
 export default function Decisions() {
-  const [query, setQuery] = useState("");
-  const decisions = useQuery("decisions", () => api.listDecisions());
+  const me = useMe();
+  const [params, setParams] = useSearchParams();
+  const get = (k: string) => params.get(k) ?? "";
+  const set = (patch: Record<string, string>) => {
+    const next = new URLSearchParams(params);
+    Object.entries(patch).forEach(([k, v]) => (v ? next.set(k, v) : next.delete(k)));
+    next.delete("highlight");
+    setParams(next, { replace: true });
+  };
+  const [q, setQ] = useState(get("q"));
+  useEffect(() => {
+    const t = window.setTimeout(() => q !== (params.get("q") ?? "") && set({ q }), 250);
+    return () => window.clearTimeout(t);
+  });
+  const [editing, setEditing] = useState<Decision | null>(null);
+  const { run, busy } = useMutation();
 
-  const q = query.trim().toLowerCase();
+  const filters: DecisionFilters = {
+    q: get("q") || undefined,
+    meetingId: get("meeting") ? Number(get("meeting")) : undefined,
+    ownerId: get("owner") ? Number(get("owner")) : undefined,
+    departmentId: get("dept") ? Number(get("dept")) : undefined,
+    review: get("review") as ReviewStatus | "",
+    from: get("from") || undefined,
+    to: get("to") || undefined,
+  };
+  const decisions = useQuery(`decisions:${JSON.stringify(filters)}`, () => api.listDecisions(filters), { refreshMs: LIST_REFRESH_INTERVAL_MS });
+  const users = useUsers();
+  const depts = useQuery("departments", () => api.listDepartments());
+  const meetings = useQuery("meetings:all", () => api.listMeetings());
+  const highlight = get("highlight");
+  const active = ["q", "meeting", "owner", "dept", "review", "from", "to"].some((k) => params.get(k));
+
+  const review = (d: Decision, status: "confirmed" | "rejected") =>
+    run(() => api.updateDecision(d.id, { reviewStatus: status }), { success: `Decision ${status}`, refresh: REFRESH, undo: () => api.updateDecision(d.id, { reviewStatus: "suggested" }) });
 
   return (
     <div>
       <PageHeader
-        title="Decision Register"
-        subtitle="Every decision made across meetings, with owner and evidence."
+        icon={<Gavel className="h-5 w-5 text-faint" />}
+        title="Decisions"
+        description="The decision register: what was agreed, by whom, in which meeting."
+        actions={
+          <button
+            className="btn-secondary"
+            disabled={!decisions.data?.length}
+            onClick={() =>
+              downloadCsv("meetops-decisions.csv", [
+                ["Decision", "Decided by", "Date", "Meeting", "Department", "Review", "Evidence"],
+                ...(decisions.data ?? []).map((d) => [d.statement, d.owner?.name ?? "", d.decidedAt, d.meetingTitle, d.department?.name ?? "", d.reviewStatus, d.evidence?.quote ?? ""]),
+              ])
+            }
+          >
+            <Download className="h-4 w-4" /> Export
+          </button>
+        }
       />
-
-      <div className="relative mb-4 max-w-sm">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-        <input
-          className="input pl-9"
-          placeholder="Search decisions…"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        <SearchInput value={q} onChange={setQ} placeholder="Search decisions…" className="w-full sm:w-56" />
+        <FilterSelect label="Meeting" value={get("meeting")} onChange={(v) => set({ meeting: v })} options={(meetings.data ?? []).map((m) => ({ value: String(m.id), label: m.title }))} />
+        <FilterSelect label="Decided by" value={get("owner")} onChange={(v) => set({ owner: v })} options={(users.data ?? []).map((u) => ({ value: String(u.id), label: u.name }))} />
+        <FilterSelect label="Department" value={get("dept")} onChange={(v) => set({ dept: v })} options={(depts.data ?? []).map((d) => ({ value: String(d.id), label: d.name }))} />
+        <FilterSelect label="Review" value={get("review")} onChange={(v) => set({ review: v })} options={[{ value: "suggested", label: "Needs review" }, { value: "confirmed", label: "Confirmed" }]} />
+        <DateRange label="Date" from={get("from")} to={get("to")} onChange={(f, t) => set({ from: f, to: t })} />
+        {active && <button className="btn-ghost" onClick={() => { setQ(""); setParams({}, { replace: true }); }}>Clear</button>}
       </div>
 
       <QueryView
         {...decisions}
         onRetry={decisions.reload}
+        skeleton={<div className="panel"><RowsSkeleton rows={6} /></div>}
         isEmpty={(d) => d.length === 0}
-        empty={
-          <EmptyState
-            title="No decisions yet"
-            message="Decisions appear here automatically once a meeting has been processed."
-            action={<Link to="/upload" className="btn-primary">Upload a meeting</Link>}
-          />
-        }
+        empty={<div className="panel"><EmptyState title={active ? "No decisions match" : "No decisions yet"} message={active ? "Try clearing a filter." : "Agreed outcomes appear here when a meeting is processed."} /></div>}
       >
-        {(all) => {
-          const list = q
-            ? all.filter(
-                (d) =>
-                  d.statement.toLowerCase().includes(q) ||
-                  d.owner?.name.toLowerCase().includes(q) ||
-                  d.meetingTitle.toLowerCase().includes(q)
-              )
-            : all;
-          if (list.length === 0) {
-            return <EmptyState title="No matches" message={`No decision matches "${query}".`} />;
-          }
-          return (
-            <div className="space-y-3">
-              {list.map((d) => (
-                <div key={d.id} className="card p-5">
-                  <div className="flex gap-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
-                      <Gavel className="h-5 w-5" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-semibold text-slate-800">{d.statement}</div>
-                      <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-500">
-                        <span className="inline-flex items-center gap-1.5">
-                          <Avatar initials={d.owner?.initials ?? "?"} className="h-5 w-5 text-[10px]" />
-                          {d.owner?.name ?? "Owner not identified"}
-                        </span>
-                        <span>{formatDate(d.decidedAt)}</span>
-                        <Link to={`/meetings/${d.meetingId}`} className="text-brand-600 hover:underline">
-                          {d.meetingTitle}
-                        </Link>
-                      </div>
-                      <EvidenceBlock evidence={d.evidence} meetingId={d.meetingId} tone="emerald" />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          );
-        }}
+        {(list) => (
+          <div className="panel overflow-x-auto">
+            <table className="table min-w-[820px]">
+              <thead>
+                <tr>
+                  <th className="w-[46%]">Decision</th>
+                  <th>Decided by</th>
+                  <th>Date</th>
+                  <th>Meeting</th>
+                  <th className="w-10" />
+                </tr>
+              </thead>
+              <tbody>
+                {list.map((d) => {
+                  const editable = mayEditItem(me, d);
+                  return (
+                    <tr key={d.id} className={highlight === String(d.id) ? "bg-accent-soft/60" : d.reviewStatus === "suggested" ? "bg-amber-500/[0.03]" : ""}>
+                      <td>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="font-medium text-fg">{d.statement}</span>
+                          <ReviewBadge status={d.reviewStatus} source={d.source} />
+                        </div>
+                        <EvidenceQuote evidence={d.evidence} meetingId={d.meetingId} className="mt-0.5" />
+                        {d.reviewStatus === "suggested" && editable && (
+                          <div className="mt-1.5 flex items-center gap-3">
+                            <ReviewButtons size="sm" busy={busy} onConfirm={() => review(d, "confirmed")} onReject={() => review(d, "rejected")} />
+                            <ConfidenceMeter value={d.confidence} source={d.source} />
+                          </div>
+                        )}
+                      </td>
+                      <td>
+                        <OwnerMenu value={d.owner} empty="Not recorded" disabled={!editable} onChange={(id) => run(() => api.updateDecision(d.id, { ownerId: id }), { refresh: REFRESH })} />
+                      </td>
+                      <td className="whitespace-nowrap text-muted">{formatDate(d.decidedAt)}</td>
+                      <td>
+                        <Link to={`/meetings/${d.meetingId}`} className="text-muted hover:text-accent-text">{d.meetingTitle}</Link>
+                        {d.department && <div className="text-2xs text-faint">{d.department.name}</div>}
+                      </td>
+                      <td>
+                        {editable && (
+                          <button className="icon-btn h-7 w-7" title="Edit" onClick={() => setEditing(d)}>
+                            <Pencil className="h-3.5 w-3.5" />
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </QueryView>
+      {editing && <EditDecision decision={editing} onClose={() => setEditing(null)} />}
     </div>
   );
 }

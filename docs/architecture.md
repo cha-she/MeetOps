@@ -30,9 +30,9 @@ flowchart LR
 
 | Layer | Technology | Responsibility |
 |-------|------------|----------------|
-| Frontend | React 18, TypeScript, Vite, Tailwind CSS, Recharts, React Router | Dashboard, task tracker, decision register, risk log, insights, search, upload with progress, evidence links |
-| API | FastAPI, Pydantic | REST endpoints with camelCase JSON; validation; background processing; audit log |
-| Persistence | SQLAlchemy 2 over PostgreSQL 16 (Docker) or SQLite (development) | Nine tables, see [database-schema.md](database-schema.md) |
+| Frontend | React 18, TypeScript, Vite, Tailwind CSS, Recharts, React Router | Sign-in, My work, review inbox, meetings with transcripts, task list and board, decision register, risk log, insights, team management, command palette |
+| API | FastAPI, Pydantic | REST endpoints with camelCase JSON; sign-in and role checks; validation; background processing; audit log |
+| Persistence | SQLAlchemy 2 over PostgreSQL 16 (Docker) or SQLite (development) | Eleven tables, see [database-schema.md](database-schema.md) |
 | ML | scikit-learn, pandas, joblib | Utterance classifier (Task / Decision / Risk / Other), preprocessing shared with the backend |
 | Extraction | Rule-based (regex + dateparser) | Owner, deadline, risk severity, recurring-risk similarity, extractive summary |
 | Data | AMI Meeting Corpus (CC BY 4.0), Label Studio | Labelled training/test sets, see [annotation-guidelines.md](annotation-guidelines.md) |
@@ -77,9 +77,9 @@ can draw progress. Failures are recorded on the meeting (`status: Failed`,
 | upload | `backend/app/routers/meetings.py` | Validates the file type and size, stores the file, creates the meeting row |
 | transcribe | `services/pipeline.py` | Skipped for text transcripts. Audio/video will go through FFmpeg → Whisper (next phase); today they stop here with a clear message |
 | preprocess | `ml/src/meetops_ml/preprocessing.py` | `segment_transcript` splits `Speaker: text` lines (optional `[hh:mm:ss]`) into one utterance per sentence. `clean_text` normalises text for the model: joins spelled letters (T_V_ → tv), expands contractions (I'll → i will), removes fillers (um, uh, you know), collapses stutters (we we → we) |
-| classify | `ml/src/meetops_ml/features.py`, `models.py` | Word TF-IDF (1–2-grams) + character TF-IDF (2–5-grams) + a risk-cue lexicon, Logistic Regression with balanced class weights. Returns a label and a confidence per utterance |
-| extract | `backend/app/services/extraction.py` | Task owner: a participant named in the sentence, or the speaker for first-person commitments ("I'll …"). Deadline: time expressions ("by Friday", "next week", "end of month", explicit dates) resolved relative to the meeting date. Risk severity: High / Medium / Low from cue words |
-| save | `services/summary.py`, `pipeline.py` | Recurring risks found by TF-IDF cosine similarity with risks from earlier meetings; extractive summary (top-scoring utterances, boosted for Task/Decision/Risk); audit log entry |
+| classify | `ml/src/meetops_ml/features.py`, `models.py`, `rules.py` | Word TF-IDF (1–2-grams) + character TF-IDF (2–5-grams) + a risk-cue lexicon, Logistic Regression with balanced class weights; then the rule layer corrects explicit requests, commitments, agreements and concerns and removes agenda lines and open questions. The model's label, the final label, the confidence and the rule are all stored |
+| extract | `backend/app/services/organise.py`, `extraction.py` | A request and its acceptance become one task; the title is rewritten as an action; owner = person addressed or who accepted, else the speaker of "I'll …"; deadline = time expression in the exchange, resolved from the meeting date; vague agreements quote what was agreed; duplicate tasks merged; risk severity from cue words |
+| save | `services/summary.py`, `pipeline.py` | Review status (confirmed only when the model alone is ≥ 0.8 confident, otherwise suggested); recurring risks by TF-IDF cosine similarity with earlier meetings; extractive summary; notifications to owners and to the uploader for review; audit log entry |
 
 The same `clean_text` runs at training time and inside the saved model, so
 the classifier always sees text in the form it was trained on.
@@ -106,10 +106,21 @@ class distribution) is scored once. Results and error analysis are in
 - **Evidence links.** Every task, decision and risk stores `segment_id`. The
   UI jumps to that line of the transcript, so nothing the system claims is
   unverifiable.
-- **API-first frontend with demo fallback.** All pages read through
-  `frontend/src/api`. When the backend is unreachable the dashboard uses a
-  built-in dataset and shows a "Demo data" badge, so the UI can always be
-  demonstrated and every API change has one place to land.
+- **Real data only.** All pages read through `frontend/src/api`; there is no
+  sample data in the frontend. If the backend is unreachable the dashboard
+  says so. Demo content is produced by running sample transcripts through the
+  real pipeline (`python -m app.seed --demo`).
+- **Hybrid classification.** A statistical model plus a small, named rule layer
+  taken from the annotation guideline. The model is still evaluated on its
+  own; the rules are reported as a separate row, and every rule change is
+  visible on the transcript line it affected.
+- **People confirm, the system proposes.** Uncertain items are *suggestions*.
+  Confirming, rejecting or relabelling takes one click, and each correction is
+  stored in `label_feedback`, the training data for the next model. Accuracy
+  therefore improves on the organisation's own meetings over time.
+- **Accounts and roles.** Departments, one account per person, three roles
+  (admin, manager, member). Passwords are scrypt-hashed, sessions are
+  HMAC-signed tokens, and every endpoint checks the role.
 - **Database portability.** SQLAlchemy lets development run on a SQLite file
   with zero setup while the deployment target stays PostgreSQL (Docker
   Compose provided). Tables are created on start-up.
@@ -123,9 +134,8 @@ class distribution) is scored once. Results and error analysis are in
   explicit patterns that are transparent and testable; the labelled
   `owner_span` / `deadline_span` columns are its evaluation set and the path
   to a learned extractor later.
-- **Audit log from day one.** Every create/update through the API writes an
-  `audit_logs` row, which the role-based access control planned for the next
-  phase will build on.
+- **Audit log.** Every create, update, review and relabel writes an
+  `audit_logs` row with the acting user; it also feeds the activity stream.
 
 ## 6. Repository layout
 

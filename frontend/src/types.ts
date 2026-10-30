@@ -1,91 +1,114 @@
 // Shared domain types for the MeetOps frontend.
-// They mirror the JSON returned by the FastAPI backend (camelCase keys).
+// They mirror the JSON returned by the FastAPI backend (camelCase keys, see backend/app/schemas.py).
 
 export type Category = "Task" | "Decision" | "Risk" | "Other";
-
 export type TaskStatus = "Open" | "In Progress" | "Completed";
-
+export type Priority = "Low" | "Medium" | "High";
 export type RiskSeverity = "Low" | "Medium" | "High";
-
+export type RiskStatus = "Open" | "Mitigated" | "Closed";
 export type MeetingSource = "audio" | "video" | "transcript";
-
 export type MeetingStatus = "Queued" | "Processing" | "Processed" | "Failed";
+export type PipelineStage = "upload" | "transcribe" | "preprocess" | "classify" | "extract" | "save";
+export type Role = "admin" | "manager" | "member";
+export type ReviewStatus = "suggested" | "confirmed" | "rejected";
+export type ItemSource = "ai" | "manual";
 
-// Stage keys reported by the backend while a meeting is being processed.
-export type PipelineStage =
-  | "upload"
-  | "transcribe"
-  | "preprocess"
-  | "classify"
-  | "extract"
-  | "save";
+export interface DepartmentRef {
+  id: number;
+  name: string;
+}
+
+export interface Department extends DepartmentRef {
+  memberCount: number;
+}
 
 export interface User {
   id: number;
   name: string;
   initials: string;
-  role: string;
+  email: string;
+  role: Role;
+  title: string | null;
+  department: DepartmentRef | null;
+  isActive: boolean;
 }
 
 export interface Meeting {
   id: number;
   title: string;
-  date: string; // ISO date (YYYY-MM-DD)
+  date: string;
   durationMin: number | null;
   source: MeetingSource;
   status: MeetingStatus;
   pipelineStage: PipelineStage | null;
   errorMessage: string | null;
   participants: User[];
+  department: DepartmentRef | null;
+  uploadedBy: User | null;
   taskCount: number;
   decisionCount: number;
   riskCount: number;
+  suggestedCount: number;
   summary: string | null;
+  modelName: string | null;
   createdAt: string;
 }
 
-// Links an extracted record back to the transcript segment it came from.
+// Links an extracted record back to the transcript line it came from.
 export interface EvidenceRef {
   segmentId: number;
   speaker: string | null;
-  timestamp: string | null; // "00:12:44"
+  timestamp: string | null;
   quote: string;
 }
 
-export interface Task {
+interface Reviewable {
+  reviewStatus: ReviewStatus;
+  confidence: number | null;
+  source: ItemSource;
+  evidence: EvidenceRef | null;
+}
+
+export interface Task extends Reviewable {
   id: number;
   description: string;
   owner: User | null;
   meetingId: number;
   meetingTitle: string;
-  deadline: string | null; // ISO date
+  meetingDate: string;
+  department: DepartmentRef | null;
+  deadline: string | null;
+  deadlineText: string | null;
   status: TaskStatus;
+  priority: Priority;
   createdAt: string;
-  evidence: EvidenceRef;
+  completedAt: string | null;
 }
 
-export interface Decision {
+export interface Decision extends Reviewable {
   id: number;
   statement: string;
   owner: User | null;
   meetingId: number;
   meetingTitle: string;
+  department: DepartmentRef | null;
   decidedAt: string;
-  evidence: EvidenceRef;
 }
 
-export interface Risk {
+export interface Risk extends Reviewable {
   id: number;
   description: string;
   meetingId: number;
   meetingTitle: string;
+  department: DepartmentRef | null;
   severity: RiskSeverity;
+  status: RiskStatus;
+  owner: User | null;
+  raisedBy: string | null;
   raisedAt: string;
   recurring: boolean;
-  evidence: EvidenceRef;
 }
 
-// A single classified utterance from a transcript.
 export interface TranscriptSegment {
   id: number;
   speaker: string | null;
@@ -93,7 +116,16 @@ export interface TranscriptSegment {
   startSec: number | null;
   text: string;
   category: Category;
-  confidence: number | null; // 0..1 model confidence
+  confidence: number | null;
+  modelLabel: Category | null;
+  rule: string | null;
+  corrected: boolean;
+}
+
+export interface ReviewQueue {
+  tasks: Task[];
+  decisions: Decision[];
+  risks: Risk[];
 }
 
 export interface NameValue {
@@ -109,27 +141,53 @@ export interface InsightsSummary {
     tasks: number;
     openTasks: number;
     overdueTasks: number;
+    dueThisWeek: number;
     decisions: number;
     risks: number;
+    openRisks: number;
     highRisks: number;
+    pendingReview: number;
+  };
+  me: {
+    openTasks: number;
+    overdueTasks: number;
+    dueThisWeek: number;
+    completedThisWeek: number;
+    pendingReview: number;
   };
   taskStatus: NameValue[];
   riskSeverity: NameValue[];
-  itemsPerMeeting: { name: string; tasks: number; decisions: number; risks: number }[];
-  workload: { name: string; open: number; inProgress: number; completed: number }[];
+  itemsPerMeeting: { id: number; name: string; tasks: number; decisions: number; risks: number }[];
+  workload: { userId: number; name: string; open: number; inProgress: number; completed: number; overdue: number }[];
+  departments: { name: string; openTasks: number; overdueTasks: number; completionRate: number }[];
+  weekly: { week: string; created: number; completed: number }[];
   recurringRisks: Risk[];
-  completionRate: number; // 0..100
+  completionRate: number;
+  onTimeRate: number | null;
   avgItemsPerMeeting: number;
+  reviewAcceptanceRate: number | null;
   topOwner: string | null;
 }
 
-export type NotificationType = "overdue" | "due_soon" | "assigned" | "status_change";
+export interface Activity {
+  id: number;
+  actor: User | null;
+  entity: string;
+  entityId: number;
+  action: string;
+  detail: string | null;
+  meetingId: number | null;
+  createdAt: string;
+}
+
+export type NotificationType = "overdue" | "due_soon" | "assigned" | "status_change" | "review";
 
 export interface Notification {
   id: number;
   type: NotificationType;
   message: string;
   taskId: number | null;
+  meetingId: number | null;
   read: boolean;
   createdAt: string;
 }
@@ -140,4 +198,9 @@ export interface SearchResults {
   tasks: Task[];
   decisions: Decision[];
   risks: Risk[];
+}
+
+export interface AuthResponse {
+  token: string;
+  user: User;
 }

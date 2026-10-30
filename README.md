@@ -16,15 +16,17 @@ are generated automatically from the meetings they already hold.
 | Phase (from proposal timeline)                    | Status         |
 |---------------------------------------------------|----------------|
 | Background research and requirements              | ✅ Done         |
-| Frontend dashboard (React) with demo data         | ✅ Done         |
+| Frontend dashboard (React)                        | ✅ Done (v2 design, light/dark) |
 | Dataset preparation (AMI corpus → utterances)     | ✅ Done         |
 | Annotation guideline and labelled sample          | ✅ Done (v1)    |
-| Classification experiments (Task/Decision/Risk)   | ✅ v1–v3 done   |
-| Information extraction (owner, deadline)          | ✅ Rule-based v1 |
+| Classification experiments (Task/Decision/Risk)   | ✅ v1–v3 + rule layer, in-domain evaluation |
+| Information extraction (owner, deadline)          | ✅ Rule-based v1, evaluated |
 | Database schema and FastAPI backend               | ✅ Done (SQLite / PostgreSQL) |
+| Accounts, departments, role-based access, audit log | ✅ Done        |
+| Human review of extracted items, label feedback   | ✅ Done         |
+| Summaries, recurring risks, evidence links        | ✅ v1 (extractive / TF-IDF similarity) |
 | Audio/video pipeline (FFmpeg + Whisper)           | ⏳ Semester 2   |
-| Workflow, RBAC and audit log                      | ⏳ Semester 2   |
-| Summaries, recurring-issue clustering, evidence   | ⏳ Semester 2   |
+| DistilBERT classifier, email reminders, PDF export | ⏳ Semester 2   |
 
 ## Repository layout
 
@@ -49,7 +51,7 @@ python -m venv .venv
 python -m pip install -e ml -r backend/requirements.txt
 python -m meetops_ml.train --version v3 --train ml/data/labeled/train_v2.csv --features full
 cd backend
-python -m app.seed --reset                  # SQLite database with sample data
+python -m app.seed --empty                  # empty database (or --demo for a demo organisation)
 python -m uvicorn app.main:app --reload --port 8000
 ```
 
@@ -61,12 +63,17 @@ npm install
 npm run dev                                 # http://localhost:5173
 ```
 
-The dashboard probes the API and shows a **Live** badge when the backend is
-running; without it, it falls back to built-in demo data so every screen can
-still be shown. Upload `backend/samples/sprint8_planning.txt` on the Upload
-page to watch the pipeline classify a transcript and extract tasks, decisions
-and risks. PostgreSQL instead of SQLite: `docker compose up -d` in `backend/`
-and set `DATABASE_URL` (see `backend/README.md`).
+On an empty database the dashboard asks you to create the first
+administrator, who then adds departments and colleagues on the Team page.
+Each person signs in with their own account. `python -m app.seed --demo`
+instead creates a demo organisation and runs the sample transcripts through
+the real pipeline. The dashboard only shows data from the backend; if the API
+is not running it says so instead of showing sample data.
+
+Upload `backend/samples/sprint8_planning.txt` on the New meeting page to watch
+the pipeline classify a transcript and extract tasks, decisions and risks.
+PostgreSQL instead of SQLite: `docker compose up -d` in `backend/` and set
+`DATABASE_URL` (see `backend/README.md`).
 
 Details per part: `frontend/README.md`, `backend/README.md`, `ml/README.md`,
 `docs/annotation-guidelines.md`.
@@ -83,10 +90,13 @@ Audio / Video / Transcript
                                      Preprocessing: cleaning + utterance segmentation
                                                               │
                                                               ▼
-                              Classification: Task / Decision / Risk / Other (TF-IDF + ML)
+                Classification: TF-IDF model ──► rule layer ──► Task / Decision / Risk / Other
                                                               │
                                                               ▼
-                              Information extraction: owner, deadline, decision statement
+              Extraction + organising: owner, deadline, titles, merged replies, severity
+                                                              │
+                                                              ▼
+              Review: confident items confirmed, the rest suggested for a person
                                                               │
                                                               ▼
                                    PostgreSQL ──► FastAPI ──► React dashboard
@@ -110,6 +120,6 @@ Audio / Video / Transcript
 | [docs/database-schema.md](docs/database-schema.md) | ER diagram and table reference |
 | [docs/annotation-guidelines.md](docs/annotation-guidelines.md) | Labelling rules for Task / Decision / Risk / Other |
 | [docs/demo-script.md](docs/demo-script.md) | Presentation walkthrough and video plan |
-| [ml/README.md](ml/README.md) | Data pipeline, labelled datasets, training protocol, results v1–v3 and error analysis |
-| [backend/README.md](backend/README.md) | API reference, schema, pipeline, PostgreSQL setup |
+| [ml/README.md](ml/README.md) | Data pipeline, labelled datasets, training protocol, results v1–v3, rule layer, in-domain evaluation, extraction results |
+| [backend/README.md](backend/README.md) | Accounts and roles, API reference, schema, pipeline, PostgreSQL setup |
 | [frontend/README.md](frontend/README.md) | Screens, project structure, API client |

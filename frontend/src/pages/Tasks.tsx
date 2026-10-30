@@ -1,226 +1,166 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-import { AlertTriangle, Search } from "lucide-react";
-import { api } from "../api/endpoints";
+import { useSearchParams } from "react-router-dom";
+import { AlertTriangle, Download, KanbanSquare, List, ListChecks, Plus } from "lucide-react";
+import { api, type TaskFilters } from "../api/endpoints";
 import { useQuery } from "../api/hooks";
-import {
-  Avatar,
-  Badge,
-  EmptyState,
-  PageHeader,
-  QueryView,
-  daysUntil,
-  formatDate,
-  isOverdue,
-  statusStyles,
-} from "../components/ui";
-import type { Task, TaskStatus } from "../types";
+import { useMe } from "../auth/AuthContext";
+import { useUsers } from "../components/items";
+import { NewTaskDialog, TaskBoard, TaskList, type GroupBy } from "../components/tasks";
+import { DateRange, EmptyState, FilterSelect, Menu, PageHeader, QueryView, RowsSkeleton, SearchInput, Segmented, Toggle, downloadCsv } from "../components/ui";
+import { LIST_REFRESH_INTERVAL_MS } from "../config";
+import type { Priority, ReviewStatus, TaskStatus } from "../types";
 
-const statusOptions: (TaskStatus | "All")[] = ["All", "Open", "In Progress", "Completed"];
+const GROUP_LABEL: Record<GroupBy, string> = { none: "No grouping", status: "Status", owner: "Owner", meeting: "Meeting", due: "Due date" };
 
 export default function Tasks() {
-  const [searchParams] = useSearchParams();
-  const highlightId = searchParams.get("highlight");
+  const me = useMe();
+  const [params, setParams] = useSearchParams();
+  const get = (k: string) => params.get(k) ?? "";
+  const set = (patch: Record<string, string>) => {
+    const next = new URLSearchParams(params);
+    Object.entries(patch).forEach(([k, v]) => (v ? next.set(k, v) : next.delete(k)));
+    next.delete("task");
+    setParams(next, { replace: true });
+  };
 
-  const [filter, setFilter] = useState<TaskStatus | "All">("All");
-  const [overdueOnly, setOverdueOnly] = useState(false);
-  const [query, setQuery] = useState("");
-  const [saveError, setSaveError] = useState<string | null>(null);
+  const [view, setView] = useState<"list" | "board">("list");
+  const [groupBy, setGroupBy] = useState<GroupBy>("due");
+  const [newTask, setNewTask] = useState(false);
+  const [q, setQ] = useState(get("q"));
 
-  const tasks = useQuery("tasks", () => api.listTasks({ sort: "deadline" }));
-
-  // Scroll to a task when arriving from a notification or the dashboard.
+  // debounce the free-text search into the URL
   useEffect(() => {
-    if (!highlightId || !tasks.data) return;
-    document.getElementById(`task-${highlightId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
-  }, [highlightId, tasks.data]);
+    const t = window.setTimeout(() => {
+      if (q !== (params.get("q") ?? "")) set({ q });
+    }, 250);
+    return () => window.clearTimeout(t);
+  });
+
+  const owner = get("owner") || (get("mine") ? "me" : "");
+  const filters: TaskFilters = {
+    q: get("q") || undefined,
+    status: get("status") as TaskStatus | "",
+    mine: owner === "me",
+    unassigned: owner === "none",
+    ownerId: owner && owner !== "me" && owner !== "none" ? Number(owner) : undefined,
+    departmentId: get("dept") ? Number(get("dept")) : undefined,
+    meetingId: get("meeting") ? Number(get("meeting")) : undefined,
+    review: get("review") as ReviewStatus | "",
+    priority: get("priority") as Priority | "",
+    overdue: !!get("overdue"),
+    dueFrom: get("dueFrom") || undefined,
+    dueTo: get("dueTo") || undefined,
+    from: get("from") || undefined,
+    to: get("to") || undefined,
+    sort: "deadline",
+  };
+  const key = `tasks:${JSON.stringify(filters)}`;
+  const tasks = useQuery(key, () => api.listTasks(filters), { refreshMs: LIST_REFRESH_INTERVAL_MS });
+  const users = useUsers();
+  const depts = useQuery("departments", () => api.listDepartments());
+  const meetings = useQuery("meetings:all", () => api.listMeetings());
+
+  const highlight = get("task");
+  useEffect(() => {
+    if (!highlight || !tasks.data) return;
+    const el = document.getElementById(`task-${highlight}`);
+    el?.scrollIntoView({ block: "center", behavior: "smooth" });
+    el?.classList.add("ring-2", "ring-accent/40");
+    const t = window.setTimeout(() => el?.classList.remove("ring-2", "ring-accent/40"), 2500);
+    return () => window.clearTimeout(t);
+  }, [highlight, tasks.data]);
 
   const counts = useMemo(() => {
     const list = tasks.data ?? [];
-    return {
-      All: list.length,
-      Open: list.filter((t) => t.status === "Open").length,
-      "In Progress": list.filter((t) => t.status === "In Progress").length,
-      Completed: list.filter((t) => t.status === "Completed").length,
-      overdue: list.filter((t) => isOverdue(t.deadline, t.status)).length,
-    };
+    return { open: list.filter((t) => t.status !== "Completed").length, total: list.length };
   }, [tasks.data]);
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return (tasks.data ?? []).filter(
-      (t) =>
-        (filter === "All" || t.status === filter) &&
-        (!overdueOnly || isOverdue(t.deadline, t.status)) &&
-        (!q ||
-          t.description.toLowerCase().includes(q) ||
-          t.owner?.name.toLowerCase().includes(q) ||
-          t.meetingTitle.toLowerCase().includes(q))
-    );
-  }, [tasks.data, filter, overdueOnly, query]);
+  const activeFilters = ["status", "owner", "mine", "dept", "meeting", "review", "priority", "overdue", "dueFrom", "dueTo", "from", "to", "q"].some((k) => params.get(k));
 
-  // Optimistic status update: change the row immediately, roll back on failure.
-  async function updateStatus(task: Task, status: TaskStatus) {
-    const previous = task.status;
-    setSaveError(null);
-    tasks.setData((prev) => prev?.map((t) => (t.id === task.id ? { ...t, status } : t)));
-    try {
-      const saved = await api.updateTask(task.id, { status });
-      tasks.setData((prev) => prev?.map((t) => (t.id === task.id ? saved : t)));
-    } catch (err) {
-      tasks.setData((prev) => prev?.map((t) => (t.id === task.id ? { ...t, status: previous } : t)));
-      setSaveError(err instanceof Error ? err.message : "Could not save the status change.");
-    }
+  function exportCsv() {
+    downloadCsv("meetops-tasks.csv", [
+      ["Task", "Owner", "Department", "Due", "Status", "Priority", "Review", "Meeting", "Meeting date", "Evidence"],
+      ...(tasks.data ?? []).map((t) => [t.description, t.owner?.name ?? "", t.department?.name ?? "", t.deadline ?? t.deadlineText ?? "", t.status, t.priority, t.reviewStatus, t.meetingTitle, t.meetingDate, t.evidence?.quote ?? ""]),
+    ]);
   }
 
   return (
     <div>
       <PageHeader
-        title="Task Tracker"
-        subtitle="Tasks extracted from meetings, with owner, deadline, and status."
+        icon={<ListChecks className="h-5 w-5 text-faint" />}
+        title="Tasks"
+        description={`${counts.open} open of ${counts.total} shown · action items extracted from meetings, with owner, due date and the line they came from.`}
+        actions={
+          <>
+            <button className="btn-secondary" onClick={exportCsv} disabled={!tasks.data?.length}>
+              <Download className="h-4 w-4" /> Export
+            </button>
+            <button className="btn-primary" onClick={() => setNewTask(true)} disabled={!meetings.data?.length}>
+              <Plus className="h-4 w-4" /> New task
+            </button>
+          </>
+        }
       />
 
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap gap-2">
-          {statusOptions.map((s) => (
-            <button
-              key={s}
-              onClick={() => setFilter(s)}
-              className={`rounded-lg px-3 py-1.5 text-sm font-semibold ring-1 ring-inset transition ${
-                filter === s
-                  ? "bg-brand-600 text-white ring-brand-600"
-                  : "bg-white text-slate-500 ring-slate-200 hover:bg-slate-50"
-              }`}
-            >
-              {s}
-              <span className="ml-1.5 opacity-70">{counts[s]}</span>
-            </button>
-          ))}
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        <SearchInput value={q} onChange={setQ} placeholder="Search tasks…" className="w-full sm:w-56" />
+        <FilterSelect label="Status" value={get("status")} onChange={(v) => set({ status: v })} options={["Open", "In Progress", "Completed"].map((s) => ({ value: s, label: s }))} />
+        <FilterSelect
+          label="Owner"
+          value={owner}
+          onChange={(v) => set({ owner: v, mine: "" })}
+          options={[{ value: "me", label: `Me (${me.name.split(" ")[0]})` }, { value: "none", label: "Unassigned" }, ...(users.data ?? []).map((u) => ({ value: String(u.id), label: u.name }))]}
+        />
+        <FilterSelect label="Department" value={get("dept")} onChange={(v) => set({ dept: v })} options={(depts.data ?? []).map((d) => ({ value: String(d.id), label: d.name }))} />
+        <FilterSelect label="Meeting" value={get("meeting")} onChange={(v) => set({ meeting: v })} options={(meetings.data ?? []).map((m) => ({ value: String(m.id), label: m.title }))} />
+        <FilterSelect label="Review" value={get("review")} onChange={(v) => set({ review: v })} options={[{ value: "suggested", label: "Needs review" }, { value: "confirmed", label: "Confirmed" }]} />
+        <FilterSelect label="Priority" value={get("priority")} onChange={(v) => set({ priority: v })} options={["High", "Medium", "Low"].map((p) => ({ value: p, label: p }))} />
+        <Toggle active={!!get("overdue")} tone="red" onClick={() => set({ overdue: get("overdue") ? "" : "1" })}>
+          <AlertTriangle className="h-3.5 w-3.5" /> Overdue
+        </Toggle>
+        <DateRange label="Due" from={get("dueFrom")} to={get("dueTo")} onChange={(f, t) => set({ dueFrom: f, dueTo: t })} />
+        <DateRange label="Meeting" from={get("from")} to={get("to")} onChange={(f, t) => set({ from: f, to: t })} />
+        {activeFilters && (
           <button
-            onClick={() => setOverdueOnly((v) => !v)}
-            className={`inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-semibold ring-1 ring-inset transition ${
-              overdueOnly
-                ? "bg-red-600 text-white ring-red-600"
-                : "bg-white text-red-600 ring-red-200 hover:bg-red-50"
-            }`}
+            className="btn-ghost"
+            onClick={() => {
+              setQ("");
+              setParams({}, { replace: true });
+            }}
           >
-            <AlertTriangle className="h-3.5 w-3.5" />
-            Overdue
-            <span className="ml-1 opacity-70">{counts.overdue}</span>
+            Clear
           </button>
-        </div>
-        <div className="relative max-w-xs">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-          <input
-            className="input pl-9"
-            placeholder="Search tasks, owners, meetings…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
+        )}
+        <div className="flex-1" />
+        {view === "list" && (
+          <Menu
+            align="right"
+            header="Group by"
+            trigger={() => <button className="btn-secondary">Group: {GROUP_LABEL[groupBy]}</button>}
+            items={(Object.keys(GROUP_LABEL) as GroupBy[]).map((g) => ({ label: GROUP_LABEL[g], checked: g === groupBy, onSelect: () => setGroupBy(g) }))}
           />
-        </div>
+        )}
+        <Segmented
+          value={view}
+          onChange={setView}
+          options={[
+            { value: "list", label: <><List className="h-3.5 w-3.5" /> List</> },
+            { value: "board", label: <><KanbanSquare className="h-3.5 w-3.5" /> Board</> },
+          ]}
+        />
       </div>
-
-      {saveError && (
-        <div className="mb-4 rounded-lg border border-red-100 bg-red-50 px-4 py-2.5 text-sm text-red-700">
-          {saveError}
-        </div>
-      )}
 
       <QueryView
         {...tasks}
         onRetry={tasks.reload}
-        isEmpty={(d) => d.length === 0}
-        empty={
-          <EmptyState
-            title="No tasks yet"
-            message="Tasks appear here automatically once a meeting has been processed."
-            action={<Link to="/upload" className="btn-primary">Upload a meeting</Link>}
-          />
-        }
+        skeleton={<div className="panel"><RowsSkeleton rows={8} /></div>}
+        isEmpty={(d) => d.length === 0 && !activeFilters}
+        empty={<div className="panel"><EmptyState title="No tasks yet" message="Tasks appear here automatically when a meeting is processed, or add one by hand." /></div>}
       >
-        {() => (
-          <div className="card overflow-x-auto">
-            <table className="w-full min-w-[720px] text-left text-sm">
-              <thead className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-slate-400">
-                <tr>
-                  <th className="px-4 py-3 font-semibold">Task</th>
-                  <th className="px-4 py-3 font-semibold">Owner</th>
-                  <th className="px-4 py-3 font-semibold">Meeting</th>
-                  <th className="px-4 py-3 font-semibold">Deadline</th>
-                  <th className="px-4 py-3 font-semibold">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {filtered.map((t) => {
-                  const overdue = isOverdue(t.deadline, t.status);
-                  const days = daysUntil(t.deadline);
-                  const highlighted = String(t.id) === highlightId;
-                  return (
-                    <tr
-                      id={`task-${t.id}`}
-                      key={t.id}
-                      className={`hover:bg-slate-50 ${highlighted ? "bg-brand-50/60" : ""}`}
-                    >
-                      <td className="px-4 py-3">
-                        <div className="font-medium text-slate-800">{t.description}</div>
-                        <div className="mt-0.5 line-clamp-1 text-xs text-slate-400">
-                          “{t.evidence.quote}”
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          <Avatar initials={t.owner?.initials ?? "?"} className="h-6 w-6 text-[10px]" />
-                          <span className="text-slate-600">{t.owner?.name ?? "Unassigned"}</span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <Link
-                          to={`/meetings/${t.meetingId}?segment=${t.evidence.segmentId}`}
-                          className="text-brand-600 hover:underline"
-                        >
-                          {t.meetingTitle}
-                        </Link>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-slate-600">{formatDate(t.deadline)}</span>
-                          {overdue && days !== null && (
-                            <Badge className="bg-red-50 text-red-700 ring-red-200">
-                              <AlertTriangle className="h-3 w-3" />
-                              {Math.abs(days)}d
-                            </Badge>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <select
-                          value={t.status}
-                          onChange={(e) => updateStatus(t, e.target.value as TaskStatus)}
-                          className={`cursor-pointer rounded-full border-0 px-2.5 py-1 text-xs font-semibold outline-none ring-1 ring-inset ${
-                            statusStyles[t.status]
-                          }`}
-                          aria-label={`Status of task ${t.id}`}
-                        >
-                          <option>Open</option>
-                          <option>In Progress</option>
-                          <option>Completed</option>
-                        </select>
-                      </td>
-                    </tr>
-                  );
-                })}
-                {filtered.length === 0 && (
-                  <tr>
-                    <td colSpan={5} className="px-4 py-12 text-center text-slate-400">
-                      No tasks match your filters.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
+        {(list) => (view === "board" ? <TaskBoard tasks={list} /> : <div className="panel overflow-hidden"><TaskList tasks={list} groupBy={groupBy} /></div>)}
       </QueryView>
+
+      {newTask && meetings.data && <NewTaskDialog open onClose={() => setNewTask(false)} meetings={meetings.data} defaultMeetingId={filters.meetingId} />}
     </div>
   );
 }

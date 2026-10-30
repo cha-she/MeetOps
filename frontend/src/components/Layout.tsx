@@ -1,237 +1,189 @@
-import { useState, type FormEvent, type ReactNode } from "react";
-import { NavLink, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useState, type ReactNode } from "react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
-  LayoutDashboard,
   CalendarDays,
-  ListChecks,
+  ChevronsUpDown,
   Gavel,
-  ShieldAlert,
+  Home,
+  Inbox,
   LineChart,
-  Search,
+  ListChecks,
+  LogOut,
+  Menu as MenuIcon,
+  Monitor,
+  Moon,
   Plus,
-  Menu,
+  Search,
+  ShieldAlert,
+  Sun,
+  Users,
   X,
 } from "lucide-react";
+import { api } from "../api/endpoints";
+import { useQuery } from "../api/hooks";
+import { roleLabel, useAuth, useMe } from "../auth/AuthContext";
+import { useTheme } from "../hooks/useTheme";
+import CommandPalette from "./CommandPalette";
 import NotificationsMenu from "./NotificationsMenu";
-import DataSourceBadge from "./DataSourceBadge";
-import { CURRENT_USER } from "../config";
+import { Avatar, Menu, cn } from "./ui";
 
-const navGroups: {
-  heading: string;
-  items: { to: string; label: string; icon: typeof LayoutDashboard; end?: boolean }[];
-}[] = [
-  {
-    heading: "Overview",
-    items: [
-      { to: "/", label: "Dashboard", icon: LayoutDashboard, end: true },
-      { to: "/insights", label: "Insights", icon: LineChart },
-    ],
-  },
-  {
-    heading: "Workspace",
-    items: [
-      { to: "/meetings", label: "Meetings", icon: CalendarDays },
-      { to: "/tasks", label: "Task Tracker", icon: ListChecks },
-      { to: "/decisions", label: "Decision Register", icon: Gavel },
-      { to: "/risks", label: "Risk Log", icon: ShieldAlert },
-    ],
-  },
-];
-
-const pageTitles: Record<string, string> = {
-  "/": "Dashboard",
-  "/upload": "Upload Meeting",
-  "/meetings": "Meetings",
-  "/tasks": "Task Tracker",
-  "/decisions": "Decision Register",
-  "/risks": "Risk Log",
-  "/insights": "Insights",
-  "/search": "Search",
-};
-
-function Logo({ small = false }: { small?: boolean }) {
+function NavItem({ to, icon, label, count, end, tone }: { to: string; icon: ReactNode; label: string; count?: number; end?: boolean; tone?: "amber" }) {
   return (
-    <div
-      className={`flex items-center justify-center rounded-xl bg-brand-gradient text-white shadow-glow ${
-        small ? "h-8 w-8" : "h-10 w-10"
-      }`}
-    >
-      <svg viewBox="0 0 32 32" className={small ? "h-4 w-4" : "h-5 w-5"} fill="none">
-        <path
-          d="M8 21V11l5 6 5-6v10"
-          stroke="currentColor"
-          strokeWidth="2.6"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+    <NavLink to={to} end={end} className={({ isActive }) => cn("nav-item", isActive && "nav-item-active")}>
+      <span className="flex w-4 justify-center">{icon}</span>
+      <span className="flex-1 truncate">{label}</span>
+      {!!count && (
+        <span className={cn("rounded px-1.5 text-2xs font-semibold tabular-nums", tone === "amber" ? "bg-amber-500/15 text-amber-700 dark:text-amber-300" : "text-faint")}>{count}</span>
+      )}
+    </NavLink>
+  );
+}
+
+function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
+  const me = useMe();
+  const { signOut } = useAuth();
+  const [theme, setTheme] = useTheme();
+  const navigate = useNavigate();
+  const insights = useQuery("insights", () => api.insights(), { refreshMs: 30000 });
+  const t = insights.data;
+
+  return (
+    <div className="flex h-full flex-col" onClick={(e) => (e.target as HTMLElement).closest("a") && onNavigate?.()}>
+      <div className="flex h-12 items-center gap-2 px-3">
+        <div className="flex h-6 w-6 items-center justify-center rounded-md bg-accent text-[11px] font-bold text-white">M</div>
+        <span className="text-[14px] font-semibold tracking-tight">MeetOps</span>
+      </div>
+
+      <div className="px-3 pb-2">
+        <button className="btn-primary w-full justify-start" onClick={() => { navigate("/upload"); onNavigate?.(); }}>
+          <Plus className="h-4 w-4" /> New meeting
+        </button>
+      </div>
+
+      <nav className="flex-1 space-y-4 overflow-y-auto px-2 py-2">
+        <div className="space-y-0.5">
+          <NavItem to="/" end icon={<Home className="h-4 w-4" />} label="My work" count={t?.me.openTasks} />
+          <NavItem to="/review" icon={<Inbox className="h-4 w-4" />} label="Review" count={t?.totals.pendingReview} tone="amber" />
+        </div>
+        <div className="space-y-0.5">
+          <div className="px-2.5 pb-1 text-2xs font-semibold uppercase tracking-wider text-faint">Workspace</div>
+          <NavItem to="/meetings" icon={<CalendarDays className="h-4 w-4" />} label="Meetings" count={t?.totals.meetings} />
+          <NavItem to="/tasks" icon={<ListChecks className="h-4 w-4" />} label="Tasks" count={t?.totals.openTasks} />
+          <NavItem to="/decisions" icon={<Gavel className="h-4 w-4" />} label="Decisions" count={t?.totals.decisions} />
+          <NavItem to="/risks" icon={<ShieldAlert className="h-4 w-4" />} label="Risks" count={t?.totals.openRisks} />
+        </div>
+        <div className="space-y-0.5">
+          <div className="px-2.5 pb-1 text-2xs font-semibold uppercase tracking-wider text-faint">Organisation</div>
+          <NavItem to="/insights" icon={<LineChart className="h-4 w-4" />} label="Insights" />
+          <NavItem to="/team" icon={<Users className="h-4 w-4" />} label="Team" />
+        </div>
+      </nav>
+
+      <div className="border-t border-line p-2">
+        <Menu
+          width={232}
+          trigger={() => (
+            <button className="flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left hover:bg-hover">
+              <Avatar name={me.name} initials={me.initials} size={26} />
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-[13px] font-medium text-fg">{me.name}</span>
+                <span className="block truncate text-2xs text-faint">
+                  {roleLabel[me.role]}
+                  {me.department && ` · ${me.department.name}`}
+                </span>
+              </span>
+              <ChevronsUpDown className="h-3.5 w-3.5 text-faint" />
+            </button>
+          )}
+          header={me.email}
+          items={[
+            { label: "Light", icon: <Sun className="h-3.5 w-3.5" />, checked: theme === "light", onSelect: () => setTheme("light") },
+            { label: "Dark", icon: <Moon className="h-3.5 w-3.5" />, checked: theme === "dark", onSelect: () => setTheme("dark") },
+            { label: "System", icon: <Monitor className="h-3.5 w-3.5" />, checked: theme === "system", onSelect: () => setTheme("system") },
+            "divider",
+            { label: "Sign out", icon: <LogOut className="h-3.5 w-3.5" />, onSelect: signOut, danger: true },
+          ]}
         />
-        <circle cx="23" cy="12" r="2.2" fill="currentColor" opacity="0.85" />
-      </svg>
+      </div>
     </div>
   );
 }
 
-function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
-  return (
-    <>
-      <div className="mb-8 flex items-center gap-3 px-2">
-        <Logo />
-        <div>
-          <div className="text-base font-extrabold tracking-tight text-white">MeetOps</div>
-          <div className="text-[11px] font-medium text-slate-400">Meeting Intelligence</div>
-        </div>
-      </div>
-
-      <NavLink
-        to="/upload"
-        onClick={onNavigate}
-        className="mb-6 flex items-center justify-center gap-2 rounded-xl bg-white/10 px-3 py-2.5 text-sm font-semibold text-white ring-1 ring-inset ring-white/10 transition hover:bg-white/[0.16]"
-      >
-        <Plus className="h-4 w-4" />
-        New meeting
-      </NavLink>
-
-      <nav className="flex flex-1 flex-col gap-6 overflow-y-auto">
-        {navGroups.map((group) => (
-          <div key={group.heading}>
-            <div className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-              {group.heading}
-            </div>
-            <div className="flex flex-col gap-1">
-              {group.items.map(({ to, label, icon: Icon, end }) => (
-                <NavLink
-                  key={to}
-                  to={to}
-                  end={end}
-                  onClick={onNavigate}
-                  className={({ isActive }) => `nav-link ${isActive ? "nav-link-active" : ""}`}
-                >
-                  {({ isActive }) => (
-                    <>
-                      {isActive && (
-                        <span className="absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-brand-gradient-soft" />
-                      )}
-                      <Icon className="h-[18px] w-[18px]" />
-                      {label}
-                    </>
-                  )}
-                </NavLink>
-              ))}
-            </div>
-          </div>
-        ))}
-      </nav>
-
-      <div className="mt-4 flex items-center gap-3 rounded-xl bg-white/5 p-3 ring-1 ring-inset ring-white/10">
-        <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-gradient text-xs font-bold text-white">
-          {CURRENT_USER.initials}
-        </span>
-        <div className="min-w-0">
-          <div className="truncate text-sm font-semibold text-white">{CURRENT_USER.name}</div>
-          <div className="truncate text-xs text-slate-400">{CURRENT_USER.role}</div>
-        </div>
-      </div>
-    </>
-  );
-}
+const TITLES: [RegExp, string][] = [
+  [/^\/$/, "My work"],
+  [/^\/review/, "Review"],
+  [/^\/meetings\/\d+/, "Meeting"],
+  [/^\/meetings/, "Meetings"],
+  [/^\/tasks/, "Tasks"],
+  [/^\/decisions/, "Decisions"],
+  [/^\/risks/, "Risks"],
+  [/^\/insights/, "Insights"],
+  [/^\/team/, "Team"],
+  [/^\/upload/, "New meeting"],
+  [/^\/search/, "Search"],
+];
 
 export default function Layout({ children }: { children: ReactNode }) {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
   const { pathname } = useLocation();
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [query, setQuery] = useState(searchParams.get("q") ?? "");
+  const title = TITLES.find(([rx]) => rx.test(pathname))?.[1] ?? "";
 
-  const title =
-    pageTitles[pathname] ?? (pathname.startsWith("/meetings/") ? "Meeting Detail" : "MeetOps");
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setPaletteOpen((o) => !o);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
-  // Keep the search box in sync with the URL on the search page (back/forward
-  // navigation). Adjusting state while rendering is React's recommended way
-  // to derive state from props without an effect.
-  const urlQuery = pathname === "/search" ? searchParams.get("q") ?? "" : null;
-  const [lastUrlQuery, setLastUrlQuery] = useState(urlQuery);
-  if (urlQuery !== lastUrlQuery) {
-    setLastUrlQuery(urlQuery);
-    if (urlQuery !== null) setQuery(urlQuery);
-  }
-
-  function submitSearch(e: FormEvent) {
-    e.preventDefault();
-    const q = query.trim();
-    if (q) navigate(`/search?q=${encodeURIComponent(q)}`);
-  }
+  useEffect(() => {
+    document.title = title ? `${title} · MeetOps` : "MeetOps";
+  }, [title]);
 
   return (
-    <div className="flex min-h-screen">
-      {/* Desktop sidebar */}
-      <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col bg-sidebar-gradient px-4 py-6 lg:flex">
-        <SidebarContent />
+    <div className="flex h-full">
+      <aside className="hidden w-[232px] shrink-0 border-r border-line bg-surface lg:block">
+        <Sidebar />
       </aside>
 
-      {/* Mobile drawer */}
-      {menuOpen && (
-        <div className="fixed inset-0 z-40 lg:hidden">
-          <div
-            className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
-            onClick={() => setMenuOpen(false)}
-          />
-          <aside className="absolute inset-y-0 left-0 flex w-72 flex-col bg-sidebar-gradient px-4 py-6 shadow-2xl">
-            <button
-              onClick={() => setMenuOpen(false)}
-              className="absolute right-3 top-3 rounded-lg p-1.5 text-slate-400 hover:bg-white/10 hover:text-white"
-              aria-label="Close menu"
-            >
-              <X className="h-5 w-5" />
+      {mobileOpen && (
+        <div className="fixed inset-0 z-40 bg-black/40 lg:hidden" onClick={() => setMobileOpen(false)}>
+          <aside className="h-full w-[260px] border-r border-line bg-surface animate-slide-in" onClick={(e) => e.stopPropagation()}>
+            <button className="icon-btn absolute left-[268px] top-2 bg-surface" onClick={() => setMobileOpen(false)} aria-label="Close menu">
+              <X className="h-4 w-4" />
             </button>
-            <SidebarContent onNavigate={() => setMenuOpen(false)} />
+            <Sidebar onNavigate={() => setMobileOpen(false)} />
           </aside>
         </div>
       )}
 
-      {/* Main column */}
-      <div className="flex min-w-0 flex-1 flex-col lg:pl-64">
-        <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-slate-200/70 bg-white/70 px-4 backdrop-blur-xl sm:px-6">
-          <button
-            onClick={() => setMenuOpen(true)}
-            className="rounded-xl border border-slate-200 bg-white p-2 text-slate-600 shadow-sm lg:hidden"
-            aria-label="Open menu"
-          >
-            <Menu className="h-5 w-5" />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="sticky top-0 z-30 flex h-12 shrink-0 items-center gap-2 border-b border-line bg-canvas/85 px-3 backdrop-blur sm:px-5">
+          <button className="icon-btn lg:hidden" onClick={() => setMobileOpen(true)} aria-label="Open menu">
+            <MenuIcon className="h-4 w-4" />
           </button>
-          <div className="flex items-center gap-2 lg:hidden">
-            <Logo small />
-            <span className="font-extrabold text-slate-900">MeetOps</span>
-          </div>
-
-          <h2 className="hidden text-lg font-bold tracking-tight text-slate-900 sm:block">
-            {title}
-          </h2>
-
-          <div className="ml-auto flex items-center gap-3">
-            <form onSubmit={submitSearch} className="relative hidden sm:block" role="search">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              <input
-                className="input w-56 pl-9 md:w-72"
-                placeholder="Search tasks, decisions, risks…"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                aria-label="Search"
-              />
-            </form>
-            <DataSourceBadge />
-            <NotificationsMenu />
-            <span
-              className="hidden h-9 w-9 items-center justify-center rounded-full bg-brand-gradient text-xs font-bold text-white sm:inline-flex"
-              title={CURRENT_USER.name}
-            >
-              {CURRENT_USER.initials}
-            </span>
-          </div>
+          <span className="text-[13px] font-medium text-muted">{title}</span>
+          <div className="flex-1" />
+          <button onClick={() => setPaletteOpen(true)} className="hidden h-8 w-[260px] items-center gap-2 rounded-md border border-line bg-surface px-2.5 text-[13px] text-faint shadow-card transition hover:border-line-strong sm:flex">
+            <Search className="h-3.5 w-3.5" />
+            <span className="flex-1 text-left">Search or jump to…</span>
+            <span className="kbd">Ctrl K</span>
+          </button>
+          <button className="icon-btn sm:hidden" onClick={() => setPaletteOpen(true)} aria-label="Search">
+            <Search className="h-4 w-4" />
+          </button>
+          <NotificationsMenu />
         </header>
-
-        <main className="flex-1 px-4 py-7 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-7xl animate-fade-up">{children}</div>
+        <main className="min-w-0 flex-1 overflow-y-auto">
+          <div className="mx-auto max-w-[1280px] px-4 py-6 sm:px-6 lg:px-8">{children}</div>
         </main>
       </div>
+
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
     </div>
   );
 }

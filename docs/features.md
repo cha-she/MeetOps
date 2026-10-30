@@ -1,112 +1,138 @@
 # MeetOps — Features
 
-Screenshots are taken from the running application (backend live, SQLite
-database seeded with `python -m app.seed --reset`, plus one transcript
-uploaded from `backend/samples/sprint8_planning.txt`).
+Screenshots are taken from the running application (backend live, database
+prepared with `python -m app.seed --demo`, signed in as the administrator).
 
-## 1. Dashboard
+## 1. Accounts, departments and roles
 
-![Dashboard](screenshots/dashboard.png)
+- **First run:** on an empty database the app asks for the first
+  administrator (name, email, department, password). No account is built in.
+- **Team page:** the administrator creates departments and one account per
+  person, sets the role, job title and department, resets passwords and
+  deactivates people who leave.
+- **Roles:** *Admin* changes everything; *Manager* reviews and edits items from
+  their department's meetings; *Member* updates their own tasks and reviews
+  items from meetings they attended. The server enforces this on every
+  request; the interface hides actions a person may not take.
+- Speakers in a transcript are matched to accounts by name, so tasks are
+  assigned to real people and appear in their *My work*.
 
-- Totals for open tasks (with overdue count), decisions, risks (with high
-  severity count) and processed meetings, each linking to its page.
-- "Extracted items per meeting" chart (tasks / decisions / risks) and task
-  status donut, both computed by `GET /api/insights/summary`.
-- Recent meetings and upcoming deadlines.
-- The **Live** badge shows the dashboard is reading from the API; when the
-  backend is not running it says **Demo data** and uses a built-in dataset.
-- Global search box and a notifications bell (overdue, due soon, assigned,
-  status change).
+## 2. My work (home)
 
-## 2. Meetings
+![My work](screenshots/home.png)
 
-![Meetings](screenshots/meetings.png)
+- Personal counts: open tasks, due this week, overdue, items waiting for
+  review; each opens the matching filtered list.
+- My tasks grouped by Overdue / Today / This week / Later / No due date, with
+  inline status, owner, due date and priority.
+- Recent meetings with what still needs review, and an activity feed built
+  from the audit log ("Ravindu moved … to Completed").
 
-Every uploaded meeting with its source type (audio / video / transcript),
-processing status, participants, duration and how many tasks, decisions and
-risks were extracted. Search by title.
+## 3. New meeting and the processing pipeline
 
-## 3. Meeting detail with evidence
+![New meeting](screenshots/upload.png)
 
-![Meeting detail](screenshots/meeting-detail.png)
+Upload a transcript with title, date and department. The page follows the
+backend through `upload → transcribe → preprocess → classify → extract →
+save` and then links to the meeting and its review items. Text transcripts
+(`Speaker: text`, optional `[hh:mm:ss]`) are processed end-to-end; audio and
+video are accepted and reported as "transcription in the next phase".
 
-- Automatic extractive summary.
-- Tabs for the tasks, decisions and risks of this meeting.
-- The full transcript, one utterance per line, with the predicted category
-  and the model's confidence.
-- **Evidence links**: every task, decision or risk anywhere in the app links
-  to the exact transcript line it came from (`/meetings/{id}?segment=…`), which
-  is highlighted on arrival.
+What happens inside:
 
-## 4. Upload and processing pipeline
+- **Classify:** the TF-IDF model labels every sentence; a rule layer then
+  corrects explicit requests, commitments, agreements and concerns, and
+  removes agenda lines and open questions (`ml/README.md` §3.7–3.8).
+- **Organise:** a request and its acceptance become one task; titles are
+  rewritten as actions; owner and due date come from whoever was asked or
+  accepted and whatever time was said; vague agreements quote what was
+  agreed; duplicates are merged.
+- **Review state:** confident model predictions are confirmed automatically;
+  everything else is a *suggestion* for a person to confirm.
 
-![Upload](screenshots/upload.png)
+## 4. Review
 
-Drag-and-drop or choose a file, give it a title and date, and submit. The
-page polls the meeting and shows the stage the backend is in:
-`upload → transcribe → preprocess → classify → extract → save`. Text
-transcripts (`Speaker: text` lines, optional `[hh:mm:ss]`) are processed
-end-to-end; audio and video are accepted and reported as "transcription
-coming in the next phase". Failures are shown with the backend's message.
+![Review](screenshots/review.png)
 
-## 5. Task tracker
+Everything the system was not sure about, grouped by meeting, with the
+evidence line, owner, due date and the model's confidence (or *Rule* when a
+rule found it). Confirm or reject one item or a whole meeting; every
+rejection is stored as label feedback for retraining, and can be undone.
 
-![Task tracker](screenshots/task-tracker.png)
+## 5. Meeting page
 
-- Extracted action items with owner (avatar), deadline, status and the
-  meeting they came from.
-- Filters: status, owner, meeting, overdue only, free text; sort by deadline.
-- Change status inline (Open → In Progress → Completed). The update is sent
-  with `PATCH /api/tasks/{id}`, written to the audit log, and produces a
-  "status change" notification.
-- Overdue and due-soon tasks are highlighted.
+![Meeting](screenshots/meeting-detail.png)
 
-## 6. Decision register
+- The transcript, one sentence per line, with its label and confidence. When
+  the rule layer changed the model's label, the line says so ("model said
+  Other · rule: request").
+- **Correct any line:** hover a line and mark it as Task, Decision, Risk or
+  Other. The register entry is created or removed immediately and the
+  correction is saved as feedback. This is how a missed task is added.
+- Extractive summary, and the meeting's tasks, decisions and risks with
+  review buttons and owners. Every item links back to its line
+  (`/meetings/{id}?segment=…`), which is highlighted on arrival.
 
-![Decision register](screenshots/decision-register.png)
+## 6. Tasks
 
-Agreed outcomes with who stated them, the meeting and date, and the evidence
-link to the transcript.
+![Tasks list](screenshots/task-tracker.png)
+![Tasks board](screenshots/task-board.png)
 
-## 7. Risk log
+- **List** grouped by due date, status, owner or meeting; **Board** with Open
+  / In progress / Completed columns, drag a card to change its status.
+- Filters: search, status, owner (*Me*, *Unassigned* or a person),
+  department, meeting, review state, priority, overdue, due-date range,
+  meeting-date range. Filters are kept in the URL.
+- Inline owner, due date (the phrase said in the meeting is kept, e.g.
+  "before the go-live"), status and priority; new task by hand; CSV export.
+- Changing a status notifies the owner and the meeting's uploader and writes
+  the audit log; completing a task records when, for on-time statistics.
 
-![Risk log](screenshots/risk-log.png)
+## 7. Decisions
 
-Concerns and blockers with a severity (High / Medium / Low, from cue words in
-the utterance) and a **recurring** flag when the same risk was raised in an
-earlier meeting (TF-IDF cosine similarity between risk statements).
+![Decisions](screenshots/decision-register.png)
 
-## 8. Insights
+Decision register: statement, who decided, date, meeting and department,
+evidence line; filters by meeting, person, department, review state and date
+range; edit the wording; confirm / reject; CSV export.
+
+## 8. Risks
+
+![Risks](screenshots/risk-log.png)
+
+Risk log: severity (High / Medium / Low, from cue words), status (Open /
+Mitigated / Closed), owner, who raised it, and a **Recurring** flag when a
+similar risk was raised in an earlier meeting (TF-IDF cosine similarity).
+Summary counts for open, high, recurring and unowned risks; filters; CSV
+export.
+
+## 9. Insights
 
 ![Insights](screenshots/insights.png)
 
-Completion rate, average items per meeting, busiest owner, task status and
-risk severity breakdowns, workload per person and the list of recurring
-risks.
+Task completion rate, on-time delivery, overdue now, review acceptance rate;
+tasks created vs completed per week; open risks by severity; workload per
+person; per-department open, overdue and completion; extracted items per
+meeting; recurring risks.
 
-## 9. Search
+## 10. Team
 
-![Search](screenshots/search.png)
+![Team](screenshots/team.png)
 
-One query across meetings (title, summary), tasks (description, owner),
-decisions, risks and the transcript text behind them.
+People with department, job title and role; departments with member counts;
+administrators add, edit, reset passwords and deactivate.
 
-## 10. Behind the screens
+## 11. Everywhere
 
-| Capability | Where |
-|------------|-------|
-| Utterance classification (Task / Decision / Risk / Other) | `ml/` package, Logistic Regression over word + character TF-IDF + risk-cue lexicon, macro-F1 0.48 on held-out meetings (see `ml/README.md`) |
-| Owner and deadline extraction | `backend/app/services/extraction.py`, rules + `dateparser`, relative to the meeting date |
-| Extractive summary | `backend/app/services/summary.py` |
-| Recurring-risk detection | same module, cosine similarity threshold 0.35 |
-| Notifications | derived from task deadlines and changes |
-| Audit log | `audit_logs` table, written on every API change |
-| Database | PostgreSQL (Docker) or SQLite, see `docs/database-schema.md` |
-| Tests | `frontend` lint + type-check + build, `backend/tests`, `ml/tests`, all run in GitHub Actions |
+- **Ctrl K** command palette: jump to any page or search meetings, tasks,
+  decisions, risks and transcript text.
+- Notifications: overdue, due soon, assigned, status changed, review needed.
+- Light, dark or system theme; responsive layout down to phone width.
+- Lists refresh in the background, so changes made by colleagues appear
+  without reloading.
 
-## 11. Planned for the next phase
+## 12. Planned for the next phase
 
 Audio/video ingestion (FFmpeg + Whisper), DistilBERT classifier with context
-features, learned owner/deadline extraction, role-based access control with
-personal accounts, email reminders for deadlines, PDF export of the decision
-register, and theme / appearance settings.
+features trained on the collected label feedback, learned owner/deadline
+extraction, email reminders for deadlines, PDF export of the registers.

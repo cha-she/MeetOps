@@ -1,64 +1,48 @@
 import { useEffect, useRef, useState, type DragEvent, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  UploadCloud,
-  FileAudio,
-  FileVideo,
-  FileText,
-  Check,
-  Loader2,
-  AlertTriangle,
-  X,
-} from "lucide-react";
-import { api } from "../api/endpoints";
+import { Link } from "react-router-dom";
+import { AlertTriangle, ArrowRight, Check, FileAudio, FileText, FileVideo, Loader2, UploadCloud, X } from "lucide-react";
 import { ApiError } from "../api/client";
+import { api } from "../api/endpoints";
+import { invalidate, useQuery } from "../api/hooks";
+import { useMe } from "../auth/AuthContext";
+import { Field, PageHeader, cn, todayIso } from "../components/ui";
 import { PIPELINE_POLL_INTERVAL_MS } from "../config";
-import { PageHeader } from "../components/ui";
 import type { Meeting, PipelineStage } from "../types";
 
-// Stages reported by the backend, in order. The UI ticks them off as the
+// Stages reported by the backend, in order. The page ticks them off as the
 // meeting's `pipelineStage` advances.
-const pipelineSteps: { key: PipelineStage; label: string }[] = [
-  { key: "upload", label: "Uploading file" },
-  { key: "transcribe", label: "Speech-to-text (audio/video only)" },
-  { key: "preprocess", label: "Cleaning & segmenting transcript" },
-  { key: "classify", label: "Classifying segments (Task / Decision / Risk / Other)" },
-  { key: "extract", label: "Extracting owners, deadlines & decisions" },
-  { key: "save", label: "Saving structured records" },
+const STEPS: { key: PipelineStage; label: string; detail: string }[] = [
+  { key: "upload", label: "Upload", detail: "File stored and meeting created" },
+  { key: "transcribe", label: "Transcribe", detail: "Speech-to-text for audio and video (next phase)" },
+  { key: "preprocess", label: "Preprocess", detail: "Split into speaker turns and sentences, clean the text" },
+  { key: "classify", label: "Classify", detail: "Model + rule layer label every sentence Task, Decision, Risk or Other" },
+  { key: "extract", label: "Extract", detail: "Owners, deadlines, titles; merge replies; recurring risks" },
+  { key: "save", label: "Save", detail: "Registers, summary, notifications and audit log" },
 ];
 
-const acceptedExtensions = [".txt", ".vtt", ".srt", ".json", ".mp3", ".wav", ".m4a", ".mp4", ".mov"];
-
+const ACCEPT = ".txt,.md,.mp3,.wav,.m4a,.ogg,.mp4,.mkv,.webm,.mov";
 type Phase = "idle" | "uploading" | "processing" | "done" | "failed";
 
-function todayIso(): string {
-  const d = new Date();
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-}
-
 function titleFromFilename(name: string): string {
-  return name
-    .replace(/\.[^.]+$/, "")
-    .replace(/[-_]+/g, " ")
-    .replace(/\s+/g, " ")
-    .trim()
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+  return name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ").replace(/\s+/g, " ").trim().replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-function isMedia(name: string) {
-  return /\.(mp3|wav|m4a|mp4|mov)$/i.test(name);
+function fileIcon(name: string) {
+  if (/\.(mp3|wav|m4a|ogg)$/i.test(name)) return <FileAudio className="h-5 w-5" />;
+  if (/\.(mp4|mkv|webm|mov)$/i.test(name)) return <FileVideo className="h-5 w-5" />;
+  return <FileText className="h-5 w-5" />;
 }
 
 export default function UploadMeeting() {
-  const navigate = useNavigate();
+  const me = useMe();
   const inputRef = useRef<HTMLInputElement>(null);
+  const depts = useQuery("departments", () => api.listDepartments());
 
   const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(todayIso());
+  const [deptId, setDeptId] = useState<number | "">(me.department?.id ?? "");
   const [dragOver, setDragOver] = useState(false);
-
   const [phase, setPhase] = useState<Phase>("idle");
   const [meeting, setMeeting] = useState<Meeting | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -70,12 +54,6 @@ export default function UploadMeeting() {
     setError(null);
   }
 
-  function onDrop(e: DragEvent) {
-    e.preventDefault();
-    setDragOver(false);
-    chooseFile(e.dataTransfer.files?.[0] ?? null);
-  }
-
   async function submit(e: FormEvent) {
     e.preventDefault();
     if (!file) return;
@@ -85,6 +63,7 @@ export default function UploadMeeting() {
     form.append("file", file);
     form.append("title", title.trim() || titleFromFilename(file.name));
     form.append("date", date);
+    if (deptId) form.append("departmentId", String(deptId));
     try {
       const created = await api.uploadMeeting(form);
       setMeeting(created);
@@ -98,17 +77,19 @@ export default function UploadMeeting() {
   // Poll the meeting while the backend pipeline runs.
   useEffect(() => {
     if (phase !== "processing" || !meeting) return;
-    const timer = setInterval(async () => {
+    const timer = window.setInterval(async () => {
       try {
         const latest = await api.getMeeting(meeting.id);
         setMeeting(latest);
-        if (latest.status === "Processed") setPhase("done");
-        if (latest.status === "Failed") setPhase("failed");
+        if (latest.status === "Processed" || latest.status === "Failed") {
+          setPhase(latest.status === "Processed" ? "done" : "failed");
+          invalidate();
+        }
       } catch {
         // transient error: keep polling
       }
     }, PIPELINE_POLL_INTERVAL_MS);
-    return () => clearInterval(timer);
+    return () => window.clearInterval(timer);
   }, [phase, meeting]);
 
   function reset() {
@@ -120,184 +101,158 @@ export default function UploadMeeting() {
     setError(null);
   }
 
-  const currentIndex = meeting?.pipelineStage
-    ? pipelineSteps.findIndex((s) => s.key === meeting.pipelineStage)
-    : phase === "uploading"
-    ? 0
-    : -1;
+  const current = phase === "done" ? STEPS.length : meeting?.pipelineStage ? STEPS.findIndex((s) => s.key === meeting.pipelineStage) : phase === "uploading" ? 0 : -1;
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <PageHeader
-        title="Upload a meeting"
-        subtitle="Drop a transcript, audio, or video file and MeetOps will turn it into structured records."
-      />
+    <div className="mx-auto max-w-2xl">
+      <PageHeader title="New meeting" description="Upload a transcript and MeetOps turns it into tasks, decisions and risks, each linked to the line it came from." />
 
-      {phase === "idle" && (
-        <form onSubmit={submit} className="space-y-4">
+      {phase === "idle" ? (
+        <form onSubmit={submit} className="panel space-y-4 p-5">
           <div
-            onDragOver={(e) => {
+            onDragOver={(e: DragEvent) => {
               e.preventDefault();
               setDragOver(true);
             }}
             onDragLeave={() => setDragOver(false)}
-            onDrop={onDrop}
+            onDrop={(e: DragEvent) => {
+              e.preventDefault();
+              setDragOver(false);
+              chooseFile(e.dataTransfer.files?.[0] ?? null);
+            }}
             onClick={() => inputRef.current?.click()}
-            className={`card flex cursor-pointer flex-col items-center justify-center px-6 py-14 text-center transition ${
-              dragOver ? "border-brand-400 bg-brand-50/50" : "border-slate-200"
-            }`}
+            className={cn("flex cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-line-strong px-6 py-10 text-center transition hover:bg-hover/40", dragOver && "border-accent bg-accent-soft/50")}
           >
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-50 text-brand-600">
-              <UploadCloud className="h-8 w-8" />
-            </div>
+            <input ref={inputRef} type="file" accept={ACCEPT} className="hidden" onChange={(e) => chooseFile(e.target.files?.[0] ?? null)} />
             {file ? (
-              <>
-                <div className="text-base font-semibold text-slate-800">{file.name}</div>
-                <div className="mt-1 text-sm text-slate-400">
-                  {(file.size / 1024).toFixed(0)} KB · click to choose a different file
-                </div>
-              </>
+              <div className="flex items-center gap-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-subtle text-muted">{fileIcon(file.name)}</span>
+                <span className="text-left">
+                  <span className="block text-[13px] font-medium">{file.name}</span>
+                  <span className="block text-2xs text-faint">{(file.size / 1024).toFixed(1)} KB · click to change</span>
+                </span>
+                <button
+                  type="button"
+                  className="icon-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setFile(null);
+                  }}
+                  aria-label="Remove file"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
             ) : (
               <>
-                <div className="text-base font-semibold text-slate-800">
-                  Drag & drop your meeting file here
-                </div>
-                <div className="mt-1 text-sm text-slate-400">
-                  or click to browse — TXT, VTT, SRT, MP3, WAV, MP4
-                </div>
+                <UploadCloud className="mb-2 h-6 w-6 text-faint" />
+                <div className="text-[13px] font-medium">Drop a file here or click to browse</div>
+                <div className="mt-1 text-[12px] text-faint">Text transcripts (.txt) with one “Speaker: text” line per turn, optional [hh:mm:ss] timestamps</div>
               </>
             )}
-            <input
-              ref={inputRef}
-              type="file"
-              className="hidden"
-              accept={acceptedExtensions.join(",")}
-              onChange={(e) => chooseFile(e.target.files?.[0] ?? null)}
-            />
           </div>
 
-          {file && isMedia(file.name) && (
-            <div className="flex items-start gap-2 rounded-lg border border-amber-100 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-              Audio and video transcription is part of the next development phase. Upload a
-              text transcript (TXT, VTT, or SRT) to process a meeting now.
-            </div>
-          )}
-
-          <div className="card grid gap-4 p-5 sm:grid-cols-2">
-            <label className="block">
-              <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400">
-                Meeting title
-              </span>
-              <input
-                className="input"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g. Sprint planning"
-              />
-            </label>
-            <label className="block">
-              <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400">
-                Meeting date
-              </span>
-              <input className="input" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-              <span className="mt-1 block text-xs text-slate-400">
-                Used to resolve relative deadlines such as “by Friday”.
-              </span>
-            </label>
+          <div className="grid gap-3 sm:grid-cols-[1fr_150px_180px]">
+            <Field label="Title">
+              <input className="field" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Sprint 9 planning" required />
+            </Field>
+            <Field label="Meeting date">
+              <input className="field" type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
+            </Field>
+            <Field label="Department">
+              <select className="field" value={deptId} onChange={(e) => setDeptId(e.target.value ? Number(e.target.value) : "")}>
+                <option value="">None</option>
+                {(depts.data ?? []).map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.name}
+                  </option>
+                ))}
+              </select>
+            </Field>
           </div>
 
-          {error && (
-            <div className="flex items-start gap-2 rounded-lg border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
-              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-              {error}
-            </div>
-          )}
+          {error && <div className="rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-[13px] text-red-700 dark:text-red-300">{error}</div>}
 
-          <div className="flex items-center justify-between">
-            <div className="grid grid-cols-3 gap-3 text-xs text-slate-400">
-              {[
-                { icon: FileText, label: "Transcript · TXT VTT SRT" },
-                { icon: FileAudio, label: "Audio · MP3 WAV M4A" },
-                { icon: FileVideo, label: "Video · MP4 MOV" },
-              ].map(({ icon: Icon, label }) => (
-                <span key={label} className="inline-flex items-center gap-1.5">
-                  <Icon className="h-4 w-4 text-brand-500" /> {label}
-                </span>
-              ))}
-            </div>
-            <button type="submit" className="btn-primary" disabled={!file}>
-              Process meeting
+          <div className="flex justify-end">
+            <button className="btn-primary" disabled={!file}>
+              Upload and process <ArrowRight className="h-4 w-4" />
             </button>
           </div>
         </form>
-      )}
-
-      {phase !== "idle" && (
-        <div className="card p-6">
-          <div className="mb-6 flex items-start justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <FileText className="h-8 w-8 text-brand-500" />
-              <div>
-                <div className="font-semibold text-slate-800">{meeting?.title ?? title}</div>
-                <div className="text-xs text-slate-400">
-                  {phase === "done" && "Processing complete"}
-                  {phase === "failed" && "Processing failed"}
-                  {(phase === "uploading" || phase === "processing") && "Running the MeetOps pipeline…"}
-                </div>
+      ) : (
+        <div className="panel p-5">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <div className="truncate text-[14px] font-semibold">{meeting?.title ?? title}</div>
+              <div className="text-[12px] text-muted">
+                {phase === "done" ? "Processing complete" : phase === "failed" ? "Processing stopped" : "Processing… you can leave this page, it continues in the background."}
               </div>
             </div>
-            {(phase === "done" || phase === "failed") && (
-              <button onClick={reset} className="btn-ghost" aria-label="Upload another">
-                <X className="h-4 w-4" /> Upload another
-              </button>
-            )}
+            {phase === "processing" || phase === "uploading" ? <Loader2 className="h-5 w-5 animate-spin text-accent" /> : null}
           </div>
 
-          <ol className="space-y-3">
-            {pipelineSteps.map((step, i) => {
-              const done = phase === "done" || i < currentIndex;
-              const active = (phase === "uploading" || phase === "processing") && i === currentIndex;
-              const skipped = done && step.key === "transcribe" && meeting?.source === "transcript";
+          <ol className="space-y-1">
+            {STEPS.map((s, i) => {
+              const skipped = s.key === "transcribe" && meeting?.source === "transcript" && i < current;
+              const failedHere = phase === "failed" && i === current;
+              const done = i < current || phase === "done";
+              const running = i === current && phase !== "done" && phase !== "failed";
               return (
-                <li key={step.key} className="flex items-center gap-3">
-                  <span
-                    className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
-                      done
-                        ? "bg-emerald-100 text-emerald-600"
-                        : active
-                        ? "bg-brand-100 text-brand-600"
-                        : "bg-slate-100 text-slate-400"
-                    }`}
-                  >
-                    {done ? <Check className="h-4 w-4" /> : active ? <Loader2 className="h-4 w-4 animate-spin" /> : i + 1}
+                <li key={s.key} className={cn("flex items-start gap-3 rounded-md px-2 py-2", running && "bg-accent-soft/50")}>
+                  <span className={cn("mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-2xs", done ? "border-emerald-500 bg-emerald-500 text-white" : failedHere ? "border-red-500 bg-red-500 text-white" : running ? "border-accent text-accent" : "border-line text-faint")}>
+                    {done ? <Check className="h-3 w-3" /> : failedHere ? <X className="h-3 w-3" /> : running ? <Loader2 className="h-3 w-3 animate-spin" /> : i + 1}
                   </span>
-                  <span className={`text-sm ${done || active ? "font-medium text-slate-800" : "text-slate-400"}`}>
-                    {step.label}
-                    {skipped && <span className="ml-2 text-xs text-slate-400">(skipped for transcripts)</span>}
+                  <span>
+                    <span className={cn("block text-[13px] font-medium", !done && !running && "text-muted")}>
+                      {s.label}
+                      {skipped && <span className="ml-2 text-2xs font-normal text-faint">skipped for text transcripts</span>}
+                    </span>
+                    <span className="block text-[12px] text-faint">{s.detail}</span>
                   </span>
                 </li>
               );
             })}
           </ol>
 
-          {phase === "done" && meeting && (
-            <div className="mt-6 flex flex-col gap-3 rounded-lg bg-emerald-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="text-sm font-medium text-emerald-700">
-                Extracted {meeting.taskCount} tasks, {meeting.decisionCount} decisions, and {meeting.riskCount} risks.
-              </div>
-              <button className="btn-primary" onClick={() => navigate(`/meetings/${meeting.id}`)}>
-                View results
-              </button>
+          {phase === "failed" && meeting?.errorMessage && (
+            <div className="mt-4 flex gap-2 rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-[13px] text-red-700 dark:text-red-300">
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+              {meeting.errorMessage}
             </div>
           )}
 
-          {phase === "failed" && (
-            <div className="mt-6 flex items-start gap-2 rounded-lg border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
-              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-              {meeting?.errorMessage ?? "The pipeline failed. Check the backend logs."}
+          {phase === "done" && meeting && (
+            <div className="mt-4 grid grid-cols-3 gap-3 text-center">
+              {[
+                ["Tasks", meeting.taskCount],
+                ["Decisions", meeting.decisionCount],
+                ["Risks", meeting.riskCount],
+              ].map(([label, n]) => (
+                <div key={label} className="rounded-md border border-line p-3">
+                  <div className="text-xl font-semibold tabular-nums">{n}</div>
+                  <div className="text-2xs text-faint">{label}</div>
+                </div>
+              ))}
             </div>
           )}
+
+          <div className="mt-5 flex justify-end gap-2">
+            {(phase === "done" || phase === "failed") && (
+              <button className="btn-secondary" onClick={reset}>
+                Upload another
+              </button>
+            )}
+            {meeting && phase === "done" && meeting.suggestedCount > 0 && (
+              <Link to={`/review?meeting=${meeting.id}`} className="btn-secondary">
+                Review {meeting.suggestedCount} items
+              </Link>
+            )}
+            {meeting && (
+              <Link to={`/meetings/${meeting.id}`} className="btn-primary">
+                Open meeting <ArrowRight className="h-4 w-4" />
+              </Link>
+            )}
+          </div>
         </div>
       )}
     </div>

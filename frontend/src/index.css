@@ -1,11 +1,44 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ---------------------------------------------------------------------------
+   Theme tokens (RGB triplets so Tailwind can apply opacity: bg-fg/5 etc.)
+   --------------------------------------------------------------------------- */
 :root {
   color-scheme: light;
+  --canvas: 248 248 250;
+  --surface: 255 255 255;
+  --subtle: 244 244 246;
+  --hover: 240 240 243;
+  --line: 230 230 234;
+  --line-strong: 212 212 218;
+  --fg: 24 24 27;
+  --muted: 100 100 112;
+  --faint: 150 150 162;
+  --accent: 79 70 229;
+  --accent-fg: 255 255 255;
+  --accent-soft: 238 240 255;
+  --accent-text: 67 56 202;
+}
+
+.dark {
+  color-scheme: dark;
+  --canvas: 12 12 15;
+  --surface: 20 20 24;
+  --subtle: 27 27 32;
+  --hover: 33 33 39;
+  --line: 40 40 47;
+  --line-strong: 56 56 64;
+  --fg: 236 236 240;
+  --muted: 160 160 172;
+  --faint: 112 112 124;
+  --accent: 114 108 255;
+  --accent-fg: 255 255 255;
+  --accent-soft: 34 32 66;
+  --accent-text: 165 160 255;
 }
 
 html,
@@ -15,64 +48,92 @@ body,
 }
 
 body {
-  @apply text-slate-700 antialiased;
-  font-feature-settings: "cv11", "ss01";
-  background-color: #f6f7fb;
-  background-image: radial-gradient(
-      1200px 500px at 100% -10%,
-      rgb(99 102 241 / 0.06),
-      transparent 60%
-    ),
-    radial-gradient(900px 500px at -10% 0%, rgb(124 58 237 / 0.05), transparent 55%);
-  background-attachment: fixed;
+  @apply bg-canvas text-fg antialiased;
+  font-size: 14px;
+  font-feature-settings: "cv11", "ss01", "ss03";
 }
 
-/* Thin, subtle scrollbars */
+::selection {
+  background: rgb(var(--accent) / 0.2);
+}
+
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-slate-300/70 rounded-full;
+  background: rgb(var(--line-strong));
+  border-radius: 999px;
+  border: 3px solid rgb(var(--canvas));
 }
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-slate-400;
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 @layer components {
-  .card {
-    @apply bg-white border border-slate-200/70 rounded-2xl shadow-card;
+  .panel {
+    @apply rounded-lg border border-line bg-surface;
   }
-  .card-hover {
-    @apply transition-all duration-200 hover:-translate-y-0.5 hover:shadow-soft hover:border-slate-300/80;
+  .panel-header {
+    @apply flex items-center justify-between gap-3 border-b border-line px-4 py-3;
   }
-
-  /* Sidebar nav */
-  .nav-link {
-    @apply relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-400 transition-all duration-200 hover:bg-white/5 hover:text-white;
-  }
-  .nav-link-active {
-    @apply bg-white/10 text-white shadow-inner hover:bg-white/10 hover:text-white;
+  .label {
+    @apply text-2xs font-semibold uppercase tracking-wider text-faint;
   }
 
-  .input {
-    @apply w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-brand-400 focus:ring-4 focus:ring-brand-100;
+  .field {
+    @apply h-8 w-full rounded-md border border-line bg-surface px-2.5 text-[13px] text-fg outline-none transition placeholder:text-faint hover:border-line-strong focus:border-accent focus:shadow-focus;
+  }
+  textarea.field {
+    @apply h-auto py-2;
   }
 
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 disabled:opacity-50;
+    @apply inline-flex h-8 select-none items-center justify-center gap-1.5 whitespace-nowrap rounded-md px-3 text-[13px] font-medium outline-none transition focus-visible:shadow-focus disabled:pointer-events-none disabled:opacity-50;
   }
   .btn-primary {
-    @apply btn bg-brand-gradient text-white shadow-soft hover:shadow-lift hover:brightness-[1.05] active:scale-[0.98];
+    @apply btn bg-accent text-accent-fg shadow-card hover:brightness-110 active:brightness-95;
+  }
+  .btn-secondary {
+    @apply btn border border-line bg-surface text-fg shadow-card hover:bg-hover;
   }
   .btn-ghost {
-    @apply btn border border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 hover:border-slate-300;
+    @apply btn text-muted hover:bg-hover hover:text-fg;
+  }
+  .btn-danger {
+    @apply btn border border-red-500/30 bg-red-500/10 text-red-600 hover:bg-red-500/15 dark:text-red-400;
+  }
+  .btn-sm {
+    @apply h-7 px-2 text-xs;
+  }
+  .icon-btn {
+    @apply inline-flex h-8 w-8 items-center justify-center rounded-md text-muted outline-none transition hover:bg-hover hover:text-fg focus-visible:shadow-focus;
   }
 
-  .chip {
-    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset;
+  .nav-item {
+    @apply flex h-8 items-center gap-2.5 rounded-md px-2.5 text-[13px] font-medium text-muted transition hover:bg-hover hover:text-fg;
   }
-  .gradient-text {
-    @apply bg-brand-gradient bg-clip-text text-transparent;
+  .nav-item-active {
+    @apply bg-hover text-fg;
+  }
+
+  .table {
+    @apply w-full border-collapse text-left text-[13px];
+  }
+  .table th {
+    @apply h-9 whitespace-nowrap border-b border-line bg-subtle/60 px-3 text-2xs font-semibold uppercase tracking-wider text-faint;
+  }
+  .table td {
+    @apply border-b border-line px-3 py-2 align-middle;
+  }
+  .table tbody tr {
+    @apply transition-colors hover:bg-hover/60;
+  }
+  .table tbody tr:last-child td {
+    @apply border-b-0;
+  }
+
+  .kbd {
+    @apply inline-flex h-5 min-w-5 items-center justify-center rounded border border-line bg-subtle px-1 font-mono text-2xs text-muted;
   }
 }

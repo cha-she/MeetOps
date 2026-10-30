@@ -21,10 +21,29 @@ function toApiError(err: unknown): ApiError {
   return new ApiError(err instanceof Error ? err.message : "Unknown error", -1);
 }
 
+// ---------------------------------------------------------------------------
+// Invalidation: after a change, call invalidate("tasks") and every mounted
+// query whose key starts with "tasks" fetches again, so all screens agree.
+// ---------------------------------------------------------------------------
+const subscribers = new Set<{ key: string; reload: () => void }>();
+
+export function invalidate(...prefixes: string[]) {
+  subscribers.forEach((s) => {
+    if (prefixes.length === 0 || prefixes.some((p) => s.key.startsWith(p))) s.reload();
+  });
+}
+
+interface Options {
+  refreshMs?: number; // poll in the background (lists use this to show changes made elsewhere)
+  enabled?: boolean;
+}
+
 // Small data-fetching hook. `key` identifies the request; when it changes (or
-// reload() is called) the request is re-run. Previous data is kept visible
-// while a reload is in flight so the UI does not flash empty.
-export function useQuery<T>(key: string, fetcher: () => Promise<T>): QueryState<T> {
+// reload() is called) the request runs again. Previous data stays visible
+// while a reload is in flight, so the UI does not flash empty. Background
+// refreshes (polling, window focus, invalidate) never show a loading state.
+export function useQuery<T>(key: string, fetcher: () => Promise<T>, options: Options = {}): QueryState<T> {
+  const { refreshMs, enabled = true } = options;
   const fetcherRef = useRef(fetcher);
   useEffect(() => {
     fetcherRef.current = fetcher;
@@ -35,6 +54,7 @@ export function useQuery<T>(key: string, fetcher: () => Promise<T>): QueryState<
   const [result, setResult] = useState<Result<T>>({ token: "" });
 
   useEffect(() => {
+    if (!enabled) return;
     let alive = true;
     fetcherRef
       .current()
@@ -47,19 +67,34 @@ export function useQuery<T>(key: string, fetcher: () => Promise<T>): QueryState<
     return () => {
       alive = false;
     };
-  }, [token]);
+  }, [token, enabled]);
 
-  const settled = result.token === token;
   const reload = useCallback(() => setVersion((v) => v + 1), []);
+
+  useEffect(() => {
+    const sub = { key, reload };
+    subscribers.add(sub);
+    const onFocus = () => reload();
+    window.addEventListener("focus", onFocus);
+    const timer = refreshMs ? window.setInterval(reload, refreshMs) : undefined;
+    return () => {
+      subscribers.delete(sub);
+      window.removeEventListener("focus", onFocus);
+      if (timer) window.clearInterval(timer);
+    };
+  }, [key, reload, refreshMs]);
+
   const setData = useCallback(
-    (updater: (prev: T | undefined) => T | undefined) =>
-      setResult((prev) => ({ ...prev, data: updater(prev.data) })),
+    (updater: (prev: T | undefined) => T | undefined) => setResult((prev) => ({ ...prev, data: updater(prev.data) })),
     []
   );
 
+  const sameKey = result.token.split("#")[0] === key;
+  const settled = result.token === token;
   return {
-    data: result.data,
-    loading: !settled,
+    data: sameKey ? result.data : undefined,
+    // only a first load (or a new key) counts as loading; refreshes keep showing data
+    loading: enabled && !settled && !(sameKey && result.data !== undefined),
     error: settled ? result.error ?? null : null,
     reload,
     setData,

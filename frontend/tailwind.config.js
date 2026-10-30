@@ -1,9 +1,31 @@
 /** @type {import('tailwindcss').Config} */
+
+// Semantic colour tokens (canvas, surface, line, fg, muted ...) are CSS variables
+// defined in src/index.css for the light and the dark theme, so every component
+// switches theme without per-class dark: variants.
+const token = (name) => `rgb(var(--${name}) / <alpha-value>)`;
+
 export default {
+  darkMode: "class",
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       colors: {
+        canvas: token("canvas"),
+        surface: token("surface"),
+        subtle: token("subtle"),
+        hover: token("hover"),
+        line: token("line"),
+        "line-strong": token("line-strong"),
+        fg: token("fg"),
+        muted: token("muted"),
+        faint: token("faint"),
+        accent: {
+          DEFAULT: token("accent"),
+          fg: token("accent-fg"),
+          soft: token("accent-soft"),
+          text: token("accent-text"),
+        },
         brand: {
           50: "#eef2ff",
           100: "#e0e7ff",
@@ -15,49 +37,31 @@ export default {
           700: "#4338ca",
           800: "#3730a3",
           900: "#312e81",
-          950: "#1e1b4b",
-        },
-        ink: {
-          800: "#141a2e",
-          900: "#0f1420",
-          950: "#0a0e18",
         },
       },
       fontFamily: {
-        sans: [
-          "Inter",
-          "ui-sans-serif",
-          "system-ui",
-          "-apple-system",
-          "Segoe UI",
-          "Roboto",
-          "Helvetica Neue",
-          "Arial",
-          "sans-serif",
-        ],
+        sans: ["Inter", "ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "sans-serif"],
+        mono: ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "Menlo", "Consolas", "monospace"],
+      },
+      fontSize: {
+        "2xs": ["0.6875rem", { lineHeight: "1rem" }],
       },
       boxShadow: {
-        card: "0 1px 2px 0 rgb(15 23 42 / 0.04), 0 1px 3px 0 rgb(15 23 42 / 0.06)",
-        soft: "0 4px 16px -4px rgb(15 23 42 / 0.10), 0 2px 6px -2px rgb(15 23 42 / 0.06)",
-        lift: "0 12px 32px -8px rgb(79 70 229 / 0.18), 0 6px 12px -6px rgb(15 23 42 / 0.10)",
-        glow: "0 0 0 1px rgb(99 102 241 / 0.20), 0 8px 24px -6px rgb(99 102 241 / 0.35)",
-      },
-      backgroundImage: {
-        "brand-gradient": "linear-gradient(135deg, #6366f1 0%, #7c3aed 100%)",
-        "brand-gradient-soft": "linear-gradient(135deg, #818cf8 0%, #a78bfa 100%)",
-        "sidebar-gradient":
-          "linear-gradient(180deg, #141a2e 0%, #0f1420 60%, #0a0e18 100%)",
-        "hero-gradient":
-          "linear-gradient(120deg, #4f46e5 0%, #6d28d9 45%, #7c3aed 100%)",
+        card: "0 1px 2px 0 rgb(0 0 0 / 0.04)",
+        pop: "0 10px 38px -10px rgb(22 23 24 / 0.35), 0 10px 20px -15px rgb(22 23 24 / 0.2)",
+        focus: "0 0 0 3px rgb(var(--accent) / 0.25)",
       },
       keyframes: {
-        "fade-up": {
-          "0%": { opacity: "0", transform: "translateY(8px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
-        },
+        "fade-in": { from: { opacity: "0" }, to: { opacity: "1" } },
+        "pop-in": { from: { opacity: "0", transform: "translateY(4px) scale(0.98)" }, to: { opacity: "1", transform: "none" } },
+        "slide-in": { from: { opacity: "0", transform: "translateX(12px)" }, to: { opacity: "1", transform: "none" } },
+        pulse: { "0%, 100%": { opacity: "1" }, "50%": { opacity: "0.45" } },
       },
       animation: {
-        "fade-up": "fade-up 0.4s ease-out both",
+        "fade-in": "fade-in 0.15s ease-out both",
+        "pop-in": "pop-in 0.16s ease-out both",
+        "slide-in": "slide-in 0.2s ease-out both",
+        pulse: "pulse 1.6s ease-in-out infinite",
       },
     },
   },

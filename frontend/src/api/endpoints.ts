@@ -1,12 +1,20 @@
 import { http } from "./client";
-import { demoApi } from "./demo";
-import { API_BASE_URL, DEMO_MODE } from "../config";
 import type {
+  Activity,
+  AuthResponse,
+  Category,
   Decision,
+  Department,
   InsightsSummary,
   Meeting,
   Notification,
+  Priority,
+  ReviewQueue,
+  ReviewStatus,
   Risk,
+  RiskSeverity,
+  RiskStatus,
+  Role,
   SearchResults,
   Task,
   TaskStatus,
@@ -14,138 +22,108 @@ import type {
   User,
 } from "../types";
 
-// ---------------------------------------------------------------------------
-// Live API (FastAPI backend). One function per endpoint; pages never call
-// fetch directly.
-// ---------------------------------------------------------------------------
+// One function per API endpoint; pages never call fetch directly.
 
-const liveApi = {
-  health: () => http.get<{ status: string; version: string }>("/health"),
+export interface TaskFilters {
+  status?: TaskStatus | "";
+  meetingId?: number;
+  ownerId?: number;
+  departmentId?: number;
+  mine?: boolean;
+  unassigned?: boolean;
+  review?: ReviewStatus | "";
+  priority?: Priority | "";
+  q?: string;
+  overdue?: boolean;
+  dueFrom?: string;
+  dueTo?: string;
+  from?: string;
+  to?: string;
+  sort?: "deadline" | "created" | "priority";
+  limit?: number;
+}
+
+export interface DecisionFilters {
+  meetingId?: number;
+  ownerId?: number;
+  departmentId?: number;
+  review?: ReviewStatus | "";
+  from?: string;
+  to?: string;
+  q?: string;
+}
+
+export interface RiskFilters extends DecisionFilters {
+  severity?: RiskSeverity | "";
+  status?: RiskStatus | "";
+  recurring?: boolean;
+}
+
+export interface MeetingFilters {
+  q?: string;
+  departmentId?: number;
+  participantId?: number;
+  status?: string;
+  from?: string;
+  to?: string;
+  limit?: number;
+}
+
+export type TaskPatch = Partial<Pick<Task, "status" | "deadline" | "description" | "priority" | "reviewStatus">> & {
+  ownerId?: number | null;
+};
+
+export const api = {
+  health: () => http.get<{ status: string; version: string; database: string; model: string | null; rules: boolean }>("/health"),
+
+  // Auth
+  authStatus: () => http.get<{ needsSetup: boolean }>("/auth/status"),
+  setup: (body: { name: string; email: string; password: string; department: string; title?: string }) =>
+    http.post<AuthResponse>("/auth/setup", body),
+  login: (email: string, password: string) => http.post<AuthResponse>("/auth/login", { email, password }),
+  me: () => http.get<User>("/auth/me"),
 
   // Meetings
-  listMeetings: (params?: { q?: string; limit?: number }) =>
-    http.get<Meeting[]>("/meetings", params),
+  listMeetings: (params?: MeetingFilters) => http.get<Meeting[]>("/meetings", { ...params }),
   getMeeting: (id: number | string) => http.get<Meeting>(`/meetings/${id}`),
-  getSegments: (id: number | string) =>
-    http.get<TranscriptSegment[]>(`/meetings/${id}/segments`),
+  getSegments: (id: number | string) => http.get<TranscriptSegment[]>(`/meetings/${id}/segments`),
   uploadMeeting: (formData: FormData) => http.upload<Meeting>("/meetings/upload", formData),
   deleteMeeting: (id: number) => http.del<void>(`/meetings/${id}`),
+  reclassifySegment: (segmentId: number, category: Category) =>
+    http.post<TranscriptSegment>(`/segments/${segmentId}/category`, { category }),
 
-  // Tasks
-  listTasks: (params?: {
-    status?: TaskStatus | "";
-    meetingId?: number;
-    ownerId?: number;
-    q?: string;
-    overdue?: boolean;
-    sort?: "deadline" | "created";
-    limit?: number;
-  }) => http.get<Task[]>("/tasks", params),
-  updateTask: (
+  // Registers
+  listTasks: (params?: TaskFilters) => http.get<Task[]>("/tasks", { ...params }),
+  createTask: (body: { description: string; meetingId: number; ownerId?: number | null; deadline?: string | null; priority?: Priority; segmentId?: number }) =>
+    http.post<Task>("/tasks", body),
+  updateTask: (id: number, patch: TaskPatch) => http.patch<Task>(`/tasks/${id}`, patch),
+  listDecisions: (params?: DecisionFilters) => http.get<Decision[]>("/decisions", { ...params }),
+  updateDecision: (id: number, patch: { statement?: string; ownerId?: number | null; reviewStatus?: ReviewStatus }) =>
+    http.patch<Decision>(`/decisions/${id}`, patch),
+  listRisks: (params?: RiskFilters) => http.get<Risk[]>("/risks", { ...params }),
+  updateRisk: (
     id: number,
-    patch: Partial<Pick<Task, "status" | "deadline" | "description">> & { ownerId?: number | null }
-  ) => http.patch<Task>(`/tasks/${id}`, patch),
+    patch: { description?: string; severity?: RiskSeverity; status?: RiskStatus; ownerId?: number | null; reviewStatus?: ReviewStatus }
+  ) => http.patch<Risk>(`/risks/${id}`, patch),
+  reviewQueue: (params?: { meetingId?: number; mine?: boolean }) => http.get<ReviewQueue>("/review", { ...params }),
 
-  // Decisions and risks
-  listDecisions: (params?: { meetingId?: number; q?: string }) =>
-    http.get<Decision[]>("/decisions", params),
-  listRisks: (params?: { meetingId?: number; severity?: string; q?: string }) =>
-    http.get<Risk[]>("/risks", params),
+  // People
+  listUsers: (includeInactive = false) => http.get<User[]>("/users", { includeInactive }),
+  createUser: (body: { name: string; email: string; password: string; role: Role; title?: string; departmentId?: number | null }) =>
+    http.post<User>("/users", body),
+  updateUser: (
+    id: number,
+    patch: { name?: string; role?: Role; title?: string | null; departmentId?: number | null; isActive?: boolean; password?: string }
+  ) => http.patch<User>(`/users/${id}`, patch),
+  listDepartments: () => http.get<Department[]>("/departments"),
+  createDepartment: (name: string) => http.post<Department>("/departments", { name }),
+  renameDepartment: (id: number, name: string) => http.patch<Department>(`/departments/${id}`, { name }),
+  deleteDepartment: (id: number) => http.del<void>(`/departments/${id}`),
 
-  // People, insights, search, notifications
-  listUsers: () => http.get<User[]>("/users"),
+  // Insights, activity, search, notifications
   insights: () => http.get<InsightsSummary>("/insights/summary"),
+  activity: (params?: { meetingId?: number; limit?: number }) => http.get<Activity[]>("/activity", { ...params }),
   search: (q: string) => http.get<SearchResults>("/search", { q }),
   listNotifications: () => http.get<Notification[]>("/notifications"),
   markNotificationsRead: () => http.post<void>("/notifications/read-all"),
-};
-
-export type MeetOpsApi = typeof liveApi;
-
-// ---------------------------------------------------------------------------
-// Data source selection.
-//
-// The first request probes the backend's /health endpoint. If it answers, the
-// live API is used for the rest of the session; if it cannot be reached, the
-// app switches to the built-in demo dataset so every screen stays usable.
-// VITE_DEMO_MODE=true forces demo data regardless of the backend.
-// ---------------------------------------------------------------------------
-
-export type DataSource = "live" | "demo" | "unknown";
-
-let source: DataSource = DEMO_MODE ? "demo" : "unknown";
-let probe: Promise<DataSource> | null = null;
-const listeners = new Set<(s: DataSource) => void>();
-
-function setSource(next: DataSource) {
-  source = next;
-  listeners.forEach((fn) => fn(next));
-}
-
-export function getDataSource(): DataSource {
-  return source;
-}
-
-export function onDataSourceChange(fn: (s: DataSource) => void): () => void {
-  listeners.add(fn);
-  return () => listeners.delete(fn);
-}
-
-async function resolveSource(): Promise<DataSource> {
-  if (source !== "unknown") return source;
-  if (!probe) {
-    probe = probeBackend().then((ok) => {
-      setSource(ok ? "live" : "demo");
-      return source;
-    });
-  }
-  return probe;
-}
-
-// GET /health with a short timeout. Any failure (connection refused, dev-server
-// proxy error, timeout) means "no backend available".
-async function probeBackend(): Promise<boolean> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 4000);
-  try {
-    const res = await fetch(`${API_BASE_URL}/health`, { signal: controller.signal });
-    return res.ok;
-  } catch {
-    return false;
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
-// Re-probe the backend (e.g. after the user starts it).
-export function resetDataSource() {
-  if (DEMO_MODE) return;
-  probe = null;
-  setSource("unknown");
-}
-
-function pick<K extends keyof MeetOpsApi>(name: K): MeetOpsApi[K] {
-  return (async (...args: unknown[]) => {
-    const s = await resolveSource();
-    const impl = (s === "demo" ? demoApi : liveApi)[name] as (...a: unknown[]) => unknown;
-    return impl(...args);
-  }) as unknown as MeetOpsApi[K];
-}
-
-export const api: MeetOpsApi = {
-  health: pick("health"),
-  listMeetings: pick("listMeetings"),
-  getMeeting: pick("getMeeting"),
-  getSegments: pick("getSegments"),
-  uploadMeeting: pick("uploadMeeting"),
-  deleteMeeting: pick("deleteMeeting"),
-  listTasks: pick("listTasks"),
-  updateTask: pick("updateTask"),
-  listDecisions: pick("listDecisions"),
-  listRisks: pick("listRisks"),
-  listUsers: pick("listUsers"),
-  insights: pick("insights"),
-  search: pick("search"),
-  listNotifications: pick("listNotifications"),
-  markNotificationsRead: pick("markNotificationsRead"),
 };
