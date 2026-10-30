@@ -1,0 +1,24 @@
+[00:00:03] Chanya: Hi everyone, thanks for joining. This is the weekly review for the Lanka Foods onboarding.
+[00:00:20] Dilini: So, quick status. They signed the contract last Friday and the kickoff call went well.
+[00:00:42] Dilini: Their main ask is that the inventory data from their old system is imported before go-live.
+[00:01:05] Ravindu: The problem is their export is a set of Excel files with no consistent format.
+[00:01:22] Ravindu: Cleaning that by hand could easily take two weeks.
+[00:01:40] Nethmi: I could write a small script to normalise the columns, that would save a lot of time.
+[00:01:58] Chanya: Okay, let's do that. Nethmi, please have a first version of the script ready by next Tuesday.
+[00:02:15] Nethmi: Okay.
+[00:02:25] Dilini: They also asked about single sign-on with their Google accounts.
+[00:02:41] Ravindu: We support it, but we've never set it up for a client with more than two hundred users.
+[00:03:00] Chanya: Hmm, I'm a bit worried about performance with that many logins on day one.
+[00:03:20] Ravindu: I'll run a load test with three hundred simulated users before the go-live.
+[00:03:38] Dilini: What about training? Do we do it on site or online?
+[00:03:52] Chanya: Online is cheaper, but their warehouse staff aren't very comfortable with video calls.
+[00:04:10] Dilini: So I think on site makes more sense for them.
+[00:04:22] Chanya: Yeah, okay, we'll do the training on site at their Kandy office.
+[00:04:40] Ishara: Who's going to prepare the training material?
+[00:04:52] Dilini: I can put the slides together, I've done it for the last two clients.
+[00:05:10] Ishara: One more thing, their IT person is leaving the company at the end of the month.
+[00:05:28] Ishara: If nobody replaces him, we won't have anyone on their side to approve the data mapping.
+[00:05:50] Chanya: Good point. Dilini, could you ask them who the new contact will be?
+[00:06:05] Dilini: Sure, I'll email their manager today.
+[00:06:20] Chanya: Alright, go-live stays on the fifteenth unless the data import slips.
+[00:06:38] Chanya: Thanks all, let's catch up next week.

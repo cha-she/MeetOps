@@ -1,0 +1,90 @@
+segment_id,meeting_id,speaker,start_time,text,label,owner_span,deadline_span,notes,annotated_at
+client_onboarding_review.0,client_onboarding_review,Chanya,3.0,"Hi everyone, thanks for joining.",Other,,,,2026-10-30
+client_onboarding_review.1,client_onboarding_review,Chanya,3.0,This is the weekly review for the Lanka Foods onboarding.,Other,,,,2026-10-30
+client_onboarding_review.2,client_onboarding_review,Dilini,20.0,"So, quick status.",Other,,,,2026-10-30
+client_onboarding_review.3,client_onboarding_review,Dilini,20.0,They signed the contract last Friday and the kickoff call went well.,Other,,,,2026-10-30
+client_onboarding_review.4,client_onboarding_review,Dilini,42.0,Their main ask is that the inventory data from their old system is imported before go-live.,Other,,,,2026-10-30
+client_onboarding_review.5,client_onboarding_review,Ravindu,65.0,The problem is their export is a set of Excel files with no consistent format.,Risk,,,Inconsistent export format.,2026-10-30
+client_onboarding_review.6,client_onboarding_review,Ravindu,82.0,Cleaning that by hand could easily take two weeks.,Risk,,,Could take two weeks.,2026-10-30
+client_onboarding_review.7,client_onboarding_review,Nethmi,100.0,"I could write a small script to normalise the columns, that would save a lot of time.",Task,Nethmi,,Offers the script; accepted next.,2026-10-30
+client_onboarding_review.8,client_onboarding_review,Chanya,118.0,"Okay, let's do that.",Decision,,,Accepts Nethmi's proposal.,2026-10-30
+client_onboarding_review.9,client_onboarding_review,Chanya,118.0,"Nethmi, please have a first version of the script ready by next Tuesday.",Task,Nethmi,by next Tuesday,,2026-10-30
+client_onboarding_review.10,client_onboarding_review,Nethmi,135.0,Okay.,Other,,,,2026-10-30
+client_onboarding_review.11,client_onboarding_review,Dilini,145.0,They also asked about single sign-on with their Google accounts.,Other,,,,2026-10-30
+client_onboarding_review.12,client_onboarding_review,Ravindu,161.0,"We support it, but we've never set it up for a client with more than two hundred users.",Risk,,,Never tested at this scale.,2026-10-30
+client_onboarding_review.13,client_onboarding_review,Chanya,180.0,"Hmm, I'm a bit worried about performance with that many logins on day one.",Risk,,,Performance concern.,2026-10-30
+client_onboarding_review.14,client_onboarding_review,Ravindu,200.0,I'll run a load test with three hundred simulated users before the go-live.,Task,Ravindu,before the go-live,,2026-10-30
+client_onboarding_review.15,client_onboarding_review,Dilini,218.0,What about training?,Other,,,,2026-10-30
+client_onboarding_review.16,client_onboarding_review,Dilini,218.0,Do we do it on site or online?,Other,,,,2026-10-30
+client_onboarding_review.17,client_onboarding_review,Chanya,232.0,"Online is cheaper, but their warehouse staff aren't very comfortable with video calls.",Other,,,,2026-10-30
+client_onboarding_review.18,client_onboarding_review,Dilini,250.0,So I think on site makes more sense for them.,Other,,,,2026-10-30
+client_onboarding_review.19,client_onboarding_review,Chanya,262.0,"Yeah, okay, we'll do the training on site at their Kandy office.",Decision,,,Training on site.,2026-10-30
+client_onboarding_review.20,client_onboarding_review,Ishara,280.0,Who's going to prepare the training material?,Other,,,,2026-10-30
+client_onboarding_review.21,client_onboarding_review,Dilini,292.0,"I can put the slides together, I've done it for the last two clients.",Task,Dilini,,Volunteers for the slides.,2026-10-30
+client_onboarding_review.22,client_onboarding_review,Ishara,310.0,"One more thing, their IT person is leaving the company at the end of the month.",Other,,,,2026-10-30
+client_onboarding_review.23,client_onboarding_review,Ishara,328.0,"If nobody replaces him, we won't have anyone on their side to approve the data mapping.",Risk,,,No approver on client side.,2026-10-30
+client_onboarding_review.24,client_onboarding_review,Chanya,350.0,Good point.,Other,,,,2026-10-30
+client_onboarding_review.25,client_onboarding_review,Chanya,350.0,"Dilini, could you ask them who the new contact will be?",Task,Dilini,,,2026-10-30
+client_onboarding_review.26,client_onboarding_review,Dilini,365.0,"Sure, I'll email their manager today.",Task,Dilini,today,Accepts the request.,2026-10-30
+client_onboarding_review.27,client_onboarding_review,Chanya,380.0,"Alright, go-live stays on the fifteenth unless the data import slips.",Decision,,,Go-live date confirmed.,2026-10-30
+client_onboarding_review.28,client_onboarding_review,Chanya,398.0,"Thanks all, let's catch up next week.",Other,,,,2026-10-30
+incident_retrospective.0,incident_retrospective,Ravindu,5.0,"Okay, let's start.",Other,,,,2026-10-30
+incident_retrospective.1,incident_retrospective,Ravindu,5.0,This is the retro for Saturday's outage of the booking service.,Other,,,,2026-10-30
+incident_retrospective.2,incident_retrospective,Ravindu,22.0,The service was down for about forty minutes between nine and nine forty in the morning.,Other,,,,2026-10-30
+incident_retrospective.3,incident_retrospective,Kasun,45.0,It started right after the database migration finished.,Other,,,,2026-10-30
+incident_retrospective.4,incident_retrospective,Kasun,62.0,The new index locked the bookings table and every request timed out.,Risk,,,Root cause problem.,2026-10-30
+incident_retrospective.5,incident_retrospective,Nethmi,80.0,And our alerts didn't fire until a customer called support.,Risk,,,Alerting problem.,2026-10-30
+incident_retrospective.6,incident_retrospective,Ishara,98.0,"That's the part that worries me most, honestly.",Risk,,,Concern.,2026-10-30
+incident_retrospective.7,incident_retrospective,Ishara,112.0,"If the alerts are that slow, a longer outage could go unnoticed for hours.",Risk,,,Consequence.,2026-10-30
+incident_retrospective.8,incident_retrospective,Ravindu,134.0,Agreed.,Other,,,,2026-10-30
+incident_retrospective.9,incident_retrospective,Ravindu,134.0,"So first, from now on all migrations run outside business hours.",Decision,,,Migration policy.,2026-10-30
+incident_retrospective.10,incident_retrospective,Kasun,151.0,Even the small ones?,Other,,,,2026-10-30
+incident_retrospective.11,incident_retrospective,Ravindu,160.0,"Even the small ones, no exceptions.",Decision,,,Confirms policy.,2026-10-30
+incident_retrospective.12,incident_retrospective,Nethmi,175.0,I'll change the alert threshold from five minutes to one minute today.,Task,Nethmi,today,,2026-10-30
+incident_retrospective.13,incident_retrospective,Chanya,192.0,Should we also add a status page so customers know what's going on?,Other,,,,2026-10-30
+incident_retrospective.14,incident_retrospective,Kasun,208.0,"That would be nice, but I'm not sure we have time for it this sprint.",Risk,,,Capacity concern.,2026-10-30
+incident_retrospective.15,incident_retrospective,Chanya,225.0,"Okay, let's put the status page in the backlog for now.",Decision,,,Status page to backlog.,2026-10-30
+incident_retrospective.16,incident_retrospective,Ravindu,240.0,"Kasun, can you write up the timeline of the incident by Wednesday?",Task,Kasun,by Wednesday,,2026-10-30
+incident_retrospective.17,incident_retrospective,Kasun,255.0,"Yes, I'll have it in the wiki by Wednesday.",Task,Kasun,by Wednesday,Accepts.,2026-10-30
+incident_retrospective.18,incident_retrospective,Ishara,270.0,We also never tested restoring from the backups.,Risk,,,Backups untested.,2026-10-30
+incident_retrospective.19,incident_retrospective,Ishara,285.0,Nobody actually knows how long a full restore takes.,Risk,,,Unknown restore time.,2026-10-30
+incident_retrospective.20,incident_retrospective,Ravindu,305.0,That's a real gap.,Risk,,,Gap.,2026-10-30
+incident_retrospective.21,incident_retrospective,Ravindu,305.0,"Ishara, please schedule a restore drill for next week.",Task,Ishara,next week,,2026-10-30
+incident_retrospective.22,incident_retrospective,Ishara,320.0,"Okay, I'll book a slot with the ops team.",Task,Ishara,,Accepts.,2026-10-30
+incident_retrospective.23,incident_retrospective,Chanya,335.0,And we should tell the customers what happened.,Task,,,Group should notify customers.,2026-10-30
+incident_retrospective.24,incident_retrospective,Chanya,350.0,I'll draft the incident email and share it with you before sending.,Task,Chanya,before sending,,2026-10-30
+incident_retrospective.25,incident_retrospective,Ravindu,368.0,Sounds good.,Other,,,,2026-10-30
+incident_retrospective.26,incident_retrospective,Ravindu,368.0,"We go with a short apology plus the timeline, nothing too technical.",Decision,,,Email content decided.,2026-10-30
+incident_retrospective.27,incident_retrospective,Ravindu,385.0,"Okay, that's it, thanks everyone.",Other,,,,2026-10-30
+mobile_release_planning.0,mobile_release_planning,Dilini,4.0,"Okay, morning all.",Other,,,,2026-10-30
+mobile_release_planning.1,mobile_release_planning,Dilini,4.0,"Let's get going, we've got a lot to cover.",Other,,,,2026-10-30
+mobile_release_planning.2,mobile_release_planning,Dilini,15.0,So the main thing today is the 2.3 release of the mobile app and whether we can still hit the end of the month.,Other,,,,2026-10-30
+mobile_release_planning.3,mobile_release_planning,Ravindu,41.0,"Um, from the backend side the payment API changes are done, but the refund flow still isn't tested.",Risk,,,Refund flow untested.,2026-10-30
+mobile_release_planning.4,mobile_release_planning,Ravindu,62.0,I'll write the integration tests for refunds by Wednesday.,Task,Ravindu,by Wednesday,,2026-10-30
+mobile_release_planning.5,mobile_release_planning,Kasun,80.0,The new checkout screen is about eighty percent there.,Other,,,,2026-10-30
+mobile_release_planning.6,mobile_release_planning,Kasun,95.0,"Honestly, if the design for the receipt page doesn't come in this week, I don't think the frontend will be ready in time.",Risk,,,Frontend may not be ready.,2026-10-30
+mobile_release_planning.7,mobile_release_planning,Dilini,118.0,"Nethmi, can you chase the design team for the receipt page today?",Task,Nethmi,today,,2026-10-30
+mobile_release_planning.8,mobile_release_planning,Nethmi,130.0,"Sure, I'll ping them after this call.",Task,Nethmi,after this call,Accepts.,2026-10-30
+mobile_release_planning.9,mobile_release_planning,Ishara,150.0,"From QA, we only have two testers next week because of the holidays.",Risk,,,Few testers.,2026-10-30
+mobile_release_planning.10,mobile_release_planning,Ishara,172.0,That's going to make regression testing really tight.,Risk,,,Tight testing.,2026-10-30
+mobile_release_planning.11,mobile_release_planning,Dilini,195.0,Okay.,Other,,,,2026-10-30
+mobile_release_planning.12,mobile_release_planning,Dilini,195.0,What if we drop the dark mode feature from this release?,Other,,,,2026-10-30
+mobile_release_planning.13,mobile_release_planning,Kasun,210.0,"Yeah, I'd be fine with that, it's mostly cosmetic anyway.",Other,,,,2026-10-30
+mobile_release_planning.14,mobile_release_planning,Ravindu,224.0,"Same, it doesn't touch the backend at all.",Other,,,,2026-10-30
+mobile_release_planning.15,mobile_release_planning,Dilini,239.0,"Right, so dark mode moves to 2.4 and we ship 2.3 without it.",Decision,,,Dark mode moves to 2.4.,2026-10-30
+mobile_release_planning.16,mobile_release_planning,Chanya,260.0,"Just a thought, should we also look at the crash reports from last week?",Other,,,,2026-10-30
+mobile_release_planning.17,mobile_release_planning,Chanya,277.0,There were quite a lot of crashes on older Android phones.,Risk,,,Crashes on old phones.,2026-10-30
+mobile_release_planning.18,mobile_release_planning,Ravindu,295.0,"Mm, that's probably the image library we upgraded.",Other,,,,2026-10-30
+mobile_release_planning.19,mobile_release_planning,Chanya,310.0,I can dig into the crash logs and send a summary to everyone by Thursday morning.,Task,Chanya,by Thursday morning,,2026-10-30
+mobile_release_planning.20,mobile_release_planning,Dilini,331.0,"Great, thanks Chanya.",Other,,,,2026-10-30
+mobile_release_planning.21,mobile_release_planning,Ishara,345.0,Do we need app store approval again for this version?,Other,,,,2026-10-30
+mobile_release_planning.22,mobile_release_planning,Dilini,358.0,"Yes, and Apple has been taking up to a week lately, so the submission has to go in by the twentieth at the latest.",Task,,by the twentieth,Submission deadline.,2026-10-30
+mobile_release_planning.23,mobile_release_planning,Kasun,380.0,Then we really can't afford any surprises in the last few days.,Risk,,,No slack for surprises.,2026-10-30
+mobile_release_planning.24,mobile_release_planning,Dilini,398.0,Agreed.,Other,,,,2026-10-30
+mobile_release_planning.25,mobile_release_planning,Dilini,398.0,"Let's freeze the code on the eighteenth, no new features after that.",Decision,,,Code freeze date.,2026-10-30
+mobile_release_planning.26,mobile_release_planning,Ishara,415.0,I'll put together the regression checklist before the freeze.,Task,Ishara,before the freeze,,2026-10-30
+mobile_release_planning.27,mobile_release_planning,Dilini,432.0,And someone needs to update the release notes.,Task,,,Someone must update release notes.,2026-10-30
+mobile_release_planning.28,mobile_release_planning,Dilini,432.0,"Kasun, could you take that?",Task,Kasun,,,2026-10-30
+mobile_release_planning.29,mobile_release_planning,Kasun,445.0,"Yep, I'll do it.",Task,Kasun,,Accepts.,2026-10-30
+mobile_release_planning.30,mobile_release_planning,Dilini,460.0,"Okay, I think that's everything.",Other,,,,2026-10-30
+mobile_release_planning.31,mobile_release_planning,Dilini,460.0,Same time next Monday.,Other,,,,2026-10-30

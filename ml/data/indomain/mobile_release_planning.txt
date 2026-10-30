@@ -1,0 +1,27 @@
+[00:00:04] Dilini: Okay, morning all. Let's get going, we've got a lot to cover.
+[00:00:15] Dilini: So the main thing today is the 2.3 release of the mobile app and whether we can still hit the end of the month.
+[00:00:41] Ravindu: Um, from the backend side the payment API changes are done, but the refund flow still isn't tested.
+[00:01:02] Ravindu: I'll write the integration tests for refunds by Wednesday.
+[00:01:20] Kasun: The new checkout screen is about eighty percent there.
+[00:01:35] Kasun: Honestly, if the design for the receipt page doesn't come in this week, I don't think the frontend will be ready in time.
+[00:01:58] Dilini: Nethmi, can you chase the design team for the receipt page today?
+[00:02:10] Nethmi: Sure, I'll ping them after this call.
+[00:02:30] Ishara: From QA, we only have two testers next week because of the holidays.
+[00:02:52] Ishara: That's going to make regression testing really tight.
+[00:03:15] Dilini: Okay. What if we drop the dark mode feature from this release?
+[00:03:30] Kasun: Yeah, I'd be fine with that, it's mostly cosmetic anyway.
+[00:03:44] Ravindu: Same, it doesn't touch the backend at all.
+[00:03:59] Dilini: Right, so dark mode moves to 2.4 and we ship 2.3 without it.
+[00:04:20] Chanya: Just a thought, should we also look at the crash reports from last week?
+[00:04:37] Chanya: There were quite a lot of crashes on older Android phones.
+[00:04:55] Ravindu: Mm, that's probably the image library we upgraded.
+[00:05:10] Chanya: I can dig into the crash logs and send a summary to everyone by Thursday morning.
+[00:05:31] Dilini: Great, thanks Chanya.
+[00:05:45] Ishara: Do we need app store approval again for this version?
+[00:05:58] Dilini: Yes, and Apple has been taking up to a week lately, so the submission has to go in by the twentieth at the latest.
+[00:06:20] Kasun: Then we really can't afford any surprises in the last few days.
+[00:06:38] Dilini: Agreed. Let's freeze the code on the eighteenth, no new features after that.
+[00:06:55] Ishara: I'll put together the regression checklist before the freeze.
+[00:07:12] Dilini: And someone needs to update the release notes. Kasun, could you take that?
+[00:07:25] Kasun: Yep, I'll do it.
+[00:07:40] Dilini: Okay, I think that's everything. Same time next Monday.

@@ -23,20 +23,23 @@ import numpy as np
 
 from .data import MODEL_FILENAME, latest_model_dir
 from .preprocessing import segment_transcript
-from .train import confidence_of
+from .rules import apply_rules
 
 
 @dataclass
 class Prediction:
     text: str
-    label: str
-    confidence: float
+    label: str              # final label (after the rule layer when enabled)
+    confidence: float       # model probability of the final label
+    model_label: str = ""   # what the model alone predicted
+    rule: str | None = None  # rule that changed the label, if any
 
 
 class Classifier:
-    def __init__(self, pipeline, metadata: dict | None = None):
+    def __init__(self, pipeline, metadata: dict | None = None, model_dir: Path | None = None):
         self.pipeline = pipeline
         self.metadata = metadata or {}
+        self.model_dir = model_dir
 
     @classmethod
     def load(cls, model_dir: Path | str | None = None) -> "Classifier":
@@ -45,7 +48,7 @@ class Classifier:
         pipeline = joblib.load(model_dir / MODEL_FILENAME)
         meta_path = model_dir / "metadata.json"
         metadata = json.loads(meta_path.read_text(encoding="utf-8")) if meta_path.exists() else {}
-        return cls(pipeline, metadata)
+        return cls(pipeline, metadata, model_dir)
 
     @property
     def name(self) -> str:
@@ -53,12 +56,30 @@ class Classifier:
         version = self.metadata.get("version")
         return f"{model} ({version})" if version else model
 
-    def predict(self, texts: list[str]) -> list[Prediction]:
+    def _probabilities(self, texts: list[str]) -> tuple[np.ndarray, list[str]]:
+        clf = self.pipeline.named_steps["clf"]
+        classes = [str(c) for c in clf.classes_]
+        if hasattr(clf, "predict_proba"):
+            return self.pipeline.predict_proba(texts), classes
+        margins = np.atleast_2d(self.pipeline.decision_function(texts))
+        e = np.exp(margins - margins.max(axis=1, keepdims=True))
+        return e / e.sum(axis=1, keepdims=True), classes
+
+    def predict(self, texts: list[str], use_rules: bool = True) -> list[Prediction]:
+        """Label utterances. With ``use_rules`` the rule layer (rules.py) refines the model's labels."""
         if not texts:
             return []
-        labels = self.pipeline.predict(texts)
-        conf = confidence_of(self.pipeline, texts)
-        return [Prediction(t, str(l), round(float(c), 3)) for t, l, c in zip(texts, labels, conf)]
+        proba, classes = self._probabilities(texts)
+        out = []
+        for text, row in zip(texts, proba):
+            model_label = classes[int(row.argmax())]
+            label, rule = model_label, None
+            if use_rules:
+                r = apply_rules(text, model_label)
+                label, rule = r.label, r.rule
+            conf = float(row[classes.index(label)]) if label in classes else float(row.max())
+            out.append(Prediction(text, label, round(conf, 3), model_label, rule))
+        return out
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -67,6 +88,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--file", type=Path, help="Plain-text transcript to segment and classify")
     ap.add_argument("--model-dir", type=Path, help="Model folder (default: newest under ml/models/)")
     ap.add_argument("--json", action="store_true", help="Print JSON instead of a table")
+    ap.add_argument("--no-rules", action="store_true", help="Model only, without the rule layer")
     args = ap.parse_args(argv)
 
     clf = Classifier.load(args.model_dir)
@@ -79,14 +101,15 @@ def main(argv: list[str] | None = None) -> int:
     if not texts:
         ap.error("give one or more utterances, or --file")
 
-    preds = clf.predict(texts)
+    preds = clf.predict(texts, use_rules=not args.no_rules)
     if args.json:
         print(json.dumps([asdict(p) for p in preds], indent=2))
     else:
-        print(f"Model: {clf.name}\n")
+        print(f"Model: {clf.name}{'' if args.no_rules else ' + rules'}\n")
         for s, p in zip(speakers, preds):
             who = f"{s}: " if s else ""
-            print(f"{p.label:<9} {p.confidence:.2f}  {who}{p.text}")
+            note = f"  [rule {p.rule}: model said {p.model_label}]" if p.rule else ""
+            print(f"{p.label:<9} {p.confidence:.2f}  {who}{p.text}{note}")
     return 0
 
 

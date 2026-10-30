@@ -154,6 +154,8 @@ ml/src/meetops_ml/
 ├── features.py        word TF-IDF, character TF-IDF and the risk-cue lexicon
 ├── models.py          the four candidate pipelines (clean -> features -> classifier)
 ├── train.py           cross-validation, model selection, test evaluation, reports
+├── rules.py           rule layer applied after the classifier (section 3.7)
+├── evaluate.py        model vs model + rules on the test sets (section 3.8)
 └── predict.py         Classifier.load() / predict() used by the backend and CLI
 ml/tests/              pytest unit tests
 ml/models/<version>/   classifier.joblib + metadata.json + reports/ (local only, ignored by Git)
@@ -301,16 +303,145 @@ speaker-role context features, a fine-tuned DistilBERT comparison (semantic
 rather than lexical), hyper-parameter tuning inside the cross-validation, and
 more Task examples (still only 62).
 
-### 3.7 Trying the model
+### 3.7 Rule layer after the model (hybrid classification)
+
+Testing the deployed system on a modern software-team transcript showed two
+systematic problems: explicit requests such as "Kasun, can you connect the
+dashboard to the live API this week?" were missed, and agenda sentences
+("Two things on the agenda today …") were labelled Task. The cause is domain
+shift: the model learned from AMI design meetings recorded in 2005, where people
+rarely phrase commitments this explicitly.
+
+`ml/src/meetops_ml/rules.py` adds a rule layer **after** the classifier. The
+model is unchanged and still evaluated on its own; the rules only correct
+labels where the annotation guideline gives an explicit signal:
+
+| Rule | Direction | Signal (from the guideline) |
+|------|-----------|-----------------------------|
+| `request` | Other → Task | "can / could / would you", "please" + a follow-up verb or a deadline |
+| `commitment` | Other → Task | "I'll / I will / I'm going to" + a follow-up verb (send, fix, prepare …) |
+| `assignment` | Other → Task | "you two will …", "someone needs to …", "let's make sure …" |
+| `agreement` | Other → Decision | "we'll go with", "agreed", "let's not", "from now on", "moves to 2.4" |
+| `concern` | Other → Risk | "the problem is", "I'm worried", "won't be able to", "if … won't …" |
+| `meeting_management` | → Other | agenda, greetings, "thank you", "next slide", "let's get started" |
+| `open_question` | Task/Decision → Other | a question that asks nobody to do anything |
+| `fragment` | → Other | fewer than two content words |
+
+Hedged ("maybe", "if we decided") and negated ("shouldn't be too complicated")
+sentences are excluded. Promotions follow the guideline priority Task >
+Decision > Risk > Other. The rules were written from the guideline's signal
+lists and the cross-validation errors on the **training** set; the test sets
+were not used to design them. On the training set (out-of-fold predictions)
+they raise macro-F1 from 0.479 to 0.529, and each rule is right more often than
+wrong.
+
+### 3.8 In-domain evaluation: model vs model + rules
+
+AMI is the only labelled corpus, but MeetOps targets modern business meetings.
+`ml/data/labeled/indomain_v1.csv` is a second, small test set: three realistic
+meetings (mobile release planning, client onboarding review, incident
+retrospective; transcripts in `ml/data/indomain/`), 89 utterances labelled
+with the same guideline, written and labelled after the rules were frozen.
+
+```bash
+python -m meetops_ml.evaluate --model-dir ml/models/v3
+```
+
+| Test set | Variant | Macro-F1 | Accuracy | Task F1 | Decision F1 | Risk F1 | Other F1 |
+|----------|---------|----------|----------|---------|-------------|---------|----------|
+| AMI (`test_v1`, 393 utt.) | model only | 0.475 | 0.880 | 0.45 | 0.38 | 0.13 | 0.94 |
+| AMI (`test_v1`, 393 utt.) | model + rules | 0.469 | 0.878 | 0.43 | 0.38 | 0.13 | 0.93 |
+| In-domain (`indomain_v1`, 89 utt.) | model only | 0.404 | 0.539 | 0.58 | 0.00 | 0.40 | 0.64 |
+| In-domain (`indomain_v1`, 89 utt.) | model + rules | **0.783** | **0.809** | **0.90** | **0.78** | **0.62** | **0.84** |
+
+Reading the results:
+
+- On AMI the rules barely fire (5 changes in 393 utterances), so the score is
+  unchanged: AMI speakers rarely use explicit phrasing.
+- On business meetings the model alone scores Decision F1 0.00, which confirms
+  domain shift. With the rules, macro-F1 rises from 0.40 to 0.78; all 24 rule
+  changes on this set were correct.
+- The 17 remaining errors are mostly implicit risks without a cue word ("We
+  also never tested restoring from the backups") and soft offers ("I can put
+  the slides together"). Rules cannot catch these without over-fitting, which is
+  the argument for a semantic model (DistilBERT) in the next phase.
+- Caveat: the in-domain set is small and was written by the same author as the
+  rules, so it may share phrasing with them. It should be extended with real
+  recorded meetings; the review queue in the application collects exactly that
+  data (see 3.9).
+
+**Auto-confirm threshold.** In the application, extracted items are confirmed
+automatically only when the model alone is confident; everything else waits in
+a review queue. Precision of model-only items above each threshold:
+
+| Threshold | In-domain: items / precision | AMI test: items / precision |
+|-----------|------------------------------|-----------------------------|
+| 0.5 | 16 / 0.88 | 37 / 0.19 |
+| 0.6 | 13 / 0.85 | 23 / 0.22 |
+| 0.7 | 9 / 0.89 | 12 / 0.17 |
+| 0.8 | 6 / 1.00 | 4 / 0.25 |
+
+The model's probabilities are poorly calibrated on AMI, so a low threshold
+would confirm many wrong items. MeetOps uses 0.8 (`AUTO_CONFIRM_CONFIDENCE`)
+and treats every rule-made label as a suggestion for a person to confirm.
+
+### 3.9 Human review and feedback
+
+Every task, decision and risk is stored as `suggested` or `confirmed`. People
+confirm or reject suggestions in the Review screen, and can relabel any
+transcript line (e.g. mark a missed request as a Task). Each rejection or
+relabel is written to the `label_feedback` table (text, predicted label,
+corrected label), which is the training data for the next model version.
+
+### 3.10 Trying the model
 
 ```bash
 python -m meetops_ml.predict "I'll send the updated quote by Thursday." "So we go with the rubber buttons."
 python -m meetops_ml.predict --file path/to/transcript.txt
 python -m meetops_ml.predict --model-dir ml/models/v1 "..."    # a specific version (default: newest)
+python -m meetops_ml.predict --no-rules "..."                  # model only, without the rule layer
 ```
 
-## 4. Extraction (owner and deadline)
+With rules, each line shows which rule changed the model's label, e.g.
+`Task 0.08  Kasun, can you connect … [rule request: model said Other]`.
 
-Rule-based extraction of task owner and deadline is the next component; the
-`owner_span` and `deadline_span` columns of the labelled data are its
-evaluation set.
+## 4. Extraction and organisation (owner, deadline, merged items)
+
+Implemented in the backend (`backend/app/services/extraction.py` and
+`organise.py`) because it needs the meeting date and the people in the
+organisation.
+
+- **Owner:** a participant addressed or named in the sentence ("Kasun, can
+  you …"); otherwise the speaker of a first-person commitment ("I'll …").
+- **Deadline:** time expressions ("by Friday", "next week", "by the
+  twentieth", "end of the month", "next meeting", "before lunch") resolved
+  relative to the meeting date; event-relative phrases such as "before the
+  go-live" keep their text without a date.
+- **Title:** the sentence is rewritten as an action ("I'll write the
+  integration tests for refunds by Wednesday" → "Write the integration tests
+  for refunds", due Wednesday).
+- **Organising:** a request and its acceptance become one task ("Someone needs
+  to update the release notes" → "Kasun, could you take that?" → "Yep, I'll do
+  it" = one task, owner Kasun); vague agreements ("Okay, let's do that") quote
+  what was agreed; near-duplicate tasks are merged; risks get a severity.
+
+Evaluation against the labelled spans:
+
+```bash
+cd backend
+python -m app.evaluate_extraction
+```
+
+| Data | Measure | Result |
+|------|---------|--------|
+| In-domain (22 Task utterances) | owner correct | 22 / 22 |
+| In-domain | deadline found exactly when annotated | 22 / 22 |
+| In-domain | deadline phrase matches the annotation | 14 / 14 |
+| AMI (68 Task utterances, development data) | deadline recall / precision | 0.86 / 0.86 |
+
+The in-domain figures are an optimistic upper bound: the extraction rules were
+refined while inspecting output on these same transcripts. AMI owners are
+annotated as pronouns ("I", "we", "you two") rather than names, so only
+deadline detection is measured there; the remaining miss is "in between now
+and then". A learned extractor (spaCy NER over the labelled spans) is planned
+once more data is collected through the review queue.

@@ -1,0 +1,24 @@
+[00:00:05] Ravindu: Okay, let's start. This is the retro for Saturday's outage of the booking service.
+[00:00:22] Ravindu: The service was down for about forty minutes between nine and nine forty in the morning.
+[00:00:45] Kasun: It started right after the database migration finished.
+[00:01:02] Kasun: The new index locked the bookings table and every request timed out.
+[00:01:20] Nethmi: And our alerts didn't fire until a customer called support.
+[00:01:38] Ishara: That's the part that worries me most, honestly.
+[00:01:52] Ishara: If the alerts are that slow, a longer outage could go unnoticed for hours.
+[00:02:14] Ravindu: Agreed. So first, from now on all migrations run outside business hours.
+[00:02:31] Kasun: Even the small ones?
+[00:02:40] Ravindu: Even the small ones, no exceptions.
+[00:02:55] Nethmi: I'll change the alert threshold from five minutes to one minute today.
+[00:03:12] Chanya: Should we also add a status page so customers know what's going on?
+[00:03:28] Kasun: That would be nice, but I'm not sure we have time for it this sprint.
+[00:03:45] Chanya: Okay, let's put the status page in the backlog for now.
+[00:04:00] Ravindu: Kasun, can you write up the timeline of the incident by Wednesday?
+[00:04:15] Kasun: Yes, I'll have it in the wiki by Wednesday.
+[00:04:30] Ishara: We also never tested restoring from the backups.
+[00:04:45] Ishara: Nobody actually knows how long a full restore takes.
+[00:05:05] Ravindu: That's a real gap. Ishara, please schedule a restore drill for next week.
+[00:05:20] Ishara: Okay, I'll book a slot with the ops team.
+[00:05:35] Chanya: And we should tell the customers what happened.
+[00:05:50] Chanya: I'll draft the incident email and share it with you before sending.
+[00:06:08] Ravindu: Sounds good. We go with a short apology plus the timeline, nothing too technical.
+[00:06:25] Ravindu: Okay, that's it, thanks everyone.
