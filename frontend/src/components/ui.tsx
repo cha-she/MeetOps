@@ -348,7 +348,7 @@ export interface MenuItem {
   hint?: ReactNode;
 }
 
-export function Menu({ trigger, items, align = "left", width = 200, header }: { trigger: (open: boolean) => ReactNode; items: (MenuItem | "divider")[]; align?: "left" | "right"; width?: number; header?: ReactNode }) {
+export function Menu({ trigger, items, align = "left", width = 200, header, openUp = false }: { trigger: (open: boolean) => ReactNode; items: (MenuItem | "divider")[]; align?: "left" | "right"; width?: number; header?: ReactNode; openUp?: boolean }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -366,7 +366,7 @@ export function Menu({ trigger, items, align = "left", width = 200, header }: { 
     <div className="relative inline-block" ref={ref}>
       <div onClick={() => setOpen((o) => !o)}>{trigger(open)}</div>
       {open && (
-        <div className={cn("absolute z-40 mt-1 rounded-lg border border-line bg-surface p-1 shadow-pop animate-pop-in", align === "right" ? "right-0" : "left-0")} style={{ width }}>
+        <div className={cn("absolute z-40 rounded-lg border border-line bg-surface p-1 shadow-pop animate-pop-in", openUp ? "bottom-full mb-1" : "mt-1", align === "right" ? "right-0" : "left-0")} style={{ width }}>
           {header && <div className="px-2 pb-1.5 pt-1 text-2xs font-semibold uppercase tracking-wider text-faint">{header}</div>}
           {items.map((item, i) =>
             item === "divider" ? (

@@ -18,10 +18,11 @@
   --fg: 24 24 27;
   --muted: 100 100 112;
   --faint: 150 150 162;
-  --accent: 79 70 229;
+  /* accent (teal by default; see the data-accent rules below) */
+  --accent: 13 148 136;
   --accent-fg: 255 255 255;
-  --accent-soft: 238 240 255;
-  --accent-text: 67 56 202;
+  --accent-soft: 230 246 244;
+  --accent-text: 15 118 110;
 }
 
 .dark {
@@ -35,10 +36,70 @@
   --fg: 236 236 240;
   --muted: 160 160 172;
   --faint: 112 112 124;
+}
+
+/* ---------------------------------------------------------------------------
+   Accent colours, chosen in the account menu (html[data-accent="…"])
+   --------------------------------------------------------------------------- */
+[data-accent="teal"] {
+  --accent: 13 148 136;
+  --accent-fg: 255 255 255;
+  --accent-soft: 230 246 244;
+  --accent-text: 15 118 110;
+}
+.dark[data-accent="teal"] {
+  --accent: 20 184 166;
+  --accent-fg: 4 47 46;
+  --accent-soft: 17 45 44;
+  --accent-text: 94 234 212;
+}
+[data-accent="indigo"] {
+  --accent: 79 70 229;
+  --accent-fg: 255 255 255;
+  --accent-soft: 238 240 255;
+  --accent-text: 67 56 202;
+}
+.dark[data-accent="indigo"] {
   --accent: 114 108 255;
   --accent-fg: 255 255 255;
   --accent-soft: 34 32 66;
   --accent-text: 165 160 255;
+}
+[data-accent="violet"] {
+  --accent: 124 58 237;
+  --accent-fg: 255 255 255;
+  --accent-soft: 245 240 255;
+  --accent-text: 109 40 217;
+}
+.dark[data-accent="violet"] {
+  --accent: 139 92 246;
+  --accent-fg: 255 255 255;
+  --accent-soft: 40 28 68;
+  --accent-text: 196 181 253;
+}
+[data-accent="rose"] {
+  --accent: 225 29 72;
+  --accent-fg: 255 255 255;
+  --accent-soft: 255 241 242;
+  --accent-text: 190 18 60;
+}
+.dark[data-accent="rose"] {
+  --accent: 244 63 94;
+  --accent-fg: 255 255 255;
+  --accent-soft: 66 20 32;
+  --accent-text: 253 164 175;
+}
+[data-accent="orange"] {
+  --accent: 234 88 12;
+  --accent-fg: 255 255 255;
+  --accent-soft: 255 247 237;
+  --accent-text: 194 65 12;
+}
+.dark[data-accent="orange"] {
+  --accent: 249 115 22;
+  --accent-fg: 255 255 255;
+  --accent-soft: 64 32 14;
+  --accent-text: 253 186 116;
 }
 
 html,

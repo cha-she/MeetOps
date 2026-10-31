@@ -22,7 +22,7 @@ import {
 import { api } from "../api/endpoints";
 import { useQuery } from "../api/hooks";
 import { roleLabel, useAuth, useMe } from "../auth/AuthContext";
-import { useTheme } from "../hooks/useTheme";
+import { ACCENTS, useAccent, useTheme } from "../hooks/useTheme";
 import CommandPalette from "./CommandPalette";
 import NotificationsMenu from "./NotificationsMenu";
 import { Avatar, Menu, cn } from "./ui";
@@ -43,6 +43,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const me = useMe();
   const { signOut } = useAuth();
   const [theme, setTheme] = useTheme();
+  const [accent, setAccent] = useAccent();
   const navigate = useNavigate();
   const insights = useQuery("insights", () => api.insights(), { refreshMs: 30000 });
   const t = insights.data;
@@ -82,6 +83,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
       <div className="border-t border-line p-2">
         <Menu
           width={232}
+          openUp
           trigger={() => (
             <button className="flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left hover:bg-hover">
               <Avatar name={me.name} initials={me.initials} size={26} />
@@ -101,11 +103,27 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
             { label: "Dark", icon: <Moon className="h-3.5 w-3.5" />, checked: theme === "dark", onSelect: () => setTheme("dark") },
             { label: "System", icon: <Monitor className="h-3.5 w-3.5" />, checked: theme === "system", onSelect: () => setTheme("system") },
             "divider",
+            ...ACCENTS.map((a) => ({
+              label: `${a.label} accent`,
+              icon: <span className="h-3 w-3 rounded-full" style={{ background: a.swatch }} />,
+              checked: accent === a.value,
+              onSelect: () => setAccent(a.value),
+            })),
+            "divider",
             { label: "Sign out", icon: <LogOut className="h-3.5 w-3.5" />, onSelect: signOut, danger: true },
           ]}
         />
       </div>
     </div>
+  );
+}
+
+function SignOutButton() {
+  const { signOut } = useAuth();
+  return (
+    <button className="icon-btn" onClick={signOut} title="Sign out" aria-label="Sign out">
+      <LogOut className="h-4 w-4" />
+    </button>
   );
 }
 
@@ -177,6 +195,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             <Search className="h-4 w-4" />
           </button>
           <NotificationsMenu />
+          <SignOutButton />
         </header>
         <main className="min-w-0 flex-1 overflow-y-auto">
           <div className="mx-auto max-w-[1280px] px-4 py-6 sm:px-6 lg:px-8">{children}</div>

@@ -5,13 +5,15 @@ import { api } from "../api/endpoints";
 import { useQuery } from "../api/hooks";
 import { Badge, EmptyState, PageHeader, Panel, ProgressBar, QueryView, Skeleton, Stat, pct } from "../components/ui";
 import { LIST_REFRESH_INTERVAL_MS } from "../config";
+import { accentColor } from "../hooks/useTheme";
 
-const C = { blue: "#3b82f6", green: "#10b981", amber: "#f59e0b", red: "#ef4444", grey: "#a1a1aa", accent: "#6366f1" };
+const C = { blue: "#3b82f6", green: "#10b981", amber: "#f59e0b", red: "#ef4444", grey: "#a1a1aa" };
 const axis = { fontSize: 11, fill: "rgb(var(--faint))" };
 const tooltip = { contentStyle: { background: "rgb(var(--surface))", border: "1px solid rgb(var(--line))", borderRadius: 8, fontSize: 12, color: "rgb(var(--fg))" }, cursor: { fill: "rgb(var(--hover))" } };
 
 export default function Insights() {
   const insights = useQuery("insights", () => api.insights(), { refreshMs: LIST_REFRESH_INTERVAL_MS });
+  const accent = accentColor();
 
   return (
     <div>
@@ -38,7 +40,7 @@ export default function Insights() {
                   <ResponsiveContainer>
                     <AreaChart data={d.weekly} margin={{ left: -20, right: 8, top: 8 }}>
                       <defs>
-                        <linearGradient id="gCreated" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={C.accent} stopOpacity={0.25} /><stop offset="100%" stopColor={C.accent} stopOpacity={0} /></linearGradient>
+                        <linearGradient id="gCreated" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={accent} stopOpacity={0.25} /><stop offset="100%" stopColor={accent} stopOpacity={0} /></linearGradient>
                         <linearGradient id="gDone" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={C.green} stopOpacity={0.25} /><stop offset="100%" stopColor={C.green} stopOpacity={0} /></linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="rgb(var(--line))" vertical={false} />
@@ -46,7 +48,7 @@ export default function Insights() {
                       <YAxis allowDecimals={false} tick={axis} axisLine={false} tickLine={false} />
                       <Tooltip {...tooltip} />
                       <Legend wrapperStyle={{ fontSize: 12 }} />
-                      <Area type="monotone" dataKey="created" name="Created" stroke={C.accent} fill="url(#gCreated)" strokeWidth={2} />
+                      <Area type="monotone" dataKey="created" name="Created" stroke={accent} fill="url(#gCreated)" strokeWidth={2} />
                       <Area type="monotone" dataKey="completed" name="Completed" stroke={C.green} fill="url(#gDone)" strokeWidth={2} />
                     </AreaChart>
                   </ResponsiveContainer>
