@@ -34,6 +34,19 @@ def test_hedged_and_negated_cues_are_ignored():
     assert r("It shouldn't be too complicated.", "Other").label == "Other"
 
 
+def test_required_result_with_deadline_becomes_task():
+    out = r("We need the slide deck finished by the end of the week.", "Other")
+    assert out.label == "Task" and out.rule == "need_done"
+    assert r("We need the remote to be simple.", "Other").label == "Other"          # no deadline
+    assert r("Maybe we need it done by Friday?", "Other").label == "Other"         # hedged question
+
+
+def test_follow_up_verbs_match_every_form():
+    from meetops_ml.rules import FOLLOW_UP
+    assert all(FOLLOW_UP.search(w) for w in ["finished", "sending", "sent", "updated", "written", "done"])
+    assert not FOLLOW_UP.search("the remote is blue")
+
+
 def test_model_label_kept_when_no_rule_applies():
     out = r("The remote has three buttons on the front.", "Other")
     assert out.label == "Other" and out.rule is None

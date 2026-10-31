@@ -321,6 +321,7 @@ labels where the annotation guideline gives an explicit signal:
 | `request` | Other → Task | "can / could / would you", "please" + a follow-up verb or a deadline |
 | `commitment` | Other → Task | "I'll / I will / I'm going to" + a follow-up verb (send, fix, prepare …) |
 | `assignment` | Other → Task | "you two will …", "someone needs to …", "let's make sure …" |
+| `need_done` | Other → Task | "we need / want X finished, done, ready, sent" + a deadline |
 | `agreement` | Other → Decision | "we'll go with", "agreed", "let's not", "from now on", "moves to 2.4" |
 | `concern` | Other → Risk | "the problem is", "I'm worried", "won't be able to", "if … won't …" |
 | `meeting_management` | → Other | agenda, greetings, "thank you", "next slide", "let's get started" |
@@ -332,8 +333,16 @@ sentences are excluded. Promotions follow the guideline priority Task >
 Decision > Risk > Other. The rules were written from the guideline's signal
 lists and the cross-validation errors on the **training** set; the test sets
 were not used to design them. On the training set (out-of-fold predictions)
-they raise macro-F1 from 0.479 to 0.529, and each rule is right more often than
+they raise macro-F1 from 0.479 to 0.535, and each rule is right more often than
 wrong.
+
+One change was made after the evaluation in 3.8: testing the application showed
+that "We need the slide deck finished by the end of the week" was missed,
+because the verb list only matched base forms ("finish", not "finished") and
+no rule covered "need X done by …". Follow-up verbs now match every form and
+the `need_done` rule was added. Re-running the evaluation gave identical
+results on both test sets (the new rule does not fire there), so the figures
+in 3.8 are unchanged; the training-set figure above includes the fix.
 
 ### 3.8 In-domain evaluation: model vs model + rules
 
