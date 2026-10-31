@@ -43,13 +43,32 @@ def _rx(pattern: str) -> re.Pattern:
 # --------------------------------------------------------------------------
 
 # Verbs that describe follow-up work, not something done in the meeting itself.
-FOLLOW_UP = _rx(
-    r"\b(finish|complete|send|email|e-mail|prepare|write|draft|update|fix|check|review|test|run|build|deploy|"
-    r"implement|set up|book|schedule|organi[sz]e|arrange|contact|call|ask|chase|ping|follow up|look into|"
-    r"investigate|dig into|research|find out|put together|share|upload|document|report|install|configure|"
-    r"migrate|clean up|order|buy|bring|take care of|work on|sort out|confirm|connect|change|get back|"
-    r"reach out|talk to|speak to|meet with|create|design|model|draw|sketch|take that|do it|handle)\b"
-)
+# Every form counts ("finish", "finishes", "finished", "finishing"), so "we need the deck finished"
+# is recognised as well as "I'll finish the deck".
+_FOLLOW_UP_VERBS = [
+    "finish", "complete", "send", "email", "e-mail", "prepare", "write", "draft", "update", "fix", "check",
+    "review", "test", "build", "deploy", "implement", "book", "schedule", "organise", "organize", "arrange",
+    "contact", "call", "ask", "chase", "ping", "investigate", "research", "share", "upload", "document",
+    "report", "install", "configure", "migrate", "order", "bring", "confirm", "connect", "change", "create",
+    "design", "model", "draw", "sketch", "handle", "deliver", "submit", "approve", "merge",
+]
+_FOLLOW_UP_PHRASES = [
+    "set up", "setting up", "follow up", "following up", "look into", "looking into", "dig into", "find out",
+    "found out", "put together", "clean up", "cleaned up", "take care of", "work on", "working on", "sort out",
+    "sorted out", "get back", "reach out", "talk to", "speak to", "meet with", "take that", "do it", "sign off",
+    "signed off",
+]
+_IRREGULAR = ["sent", "written", "wrote", "done", "built", "run", "running", "ran", "bought", "brought",
+              "made", "drawn", "drew", "put"]
+
+
+def _forms(verb: str) -> str:
+    if verb.endswith("e"):
+        return rf"{verb}[sd]?|{verb[:-1]}ing"
+    return rf"{verb}(?:s|es|ed|ing)?"
+
+
+FOLLOW_UP = _rx(r"\b(" + "|".join([*(_forms(v) for v in _FOLLOW_UP_VERBS), *_FOLLOW_UP_PHRASES, *_IRREGULAR]) + r")\b")
 
 DEADLINE = _rx(
     r"\bby\s+(the\s+)?(end of\s+)?(this\s+|next\s+)?(monday|tuesday|wednesday|thursday|friday|saturday|sunday|"
@@ -79,6 +98,13 @@ ASSIGNMENT = _rx(
 )
 
 NEED_TO = _rx(r"\bwe (really )?(need|have|'ve got|got) to\b")
+
+# "We need the slide deck finished by Friday": a required result with a deadline, no "to".
+NEED_DONE = _rx(
+    r"\b(we|i|you|they)\s+(really\s+|also\s+|still\s+)?(need|want|must have|should have|have to have|"
+    r"have to get|need to have|need to get|'d like)\s+.{1,60}?\b(done|finished|completed|ready|sent|fixed|"
+    r"updated|deployed|tested|written|approved|signed off|in place|delivered|merged|submitted)\b"
+)
 
 DECISION = _rx(
     r"\b(we('ll| will)|let'?s|we('re| are) going to|we'?re gonna|we should just|i think we('ll| will)?) "
@@ -182,6 +208,8 @@ def apply_rules(text: str, label: str) -> RuleResult:
             candidates.append(("Task", "assignment"))
         elif not question and NEED_TO.search(t) and has_follow_up and has_deadline:
             candidates.append(("Task", "need_to_with_deadline"))
+        elif not question and not hedged and NEED_DONE.search(t) and has_deadline:
+            candidates.append(("Task", "need_done"))
     if not question and not hedged and DECISION.search(t):
         candidates.append(("Decision", "agreement"))
     if RISK.search(t) and not NEGATED_CUE.search(t) and not re.search(r"as far as i'?m concerned", t, re.I):
