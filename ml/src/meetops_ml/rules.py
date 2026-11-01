@@ -31,6 +31,8 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
+from .preprocessing import plain_quotes
+
 PRIORITY = {"Task": 3, "Decision": 2, "Risk": 1, "Other": 0}
 
 
@@ -114,7 +116,11 @@ DECISION = _rx(
     r"\blet'?s (not|drop|skip|keep|use|put|freeze|stick)\b|\bno need for\b|\b(so )?(we )?forget (about )?(the|it)\b|"
     r"\bwe('ll| will) (use|keep|stick with|drop|skip|ship|do the)\b|"
     r"\b(moves|goes|is moved|is pushed) to (the )?(next|backlog|v?\d)\b|\bstays (on|at|as)\b|"
-    r"\bfrom now on\b|\bno exceptions\b"
+    r"\bfrom now on\b|\bno exceptions\b|"
+    # approvals, rejections and amendments are decisions too (guideline: "an approval, a rejection")
+    r"\b(is|are|was|were|has been|have been)\s+(not\s+)?(approved|rejected|cancelled|canceled|signed off|postponed)\b|"
+    r"\b(i am|i'm|we are|we're)\s+not\s+(agreeing|approving|going ahead)\b|\b(i|we)\s+(do not|don't)\s+agree\s+to\b|"
+    r"^\W*(correction|change of plan|final decision|decision)\s*:"
 )
 
 RISK = _rx(
@@ -159,7 +165,7 @@ STOP = {"um", "uh", "yeah", "okay", "ok", "so", "and", "but", "the", "a", "mm", 
 
 def normalise(text: str) -> str:
     """Light clean-up for pattern matching: drop fillers and stutters, keep case and punctuation."""
-    t = FILLERS.sub("", text or "")
+    t = FILLERS.sub("", plain_quotes(text or ""))
     t = REPEATS.sub(r"\1", t)
     return re.sub(r"\s+", " ", t).strip()
 

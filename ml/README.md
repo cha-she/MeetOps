@@ -322,7 +322,7 @@ labels where the annotation guideline gives an explicit signal:
 | `commitment` | Other → Task | "I'll / I will / I'm going to" + a follow-up verb (send, fix, prepare …) |
 | `assignment` | Other → Task | "you two will …", "someone needs to …", "let's make sure …" |
 | `need_done` | Other → Task | "we need / want X finished, done, ready, sent" + a deadline |
-| `agreement` | Other → Decision | "we'll go with", "agreed", "let's not", "from now on", "moves to 2.4" |
+| `agreement` | Other → Decision | "we'll go with", "agreed", "let's not", "from now on", "moves to 2.4", "is approved / rejected", "Correction:" |
 | `concern` | Other → Risk | "the problem is", "I'm worried", "won't be able to", "if … won't …" |
 | `meeting_management` | → Other | agenda, greetings, "thank you", "next slide", "let's get started" |
 | `open_question` | Task/Decision → Other | a question that asks nobody to do anything |
@@ -343,6 +343,14 @@ no rule covered "need X done by …". Follow-up verbs now match every form and
 the `need_done` rule was added. Re-running the evaluation gave identical
 results on both test sets (the new rule does not fire there), so the figures
 in 3.8 are unchanged; the training-set figure above includes the fix.
+
+A second round came from testing an unseen transcript in a different layout
+(`00:40, Amira: "…"`, curly quotes, external participants). Three general gaps
+were fixed: the transcript reader now accepts every common layout (see
+`preprocessing.segment_transcript`), typographic quotes are normalised so
+"I’ll" matches "I'll", and the `agreement` rule also covers approvals,
+rejections and amendments ("No customer migration is approved", "I am not
+agreeing to …", "Correction: …"). Both test-set results were again unchanged.
 
 ### 3.8 In-domain evaluation: model vs model + rules
 
@@ -416,41 +424,64 @@ With rules, each line shows which rule changed the model's label, e.g.
 
 ## 4. Extraction and organisation (owner, deadline, merged items)
 
-Implemented in the backend (`backend/app/services/extraction.py` and
+Implemented in the backend (`backend/app/services/extraction.py`, `nlp.py`,
 `organise.py`) because it needs the meeting date and the people in the
-organisation.
+organisation. Three engines are available (`EXTRACTION_ENGINE`):
 
-- **Owner:** a participant addressed or named in the sentence ("Kasun, can
-  you …"); otherwise the speaker of a first-person commitment ("I'll …").
-- **Deadline:** time expressions ("by Friday", "next week", "by the
-  twentieth", "end of the month", "next meeting", "before lunch") resolved
-  relative to the meeting date; event-relative phrases such as "before the
-  go-live" keep their text without a date.
-- **Title:** the sentence is rewritten as an action ("I'll write the
-  integration tests for refunds by Wednesday" → "Write the integration tests
-  for refunds", due Wednesday).
-- **Organising:** a request and its acceptance become one task ("Someone needs
-  to update the release notes" → "Kasun, could you take that?" → "Yep, I'll do
-  it" = one task, owner Kasun); vague agreements ("Okay, let's do that") quote
-  what was agreed; near-duplicate tasks are merged; risks get a severity.
+- **rules** — regular expressions for commitments, requests and time
+  expressions, resolved to dates with `dateparser` relative to the meeting date.
+- **spacy** — spaCy `en_core_web_sm`. The owner is found from the
+  **dependency parse**: the person addressed at the start ("Kasun, can you …"),
+  or the grammatical subject of a verb that expresses future work ("Priya is
+  going to …", "Nia needs to …", "I'll …" = the speaker). A plain past or
+  present subject is ignored ("Apple has been taking a week"). Deadlines come
+  from **NER** DATE and TIME entities ("by the 3rd of December", "early next
+  month"), excluding durations and past dates.
+- **hybrid** (default) — rules first, spaCy for whatever they do not find.
 
-Evaluation against the labelled spans:
+The parse is used, not only the PERSON label, because the small English model
+labels many Sri Lankan names as ORG or GPE ("Nethmi" → ORG, "Ishara" → GPE).
+
+Further organisation: a request and its acceptance become one task ("Someone
+needs to update the release notes" → "Kasun, could you take that?" → "Yep, I'll
+do it" = one task, owner Kasun); follow-ups that add a deadline are merged
+("Can we have the list by 11 September?" → "Confirmed."); titles are rewritten
+as actions; owners without an account keep their spoken name.
 
 ```bash
 cd backend
 python -m app.evaluate_extraction
 ```
 
-| Data | Measure | Result |
-|------|---------|--------|
-| In-domain (22 Task utterances) | owner correct | 22 / 22 |
-| In-domain | deadline found exactly when annotated | 22 / 22 |
-| In-domain | deadline phrase matches the annotation | 14 / 14 |
-| AMI (68 Task utterances, development data) | deadline recall / precision | 0.86 / 0.86 |
+| Engine | Owner acc. (in-domain, 22) | Deadline F1 (in-domain) | Deadline F1 (AMI, 68 tasks) | Unseen probe: owner | Unseen probe: deadline |
+|--------|-----------------------------|-------------------------|-----------------------------|---------------------|------------------------|
+| rules | 1.00 | 1.00 | 0.86 | 8 / 16 | 13 / 16 |
+| spacy | 0.91 | 0.78 | 0.00 | 12 / 16 | 13 / 16 |
+| **hybrid** | **1.00** | **1.00** | **0.86** | **13 / 16** | **15 / 16** |
 
-The in-domain figures are an optimistic upper bound: the extraction rules were
-refined while inspecting output on these same transcripts. AMI owners are
-annotated as pronouns ("I", "we", "you two") rather than names, so only
-deadline detection is measured there; the remaining miss is "in between now
-and then". A learned extractor (spaCy NER over the labelled spans) is planned
-once more data is collected through the review queue.
+- The rules are precise on the phrasing they were developed on (the in-domain
+  figures are an optimistic upper bound for that reason).
+- spaCy alone finds no AMI deadlines: they are meeting-relative ("before
+  lunch", "next meeting", "next time"), which a model trained on news text does
+  not tag as DATE.
+- On 16 unseen sentences with new names and phrasings, spaCy generalises much
+  better than the rules for owners (12 vs 8), and the hybrid is best on both
+  owner and deadline. The hybrid is therefore the default.
+
+Remaining misses on the probe (not tuned away, to keep the probe honest):
+"Raj has to finish … by the 3rd of December" and "Sofia should send …" (owner
+not found), "Let me check the logs after lunch" (deadline not found), "Kenji is
+responsible for … due December 12" (owner not found).
+
+## 5. Recurring risks
+
+When a meeting is processed, each new risk is compared with every risk from
+earlier meetings that was not rejected. Both texts are cleaned
+(`clean_text`), turned into TF-IDF vectors over words and word pairs, and
+compared by **cosine similarity**. At 0.35 or more, both risks are flagged
+*recurring* and appear in the Insights page and the Risk log filter.
+
+Limitation: the comparison is lexical. "The battery may die early" and "power
+runs out too soon" share no words and are not linked. Sentence embeddings
+(e.g. a small sentence-transformer model) would capture this and are planned
+for the next phase.
