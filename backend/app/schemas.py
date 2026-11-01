@@ -164,6 +164,7 @@ class TaskOut(CamelModel):
     id: int
     description: str
     owner: UserOut | None
+    owner_name: str | None
     meeting_id: int
     meeting_title: str
     meeting_date: date
@@ -202,6 +203,7 @@ class DecisionOut(CamelModel):
     id: int
     statement: str
     owner: UserOut | None
+    owner_name: str | None
     meeting_id: int
     meeting_title: str
     department: DepartmentRef | None

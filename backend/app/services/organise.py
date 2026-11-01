@@ -37,7 +37,13 @@ from ..config import settings
 from . import extraction
 
 ACCEPTANCE = re.compile(r"^\W*(yes|yeah|yep|yup|sure|okay|ok|no problem|will do|on it|of course|absolutely|"
-                        r"fine|alright|i'?ll (do|take|handle) (it|that|this)|i can do (it|that))\b", re.I)
+                        r"fine|alright|confirmed|understood|noted|agreed|done|deal|"
+                        r"i'?ll (do|take|handle) (it|that|this)|i can do (it|that))\b", re.I)
+# Words that do not identify a topic, ignored when checking whether a follow-up is about the same task.
+STOP = {"have", "with", "that", "this", "will", "what", "when", "then", "there", "they", "them", "from", "your",
+        "about", "into", "also", "just", "some", "same", "should", "could", "would", "please", "need", "want",
+        "make", "sure", "okay", "today", "tomorrow", "week", "next", "friday", "monday", "tuesday", "wednesday",
+        "thursday", "saturday", "sunday"}
 PRONOUN_REQUEST = re.compile(r"\b(take|do|handle|own|pick up|look at) (that|it|this)\b", re.I)
 VAGUE_DECISION = re.compile(r"^\W*(okay|ok|so|right|yeah|yes|alright)?[\s,]*(let'?s (do|go with) (that|it|this)|"
                             r"agreed|deal|sounds good|fine|that works|done)\W*$", re.I)
@@ -51,6 +57,7 @@ class Draft:
     confidence: float | None           # model probability; None when the label came from a rule
     rule_changed: bool
     owner: models.User | None = None
+    owner_name: str | None = None
     deadline: date | None = None
     deadline_text: str | None = None
     severity: str | None = None
@@ -75,35 +82,52 @@ def _chain_conf(chain: list[models.Segment]) -> float | None:
     return max(values) if values else None
 
 
+def _content_words(text: str) -> set[str]:
+    return {w for w in re.findall(r"[a-z]{4,}", text.lower()) if w not in STOP}
+
+
 def _task_chains(segments: list[models.Segment]) -> list[list[models.Segment]]:
-    """Group task sentences that belong to one exchange (request -> acceptance, vague -> named)."""
+    """Group the sentences of one task exchange.
+
+    A task sentence opens a chain. Up to three lines later the chain takes:
+    * a short acceptance by someone else ("Yep, I'll do it", "Confirmed."), whatever its label;
+    * a request that refers back with a pronoun ("Kasun, could you take that?");
+    * a follow-up about the same thing that adds a deadline ("Can we have the list by Friday?").
+    """
     chains: list[list[models.Segment]] = []
-    for i, seg in enumerate(segments):
-        if seg.category != "Task":
-            continue
+    for seg in segments:
+        text = seg.text.strip()
+        short = len(text.split()) <= 8
         joined = False
         if chains:
-            last = chains[-1][-1]
+            chain = chains[-1]
+            last = chain[-1]
             gap = seg.position - last.position
-            text = seg.text.strip()
-            short = len(text.split()) <= 8
-            replies = gap <= 2 and (
-                (short and ACCEPTANCE.search(text))                     # "Yep, I'll do it."
-                or PRONOUN_REQUEST.search(text) and short                # "Kasun, could you take that?"
-                or (gap == 1 and last.speaker != seg.speaker and ACCEPTANCE.search(text))
-            )
-            if replies:
-                chains[-1].append(seg)
-                joined = True
-        if not joined:
+            if 0 < gap <= 3:
+                acceptance = short and ACCEPTANCE.search(text) and seg.speaker != last.speaker
+                pronoun = seg.category == "Task" and short and PRONOUN_REQUEST.search(text)
+                _, phrase = extraction.parse_deadline(text, date.today())
+                same_topic = bool(_content_words(text) & _content_words(" ".join(s.text for s in chain)))
+                follow_up = phrase is not None and same_topic and not any(
+                    extraction.parse_deadline(s.text, date.today())[1] for s in chain)
+                # a longer acceptance straight after the request ("Yes, I'll have it in the wiki by Wednesday")
+                long_acceptance = (seg.category == "Task" and gap == 1 and seg.speaker != last.speaker
+                                   and ACCEPTANCE.search(text))
+                if acceptance or pronoun or follow_up or long_acceptance:
+                    chain.append(seg)
+                    joined = True
+        if not joined and seg.category == "Task":
             chains.append([seg])
     return chains
 
 
-def _task_draft(chain: list[models.Segment], meeting_date: date, users: list[models.User]) -> Draft:
+def _task_draft(chain: list[models.Segment], meeting_date: date, users: list[models.User],
+                speakers: set[str]) -> Draft:
     # Title: the first sentence in the exchange that yields a descriptive action
     title, evidence = None, chain[0]
     for seg in chain:
+        if seg.category != "Task":
+            continue
         title = extraction.task_title(seg.text, users)
         if title:
             evidence = seg
@@ -112,14 +136,16 @@ def _task_draft(chain: list[models.Segment], meeting_date: date, users: list[mod
         title = extraction.tidy(chain[0].text)
 
     # Owner: named addressee or first-person speaker; an acceptance by someone else wins
-    owner = None
+    owner, owner_name = None, None
     for seg in chain:
-        o = extraction.find_owner(seg.text, seg.speaker, users)
-        if o:
-            owner = o
+        if seg.category != "Task":
+            continue
+        o, name = extraction.find_owner_name(seg.text, seg.speaker, users, speakers)
+        if o or name:
+            owner, owner_name = o, name
     for seg in chain[1:]:
-        if ACCEPTANCE.search(seg.text) and seg.speaker:
-            owner = extraction.match_user(seg.speaker, users) or owner
+        if ACCEPTANCE.search(seg.text) and seg.speaker and seg.speaker != "Unknown" and seg.speaker != chain[0].speaker                 and not extraction.FIRST_PERSON.search(chain[0].text):
+            owner, owner_name = extraction.match_user(seg.speaker, users) or owner, seg.speaker
 
     # Deadline: first sentence of the exchange that states one
     deadline, deadline_text = None, None
@@ -129,8 +155,9 @@ def _task_draft(chain: list[models.Segment], meeting_date: date, users: list[mod
             deadline, deadline_text = d, phrase
             break
 
-    return Draft("Task", evidence, title, _chain_conf(chain),
-                 any(s.rule for s in chain), owner, deadline, deadline_text, members=chain)
+    task_segments = [s for s in chain if s.category == "Task"]
+    return Draft("Task", evidence, title, _chain_conf(task_segments),
+                 any(s.rule for s in task_segments), owner, owner_name, deadline, deadline_text, members=chain)
 
 
 def _merge_duplicates(drafts: list[Draft], threshold: float = 0.7) -> list[Draft]:
@@ -147,6 +174,7 @@ def _merge_duplicates(drafts: list[Draft], threshold: float = 0.7) -> list[Draft
             if j not in dropped and sims[i, j] >= threshold:
                 keep, other = tasks[i], tasks[j]
                 keep.owner = keep.owner or other.owner
+                keep.owner_name = keep.owner_name or other.owner_name
                 if not keep.deadline_text and other.deadline_text:
                     keep.deadline, keep.deadline_text = other.deadline, other.deadline_text
                 values = [c for c in (keep.confidence, other.confidence) if c is not None]
@@ -159,11 +187,16 @@ def _merge_duplicates(drafts: list[Draft], threshold: float = 0.7) -> list[Draft
 
 def build_drafts(segments: list[models.Segment], meeting_date: date, users: list[models.User]) -> list[Draft]:
     drafts: list[Draft] = []
-    for chain in _task_chains(segments):
-        drafts.append(_task_draft(chain, meeting_date, users))
+    speakers = {s.speaker for s in segments if s.speaker}
+    chains = _task_chains(segments)
+    absorbed = {s.id for chain in chains for s in chain[1:]}   # follow-ups merged into a task
+    for chain in chains:
+        drafts.append(_task_draft(chain, meeting_date, users, speakers))
 
     by_pos = {s.position: s for s in segments}
     for seg in segments:
+        if seg.id in absorbed:
+            continue
         if seg.category == "Decision":
             text = extraction.tidy(seg.text)
             prev = by_pos.get(seg.position - 1)
@@ -171,7 +204,8 @@ def build_drafts(segments: list[models.Segment], meeting_date: date, users: list
                 agreed = extraction.task_title(prev.text, users) or extraction.tidy(prev.text)
                 text = f"Agreed: {agreed[0].lower() + agreed[1:]}"
             owner = extraction.match_user(seg.speaker, users)
-            drafts.append(Draft("Decision", seg, text, _conf(seg), bool(seg.rule), owner))
+            name = seg.speaker if seg.speaker and seg.speaker != "Unknown" else None
+            drafts.append(Draft("Decision", seg, text, _conf(seg), bool(seg.rule), owner, owner.name if owner else name))
         elif seg.category == "Risk":
             drafts.append(Draft("Risk", seg, extraction.tidy(seg.text), _conf(seg), bool(seg.rule),
                                 severity=extraction.risk_severity(seg.text)))

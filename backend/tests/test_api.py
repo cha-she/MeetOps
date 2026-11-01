@@ -140,3 +140,22 @@ def test_upload_transcript(client, member):
     tasks = client.get("/api/tasks", params={"meetingId": m["id"]}, headers=member).json()
     assert len(tasks) == 1 and tasks[0]["owner"]["name"] == "Kasun Silva" and tasks[0]["deadline"] == "2026-10-30"
     assert tasks[0]["description"] == "Fix the login bug"
+
+
+def test_upload_time_comma_transcript_with_external_people(client, member):
+    """Lines like '03:28, Jon: “I’ll …”', speakers without accounts, a follow-up deadline and a confirmation."""
+    from pathlib import Path
+    raw = (Path(__file__).parent / "renewals_call.txt").read_bytes()
+    r = client.post("/api/meetings/upload", data={"title": "Renewals call", "date": "2026-10-31"},
+                    files={"file": ("renewals_call.txt", raw, "text/plain")}, headers=member)
+    mid = r.json()["id"]
+    m = client.get(f"/api/meetings/{mid}", headers=member).json()
+    assert m["status"] == "Processed", m["errorMessage"]
+    segs = client.get(f"/api/meetings/{mid}/segments", headers=member).json()
+    assert len(segs) == 12 and {s["speaker"] for s in segs} == {"Amira", "Jon", "Nia"}
+    tasks = {t["ownerName"]: t for t in client.get("/api/tasks", params={"meetingId": mid}, headers=member).json()}
+    assert tasks["Jon"]["description"] == "Run that comparison and post the mismatch list"
+    assert tasks["Jon"]["deadline"] == "2026-09-11"          # taken from Amira's follow-up, confirmed by Jon
+    assert "Nia" in tasks
+    decisions = [d["statement"] for d in client.get("/api/decisions", params={"meetingId": mid}, headers=member).json()]
+    assert "No customer migration is approved." in decisions

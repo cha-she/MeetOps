@@ -54,7 +54,8 @@ def segment_out(s: models.Segment) -> schemas.SegmentOut:
 
 def task_out(t: models.Task) -> schemas.TaskOut:
     return schemas.TaskOut(
-        id=t.id, description=t.description, owner=user_out(t.owner), meeting_id=t.meeting_id,
+        id=t.id, description=t.description, owner=user_out(t.owner),
+        owner_name=t.owner.name if t.owner else t.owner_name, meeting_id=t.meeting_id,
         meeting_title=t.meeting.title, meeting_date=t.meeting.date, department=dept_ref(t.meeting.department),
         deadline=t.deadline, deadline_text=t.deadline_text, status=t.status, priority=t.priority,
         review_status=t.review_status, confidence=t.confidence, source=t.source,
@@ -64,7 +65,8 @@ def task_out(t: models.Task) -> schemas.TaskOut:
 
 def decision_out(d: models.Decision) -> schemas.DecisionOut:
     return schemas.DecisionOut(
-        id=d.id, statement=d.statement, owner=user_out(d.owner), meeting_id=d.meeting_id,
+        id=d.id, statement=d.statement, owner=user_out(d.owner),
+        owner_name=d.owner.name if d.owner else d.owner_name, meeting_id=d.meeting_id,
         meeting_title=d.meeting.title, department=dept_ref(d.meeting.department), decided_at=d.decided_at,
         review_status=d.review_status, confidence=d.confidence, source=d.source, evidence=evidence(d.segment),
     )

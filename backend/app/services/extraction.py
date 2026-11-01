@@ -17,6 +17,8 @@ from datetime import date, datetime, time, timedelta
 import dateparser
 
 from .. import models
+from ..config import settings
+from . import nlp
 
 FIRST_PERSON = re.compile(r"\b(i will|i'll|i can|i could|i am going to|i'm going to|i'm gonna|let me|i'd|i would|"
                           r"i take|i'm on it|i'll have|i can have)\b", re.I)
@@ -29,7 +31,17 @@ ORDINALS = {"first": 1, "second": 2, "third": 3, "fourth": 4, "fifth": 5, "sixth
             "thirty-first": 31}
 _ORD = "|".join(sorted((re.escape(k) for k in ORDINALS), key=len, reverse=True))
 
+_MONTH = r"(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*"
+_YEAR = r"(?:,?\s+\d{4})?"
+_TIME = r"(?:,?\s+(?:at\s+)?\d{1,2}(?:[:.]\d{2})?\s*(?:am|pm|a\.m\.|p\.m\.)?(?:\s*(?:utc|gmt|ist|sl time|local time))?)?"
+_LEAD = r"(?:by|before|until|till|due|on|no later than)"
+
 DEADLINE_PATTERNS = [
+    # explicit calendar dates first, with optional year and time: "by 11 September 2026 at 14:00 UTC"
+    rf"\b{_LEAD}\s+(?:the\s+)?\d{{1,2}}(?:st|nd|rd|th)?(?:\s+of)?\s+{_MONTH}{_YEAR}{_TIME}",
+    rf"\b{_LEAD}\s+{_MONTH}\s+\d{{1,2}}(?:st|nd|rd|th)?{_YEAR}{_TIME}",
+    rf"\b{_LEAD}\s+\d{{1,2}}[/.-]\d{{1,2}}[/.-]\d{{2,4}}{_TIME}",
+    r"\b\d{4}-\d{2}-\d{2}\b",
     r"\b(?:by|before|until|till|due|on)\s+(?:the\s+)?(?:end of\s+)?(?:this|next|coming)?\s*(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday|weekend|week|month|sprint|quarter|tomorrow|today|tonight)(?:\s+(?:morning|afternoon|evening))?\b",
     r"\b(?:by|before)\s+(?:the\s+)?next\s+(?:meeting|standup|stand-up|sprint|review|session|call)\b",
     r"\b(?:by|before|on)\s+the\s+(?:" + _ORD + r"|\d{1,2}(?:st|nd|rd|th)?)(?:\s+at the latest)?\b",
@@ -41,9 +53,6 @@ DEADLINE_PATTERNS = [
     r"\b(?:by |for |at |in )?(?:the )?next (?:meeting|time|session)\b",
     r"\bbefore (?:lunch|the break|the end of (?:the )?(?:meeting|call))\b",
     r"\btomorrow\b|\btoday\b|\btonight\b|\bthis afternoon\b|\bthis evening\b",
-    r"\b(?:by|before|on)\s+(?:the\s+)?\d{1,2}(?:st|nd|rd|th)?(?:\s+of)?\s+(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\b",
-    r"\b(?:by|before|on)\s+(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\s+\d{1,2}(?:st|nd|rd|th)?\b",
-    r"\b\d{4}-\d{2}-\d{2}\b",
 ]
 _DEADLINE = re.compile("|".join(f"(?:{p})" for p in DEADLINE_PATTERNS), re.I)
 
@@ -92,6 +101,54 @@ def find_owner(text: str, speaker: str | None, users: list[models.User]) -> mode
     return None
 
 
+def find_owner_name(text: str, speaker: str | None, users: list[models.User],
+                    speakers: set[str] | None = None, engine: str | None = None) -> tuple[models.User | None, str | None]:
+    """(account, spoken name) of the person who should do the work.
+
+    engine "rules": patterns only; "spacy": spaCy dependency parse + NER only;
+    "hybrid" (default): rules first, spaCy for what they do not find.
+    """
+    engine = engine or settings.extraction_engine
+    if engine == "spacy" and nlp.available():
+        return _spacy_owner(text, speaker, users)
+    found = _rule_owner_name(text, speaker, users, speakers)
+    if found == (None, None) and engine == "hybrid" and nlp.available():
+        return _spacy_owner(text, speaker, users)
+    return found
+
+
+def _spacy_owner(text: str, speaker: str | None, users: list[models.User]) -> tuple[models.User | None, str | None]:
+    name = nlp.owner(text, speaker)
+    if not name:
+        return None, None
+    user = match_user(name, users) or match_user(name.split()[0], users)
+    return user, user.name if user else name
+
+
+def _rule_owner_name(text: str, speaker: str | None, users: list[models.User],
+                     speakers: set[str] | None = None) -> tuple[models.User | None, str | None]:
+    """Rule-based owner: an account named in the text, a speaker's name, a vocative, or "I'll" = speaker.
+
+    Works also when people in the transcript have no account: a name addressed in the sentence
+    ("Jon, can you …", "Nia will …") or the speaker of "I'll …" is returned as the spoken name.
+    """
+    user = find_owner(text, speaker, users)
+    if user:
+        return user, user.name
+    names = {s for s in (speakers or set()) if s and s != "Unknown"}
+    # addressed or mentioned by name: "Jon, can you …", "… and Nia will check it"
+    for name in sorted(names, key=len, reverse=True):
+        first = name.split()[0]
+        if re.search(rf"\b{re.escape(first)}\b", text) and (name != speaker or text.strip().startswith(first)):
+            return match_user(name, users), name
+    vocative = re.match(r"^\W*([A-Z][a-z]+),\s+(can|could|would|will|please)\b", text)
+    if vocative:
+        return None, vocative.group(1)
+    if FIRST_PERSON.search(text) and speaker and speaker != "Unknown":
+        return match_user(speaker, users), speaker
+    return None, None
+
+
 def _next_weekday(base: date, weekday: int, strictly_after: bool = True) -> date:
     days = (weekday - base.weekday()) % 7
     if days == 0 and strictly_after:
@@ -114,59 +171,84 @@ def _day_of_month(base: date, day: int) -> date:
     return base
 
 
-def parse_deadline(text: str, base: date) -> tuple[date | None, str | None]:
-    """Return (date, matched phrase). Relative phrases are resolved from the meeting date."""
-    m = _DEADLINE.search(text)
-    if not m:
+def parse_deadline(text: str, base: date, engine: str | None = None) -> tuple[date | None, str | None]:
+    """Return (date, phrase). The phrase comes from the rules, spaCy NER, or both (``EXTRACTION_ENGINE``);
+    relative phrases are resolved from the meeting date."""
+    engine = engine or settings.extraction_engine
+    phrase = None
+    if engine != "spacy" or not nlp.available():
+        m = _DEADLINE.search(text)
+        phrase = m.group(0).strip(" ,") if m else None
+    if phrase is None and engine in ("spacy", "hybrid") and nlp.available():
+        phrase = nlp.deadline_phrase(text)
+    if not phrase:
         return None, None
-    phrase = m.group(0)
+    return resolve_deadline(phrase, base), phrase
+
+
+def resolve_deadline(phrase: str, base: date) -> date | None:
+    """Turn a time phrase into a calendar date, relative to the meeting date (None if it names an event)."""
     p = phrase.lower()
+
+    # Explicit calendar dates: respect a spoken year; without one, take the next such date.
+    date_part = re.sub(rf"^{_LEAD}\s+(the\s+)?", "", p)
+    date_part = re.sub(r"(,?\s+(at\s+)?\d{1,2}([:.]\d{2})?\s*(am|pm|a\.m\.|p\.m\.)?(\s*(utc|gmt|ist|sl time|local time))?)$", "", date_part)
+    if re.search(_MONTH, date_part) and re.search(r"\d", date_part) or re.fullmatch(r"\d{1,2}[/.-]\d{1,2}[/.-]\d{2,4}", date_part) \
+            or re.fullmatch(r"\d{4}-\d{2}-\d{2}", date_part):
+        has_year = bool(re.search(r"\d{4}", date_part))
+        settings = {"DATE_ORDER": "DMY", "PREFER_DAY_OF_MONTH": "first",
+                    "RELATIVE_BASE": datetime.combine(base, time.min)}
+        if not has_year:
+            settings["PREFER_DATES_FROM"] = "future"
+        parsed = dateparser.parse(date_part, settings=settings)
+        if parsed:
+            return parsed.date()
 
     ordinal = re.search(_ORD, p)
     numeric = re.search(r"\bthe (\d{1,2})(st|nd|rd|th)?\b", p)
     if ordinal and "the" in p and not re.search(r"(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)", p):
-        return _day_of_month(base, ORDINALS[ordinal.group(0)]), phrase
+        return _day_of_month(base, ORDINALS[ordinal.group(0)])
     if numeric and not re.search(r"(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)", p):
-        return _day_of_month(base, int(numeric.group(1))), phrase
+        return _day_of_month(base, int(numeric.group(1)))
     if "weekend" in p:
-        return _next_weekday(base, 5, strictly_after=False), phrase
+        return _next_weekday(base, 5, strictly_after=False)
     if "after this call" in p or "after the call" in p or "after the meeting" in p or "after this meeting" in p:
-        return base, phrase
+        return base
     if "end of" in p:
         if "day" in p:
-            return base, phrase
+            return base
         if "week" in p:
-            return _next_weekday(base, 4, strictly_after=False), phrase
+            return _next_weekday(base, 4, strictly_after=False)
         if "month" in p:
             nxt = (base.replace(day=28) + timedelta(days=4)).replace(day=1)
-            return nxt - timedelta(days=1), phrase
-        return base + timedelta(days=90 if "quarter" in p else 14), phrase
+            return nxt - timedelta(days=1)
+        return base + timedelta(days=90 if "quarter" in p else 14)
     if re.search(r"next (meeting|standup|stand-up|session|call|review|time)", p):
-        return base + timedelta(days=7), phrase
+        return base + timedelta(days=7)
     if re.search(r"before (lunch|the break|the end of)", p):
-        return base, phrase
+        return base
     if "next sprint" in p:
-        return base + timedelta(days=14), phrase
+        return base + timedelta(days=14)
     if re.search(r"\bthis week\b", p):
-        return _next_weekday(base, 4, strictly_after=False), phrase
+        return _next_weekday(base, 4, strictly_after=False)
     if re.search(r"\bnext week\b", p):
-        return _next_weekday(base, 0) + timedelta(days=4), phrase   # Friday of next week
+        return _next_weekday(base, 0) + timedelta(days=4)   # Friday of next week
     if re.search(r"\b(this|next) month\b", p):
-        return base + timedelta(days=30), phrase
+        return base + timedelta(days=30)
     if re.search(r"before (the )?(go-live|launch|release|freeze|deadline|demo|review|sending)", p):
-        return None, phrase   # relative to an event: keep the text, no date
+        return None   # relative to an event: keep the text, no date
     for i, day in enumerate(("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday")):
         if day in p:
-            return _next_weekday(base, i), phrase   # the coming <day>, after the meeting date
+            return _next_weekday(base, i)   # the coming <day>, after the meeting date
     if "tomorrow" in p:
-        return base + timedelta(days=1), phrase
+        return base + timedelta(days=1)
     if any(w in p for w in ("today", "tonight", "this afternoon", "this evening")):
-        return base, phrase
+        return base
 
     parsed = dateparser.parse(re.sub(r"^(by|before|until|till|due|on)\s+", "", p),
                               settings={"RELATIVE_BASE": datetime.combine(base, time.min),
                                         "PREFER_DATES_FROM": "future", "PREFER_DAY_OF_MONTH": "first"})
-    return (parsed.date() if parsed else None), phrase
+    return (parsed.date() if parsed else None)
 
 
 def task_fields(text: str, speaker: str | None, meeting_date: date, users: list[models.User]) -> TaskFields:

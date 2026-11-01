@@ -68,12 +68,15 @@ def reclassify_segment(db: Session, seg: models.Segment, category: str, user: mo
     item = None
     if category == "Task":
         f = extraction.task_fields(seg.text, seg.speaker, meeting.date, users)
+        speakers = {s.speaker for s in meeting.segments if s.speaker}
+        owner_user, owner_name = extraction.find_owner_name(seg.text, seg.speaker, users, speakers)
         item = models.Task(description=extraction.task_title(seg.text, users) or extraction.tidy(seg.text),
-                           owner_id=f.owner.id if f.owner else None, deadline=f.deadline,
+                           owner_id=owner_user.id if owner_user else None, owner_name=owner_name, deadline=f.deadline,
                            deadline_text=f.deadline_text, status="Open", reviewed_by_id=user.id, **common)
     elif category == "Decision":
         owner = extraction.match_user(seg.speaker, users)
         item = models.Decision(statement=extraction.tidy(seg.text), owner_id=owner.id if owner else None,
+                               owner_name=owner.name if owner else (seg.speaker if seg.speaker != "Unknown" else None),
                                decided_at=meeting.date, reviewed_by_id=user.id, **common)
     elif category == "Risk":
         item = models.Risk(description=extraction.tidy(seg.text), severity=extraction.risk_severity(seg.text),

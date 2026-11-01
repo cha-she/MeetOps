@@ -34,6 +34,7 @@ class Settings(BaseSettings):
     token_hours: int = 12
     use_rules: bool = True                  # rule layer after the classifier
     auto_confirm_confidence: float = 0.8    # model-only predictions at or above this are confirmed automatically
+    extraction_engine: str = "hybrid"       # owner/deadline extraction: rules | spacy | hybrid
 
 
 settings = Settings()

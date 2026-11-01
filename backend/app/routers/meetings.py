@@ -16,7 +16,7 @@ from ..services.pipeline import process_meeting
 router = APIRouter(tags=["meetings"])
 
 SOURCE_BY_EXT = {
-    ".txt": "transcript", ".md": "transcript",
+    ".txt": "transcript", ".md": "transcript", ".vtt": "transcript", ".srt": "transcript",
     ".mp3": "audio", ".wav": "audio", ".m4a": "audio", ".ogg": "audio",
     ".mp4": "video", ".mkv": "video", ".webm": "video", ".mov": "video",
 }
@@ -81,7 +81,7 @@ async def upload_meeting(
     ext = Path(file.filename or "").suffix.lower()
     source = SOURCE_BY_EXT.get(ext)
     if not source:
-        raise HTTPException(415, f"Unsupported file type '{ext or 'none'}'. Upload a .txt transcript or an audio/video file.")
+        raise HTTPException(415, f"Unsupported file type '{ext or 'none'}'. Upload a transcript (.txt, .md, .vtt, .srt) or an audio/video file.")
 
     data = await file.read()
     if len(data) > settings.max_upload_mb * 1024 * 1024:

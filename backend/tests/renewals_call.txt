@@ -1,0 +1,17 @@
+00:40, Amira: “Maybe we should move all renewals next week.”
+
+01:05, Jon: “I can examine the import. I am not agreeing to run a migration.”
+
+03:10, Amira: “No bulk move. Compare ten synthetic records in staging only.”
+
+03:28, Jon: “I’ll run that comparison and post the mismatch list.”
+
+07:15, Amira: “Can we have the list by 11 September 2026 at 14:00 UTC?”
+
+07:30, Jon: “Confirmed.”
+
+09:05, Nia: “I’ll ask security whether the export is allowed.”
+
+18:12, Amira: “Correction: five records, with the same deadline. No customer migration is approved.”
+
+18:20, Jon: “Five records, understood.”

@@ -130,6 +130,8 @@ def update_task(task_id: int, patch: schemas.TaskPatch, db: Session = Depends(ge
     before = {k: getattr(t, k) for k in changes}
     for key, value in changes.items():
         setattr(t, key, value)
+    if "owner_id" in changes:
+        t.owner_name = None   # an explicit choice replaces the name heard in the meeting
 
     if "status" in changes and before["status"] != t.status:
         t.completed_at = datetime.now(timezone.utc) if t.status == "Completed" else None

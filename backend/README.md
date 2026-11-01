@@ -22,7 +22,8 @@ backend/
 │       ├── pipeline.py        upload -> transcribe -> preprocess -> classify -> extract -> save
 │       ├── classifier.py      loads the trained model (newest ml/models/vN) with the rule layer
 │       ├── organise.py        merges replies into one task, picks titles, sets review status
-│       ├── extraction.py      owner, deadline, action titles, risk severity
+│       ├── extraction.py      owner, deadline, action titles, risk severity (rules)
+│       ├── nlp.py             spaCy owner (dependency parse) and deadline (NER) extraction
 │       ├── review.py          confirm / reject, relabel transcript lines, label feedback
 │       ├── summary.py         extractive summary + recurring-risk similarity
 │       ├── insights.py        dashboard and analytics aggregates
@@ -97,7 +98,7 @@ both of these:
 | SQLite (default) | one file, `backend/meetops.db` | none |
 | PostgreSQL | Docker volume `meetops_pgdata`, reachable at `localhost:5432`, database `meetops` | `docker compose up -d` in `backend/`, then set `DATABASE_URL` in `backend/.env` (see `.env.example`) and run the seed again |
 
-Tables are created automatically on start-up. Full ER diagram:
+Tables are created automatically on start-up, and new nullable columns are added to an existing database (`database.add_missing_columns`). Full ER diagram:
 [`docs/database-schema.md`](../docs/database-schema.md).
 
 | Table | Purpose |
@@ -107,7 +108,7 @@ Tables are created automatically on start-up. Full ER diagram:
 | `meetings` | one per upload: date, source, status, pipeline stage, department, uploader, summary, model used |
 | `meeting_participants` | speakers matched to accounts |
 | `segments` | one classified utterance: final label, confidence, the model's own label, the rule that changed it, corrected-by-a-person flag |
-| `tasks` | action items: owner, deadline (+ the phrase said), status, priority, review status, confidence, source (ai / manual) |
+| `tasks` | action items: owner (account, or the spoken name for people without one), deadline (+ the phrase said), status, priority, review status, confidence, source (ai / manual) |
 | `decisions` | agreed outcomes: decided by, date, review status |
 | `risks` | concerns: severity, status (open / mitigated / closed), owner, raised by, recurring flag, review status |
 | `notifications` | per user: overdue, due soon, assigned, status change, review needed |
@@ -128,9 +129,9 @@ polls `GET /api/meetings/{id}` to draw the progress.
 | Stage | What happens |
 |-------|--------------|
 | transcribe | text transcripts skip this; audio/video stop here with a clear message until Whisper is integrated (next phase) |
-| preprocess | `segment_transcript` splits `Speaker: text` lines (optional `[hh:mm:ss]` prefix) into one utterance per sentence |
+| preprocess | `segment_transcript` reads any common layout: `Speaker: text`, `[00:12] Speaker: text`, `00:12, Speaker: “text”`, `Speaker (00:12): text`, Teams/Otter exports (name and time on one line, text below), Zoom/Teams `.vtt` and `.srt` files, and plain minutes without speakers. Typographic quotes are normalised, then each turn is split into sentences |
 | classify | the newest `ml/models/vN` classifier labels every utterance; the rule layer (`ml/src/meetops_ml/rules.py`) then corrects explicit requests, commitments, agreements, concerns, agenda lines and open questions. Both labels are stored |
-| extract | `organise.py` merges request → acceptance exchanges into one task, rewrites titles, takes owner and deadline from the exchange; decisions and risks get readable statements and a severity; recurring risks are found by TF-IDF cosine similarity with earlier meetings |
+| extract | `organise.py` merges request → acceptance exchanges (and follow-ups such as "Can we have it by Friday?" → "Confirmed.") into one task, rewrites titles, takes owner and deadline from the exchange (rules + spaCy, `EXTRACTION_ENGINE`); decisions and risks get readable statements and a severity; recurring risks are found by TF-IDF cosine similarity with earlier meetings |
 | save | review status (auto-confirmed only when the model alone is ≥ 0.8 confident, otherwise *suggested*), extractive summary, notifications to owners and the uploader, audit entry |
 
 Any error marks the meeting `Failed` with `errorMessage` instead of crashing

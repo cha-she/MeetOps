@@ -31,6 +31,22 @@ def test_deadlines_relative_to_meeting_date():
     assert parse_deadline("no time words here", THU) == (None, None)
 
 
+def test_explicit_dates_keep_their_year_and_numeric_dates_work():
+    assert parse_deadline("Can we have the list by 11 September 2026 at 14:00 UTC?", THU) == (
+        date(2026, 9, 11), "by 11 September 2026 at 14:00 UTC")
+    assert parse_deadline("by 15/11/2026", THU)[0] == date(2026, 11, 15)
+    assert parse_deadline("by 5 Nov", THU)[0] == date(2026, 11, 5)
+
+
+def test_owner_names_without_accounts():
+    from app.services.extraction import find_owner_name
+    speakers = {"Amira", "Jon", "Nia"}
+    assert find_owner_name("I'll ask security whether the export is allowed.", "Nia", USERS, speakers) == (None, "Nia")
+    assert find_owner_name("Jon, can you post the list?", "Amira", USERS, speakers) == (None, "Jon")
+    user, name = find_owner_name("Kasun, can you fix it?", "Amira", USERS, speakers)
+    assert user is not None and name == "Kasun Silva"
+
+
 def test_tidy_and_severity():
     assert tidy("Hmm, okay, so we'll do the training on site.") == "We'll do the training on site."
     assert risk_severity("If nobody replaces him, we won't have anyone to approve it.") == "High"

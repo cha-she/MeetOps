@@ -62,14 +62,14 @@ def _run(db, meeting: models.Meeting, transcript_text: str | None) -> None:
     _set_stage(db, meeting, "transcribe")
     if meeting.source != "transcript":
         raise RuntimeError("Audio and video transcription (Whisper) is planned for the next phase. "
-                           "Upload a text transcript (.txt) with 'Speaker: text' lines for now.")
+                           "Upload a text transcript (.txt, .vtt or .srt) for now.")
     if not transcript_text or not transcript_text.strip():
         raise RuntimeError("The transcript file is empty.")
 
     _set_stage(db, meeting, "preprocess")
     utterances = segment_transcript(transcript_text)
     if not utterances:
-        raise RuntimeError("No utterances found. Use one line per turn in the form 'Speaker: text'.")
+        raise RuntimeError("The transcript contains no readable text.")
 
     _set_stage(db, meeting, "classify")
     clf = get_classifier()
@@ -97,9 +97,11 @@ def _run(db, meeting: models.Meeting, transcript_text: str | None) -> None:
                       review_status=d.review_status, source="ai")
         if d.kind == "Task":
             db.add(models.Task(description=d.description, owner_id=d.owner.id if d.owner else None,
+                               owner_name=d.owner_name,
                                deadline=d.deadline, deadline_text=d.deadline_text, status="Open", **common))
         elif d.kind == "Decision":
             db.add(models.Decision(statement=d.description, owner_id=d.owner.id if d.owner else None,
+                                   owner_name=d.owner_name,
                                    decided_at=meeting.date, **common))
         else:
             r = models.Risk(description=d.description, severity=d.severity or "Medium", raised_at=meeting.date,

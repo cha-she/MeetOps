@@ -59,6 +59,8 @@ def update_decision(decision_id: int, patch: schemas.DecisionPatch, db: Session 
         raise HTTPException(422, "Unknown owner")
     for k, v in changes.items():
         setattr(d, k, v)
+    if "owner_id" in changes:
+        d.owner_name = None   # an explicit choice replaces the name heard in the meeting
     if changes:
         audit.log(db, "decision", d.id, "updated", ", ".join(changes), actor_id=user.id, meeting_id=d.meeting_id)
     if review_status:

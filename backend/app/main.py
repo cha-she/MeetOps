@@ -37,5 +37,5 @@ for r in (auth, meetings, tasks, decisions, risks, users, insights, search, noti
 
 @app.get("/api/health", response_model=schemas.Health, tags=["health"])
 def health():
-    return schemas.Health(status="ok", version=__version__, database=settings.database_url.split(":", 1)[0],
+    return schemas.Health(status="ok", version=__version__, database=settings.database_url.split(":", 1)[0].split("+")[0],
                           model=model_name(), rules=settings.use_rules)

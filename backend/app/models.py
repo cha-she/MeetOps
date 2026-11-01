@@ -133,6 +133,7 @@ class Task(_Extracted, Base):
     segment_id: Mapped[int | None] = mapped_column(ForeignKey("segments.id", ondelete="SET NULL"))
     description: Mapped[str] = mapped_column(Text, nullable=False)
     owner_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), index=True)
+    owner_name: Mapped[str | None] = mapped_column(String(120))   # spoken name when the person has no account
     deadline: Mapped[date | None] = mapped_column(Date)
     deadline_text: Mapped[str | None] = mapped_column(String(80))
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="Open")  # Open|In Progress|Completed
@@ -155,6 +156,7 @@ class Decision(_Extracted, Base):
     segment_id: Mapped[int | None] = mapped_column(ForeignKey("segments.id", ondelete="SET NULL"))
     statement: Mapped[str] = mapped_column(Text, nullable=False)
     owner_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    owner_name: Mapped[str | None] = mapped_column(String(120))   # spoken name when the person has no account
     decided_at: Mapped[date] = mapped_column(Date, nullable=False)
     reviewed_by_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
