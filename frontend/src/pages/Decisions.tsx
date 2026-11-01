@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Download, Gavel, Pencil } from "lucide-react";
 import { api, type DecisionFilters } from "../api/endpoints";
 import { useQuery } from "../api/hooks";
 import { useMe } from "../auth/AuthContext";
 import { mayEditItem } from "../auth/permissions";
-import { ConfidenceMeter, EvidenceQuote, OwnerMenu, ReviewBadge, ReviewButtons, useUsers } from "../components/items";
+import { ConfidenceMeter, EvidenceQuote, OwnerMenu, ReviewBadge, ReviewButtons, ReviewSwitch, filterByReview, reviewViewOf, useUsers } from "../components/items";
 import { DateRange, Dialog, EmptyState, Field, FilterSelect, PageHeader, QueryView, RowsSkeleton, SearchInput, downloadCsv, formatDate } from "../components/ui";
 import { LIST_REFRESH_INTERVAL_MS } from "../config";
 import { useMutation } from "../hooks/useMutation";
-import type { Decision, ReviewStatus } from "../types";
+import type { Decision } from "../types";
 
 const REFRESH = ["decisions", "insights", "review", "meetings", "activity"];
 
@@ -63,7 +63,6 @@ export default function Decisions() {
     meetingId: get("meeting") ? Number(get("meeting")) : undefined,
     ownerId: get("owner") ? Number(get("owner")) : undefined,
     departmentId: get("dept") ? Number(get("dept")) : undefined,
-    review: get("review") as ReviewStatus | "",
     from: get("from") || undefined,
     to: get("to") || undefined,
   };
@@ -72,7 +71,9 @@ export default function Decisions() {
   const depts = useQuery("departments", () => api.listDepartments());
   const meetings = useQuery("meetings:all", () => api.listMeetings());
   const highlight = get("highlight");
-  const active = ["q", "meeting", "owner", "dept", "review", "from", "to"].some((k) => params.get(k));
+  const active = ["q", "meeting", "owner", "dept", "from", "to"].some((k) => params.get(k));
+  const reviewView = reviewViewOf(params.get("review"));
+  const shown = useMemo(() => filterByReview(decisions.data ?? [], reviewView), [decisions.data, reviewView]);
 
   const review = (d: Decision, status: "confirmed" | "rejected") =>
     run(() => api.updateDecision(d.id, { reviewStatus: status }), { success: `Decision ${status}`, refresh: REFRESH, undo: () => api.updateDecision(d.id, { reviewStatus: "suggested" }) });
@@ -90,7 +91,7 @@ export default function Decisions() {
             onClick={() =>
               downloadCsv("meetops-decisions.csv", [
                 ["Decision", "Decided by", "Date", "Meeting", "Department", "Review", "Evidence"],
-                ...(decisions.data ?? []).map((d) => [d.statement, d.owner?.name ?? "", d.decidedAt, d.meetingTitle, d.department?.name ?? "", d.reviewStatus, d.evidence?.quote ?? ""]),
+                ...shown.map((d) => [d.statement, d.owner?.name ?? d.ownerName ?? "", d.decidedAt, d.meetingTitle, d.department?.name ?? "", d.reviewStatus, d.evidence?.quote ?? ""]),
               ])
             }
           >
@@ -98,12 +99,14 @@ export default function Decisions() {
           </button>
         }
       />
+      <div className="mb-3">
+        <ReviewSwitch items={decisions.data} value={reviewView} onChange={(v) => set({ review: v === "reviewed" ? "" : v })} />
+      </div>
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <SearchInput value={q} onChange={setQ} placeholder="Search decisions…" className="w-full sm:w-56" />
         <FilterSelect label="Meeting" value={get("meeting")} onChange={(v) => set({ meeting: v })} options={(meetings.data ?? []).map((m) => ({ value: String(m.id), label: m.title }))} />
         <FilterSelect label="Decided by" value={get("owner")} onChange={(v) => set({ owner: v })} options={(users.data ?? []).map((u) => ({ value: String(u.id), label: u.name }))} />
         <FilterSelect label="Department" value={get("dept")} onChange={(v) => set({ dept: v })} options={(depts.data ?? []).map((d) => ({ value: String(d.id), label: d.name }))} />
-        <FilterSelect label="Review" value={get("review")} onChange={(v) => set({ review: v })} options={[{ value: "suggested", label: "Needs review" }, { value: "confirmed", label: "Confirmed" }]} />
         <DateRange label="Date" from={get("from")} to={get("to")} onChange={(f, t) => set({ from: f, to: t })} />
         {active && <button className="btn-ghost" onClick={() => { setQ(""); setParams({}, { replace: true }); }}>Clear</button>}
       </div>
@@ -112,10 +115,10 @@ export default function Decisions() {
         {...decisions}
         onRetry={decisions.reload}
         skeleton={<div className="panel"><RowsSkeleton rows={6} /></div>}
-        isEmpty={(d) => d.length === 0}
-        empty={<div className="panel"><EmptyState title={active ? "No decisions match" : "No decisions yet"} message={active ? "Try clearing a filter." : "Agreed outcomes appear here when a meeting is processed."} /></div>}
+        isEmpty={() => shown.length === 0}
+        empty={<div className="panel"><EmptyState title={reviewView === "needs" ? "Nothing waiting for review" : active ? "No decisions match" : reviewView === "reviewed" ? "No reviewed decisions yet" : "No decisions yet"} message={reviewView === "reviewed" && (decisions.data ?? []).some((d) => d.reviewStatus === "suggested") ? "Some decisions still need review. Switch to “Needs review” to confirm them." : active ? "Try clearing a filter." : "Agreed outcomes appear here when a meeting is processed."} /></div>}
       >
-        {(list) => (
+        {() => (
           <div className="panel overflow-x-auto">
             <table className="table min-w-[820px]">
               <thead>
@@ -128,7 +131,7 @@ export default function Decisions() {
                 </tr>
               </thead>
               <tbody>
-                {list.map((d) => {
+                {shown.map((d) => {
                   const editable = mayEditItem(me, d);
                   return (
                     <tr key={d.id} className={highlight === String(d.id) ? "bg-accent-soft/60" : d.reviewStatus === "suggested" ? "bg-amber-500/[0.03]" : ""}>
@@ -146,7 +149,7 @@ export default function Decisions() {
                         )}
                       </td>
                       <td>
-                        <OwnerMenu value={d.owner} empty="Not recorded" disabled={!editable} onChange={(id) => run(() => api.updateDecision(d.id, { ownerId: id }), { refresh: REFRESH })} />
+                        <OwnerMenu value={d.owner} name={d.ownerName} empty="Not recorded" disabled={!editable} onChange={(id) => run(() => api.updateDecision(d.id, { ownerId: id }), { refresh: REFRESH })} />
                       </td>
                       <td className="whitespace-nowrap text-muted">{formatDate(d.decidedAt)}</td>
                       <td>

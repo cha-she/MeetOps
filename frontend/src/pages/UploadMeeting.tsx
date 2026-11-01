@@ -20,7 +20,7 @@ const STEPS: { key: PipelineStage; label: string; detail: string }[] = [
   { key: "save", label: "Save", detail: "Registers, summary, notifications and audit log" },
 ];
 
-const ACCEPT = ".txt,.md,.mp3,.wav,.m4a,.ogg,.mp4,.mkv,.webm,.mov";
+const ACCEPT = ".txt,.md,.vtt,.srt,.mp3,.wav,.m4a,.ogg,.mp4,.mkv,.webm,.mov";
 type Phase = "idle" | "uploading" | "processing" | "done" | "failed";
 
 function titleFromFilename(name: string): string {
@@ -147,7 +147,7 @@ export default function UploadMeeting() {
               <>
                 <UploadCloud className="mb-2 h-6 w-6 text-faint" />
                 <div className="text-[13px] font-medium">Drop a file here or click to browse</div>
-                <div className="mt-1 text-[12px] text-faint">Text transcripts (.txt) with one “Speaker: text” line per turn, optional [hh:mm:ss] timestamps</div>
+                <div className="mt-1 text-[12px] text-faint">Transcripts (.txt, .vtt, .srt): “Speaker: text” lines, Teams/Zoom exports or plain minutes</div>
               </>
             )}
           </div>

@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { CalendarDays, FileAudio, FileText, FileVideo, Loader2, Upload } from "lucide-react";
+import { CalendarDays, ExternalLink, FileAudio, FileText, FileVideo, Loader2, MoreHorizontal, Trash2, Upload } from "lucide-react";
 import { api, type MeetingFilters } from "../api/endpoints";
 import { useQuery } from "../api/hooks";
+import { useMe } from "../auth/AuthContext";
+import { canDeleteMeeting } from "../auth/permissions";
 import { useUsers } from "../components/items";
-import { AvatarStack, Badge, DateRange, EmptyState, FilterSelect, PageHeader, QueryView, RowsSkeleton, SearchInput, formatDate, formatDuration } from "../components/ui";
+import { AvatarStack, Badge, ConfirmDialog, DateRange, EmptyState, FilterSelect, Menu, PageHeader, QueryView, RowsSkeleton, SearchInput, formatDate, formatDuration } from "../components/ui";
+import { useMutation } from "../hooks/useMutation";
 import { LIST_REFRESH_INTERVAL_MS } from "../config";
-import type { MeetingSource } from "../types";
+import type { Meeting, MeetingSource } from "../types";
 
 const sourceIcon: Record<MeetingSource, JSX.Element> = {
   transcript: <FileText className="h-3.5 w-3.5" />,
@@ -16,6 +19,9 @@ const sourceIcon: Record<MeetingSource, JSX.Element> = {
 
 export default function Meetings() {
   const navigate = useNavigate();
+  const me = useMe();
+  const [toDelete, setToDelete] = useState<Meeting | null>(null);
+  const { run, busy } = useMutation();
   const [params, setParams] = useSearchParams();
   const get = (k: string) => params.get(k) ?? "";
   const set = (patch: Record<string, string>) => {
@@ -89,6 +95,7 @@ export default function Meetings() {
                   <th className="text-right">Decisions</th>
                   <th className="text-right">Risks</th>
                   <th>Status</th>
+                  <th className="w-10" />
                 </tr>
               </thead>
               <tbody>
@@ -121,6 +128,27 @@ export default function Meetings() {
                         </Badge>
                       )}
                     </td>
+                    <td onClick={(e) => e.stopPropagation()}>
+                      <Menu
+                        align="right"
+                        width={180}
+                        trigger={() => (
+                          <button className="icon-btn h-7 w-7" aria-label={`Actions for ${m.title}`}>
+                            <MoreHorizontal className="h-4 w-4" />
+                          </button>
+                        )}
+                        items={[
+                          { label: "Open meeting", icon: <ExternalLink className="h-3.5 w-3.5" />, onSelect: () => navigate(`/meetings/${m.id}`) },
+                          {
+                            label: "Delete meeting",
+                            icon: <Trash2 className="h-3.5 w-3.5" />,
+                            danger: true,
+                            disabled: !canDeleteMeeting(me, m),
+                            onSelect: () => setToDelete(m),
+                          },
+                        ]}
+                      />
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -128,6 +156,20 @@ export default function Meetings() {
           </div>
         )}
       </QueryView>
+
+      <ConfirmDialog
+        open={!!toDelete}
+        danger
+        busy={busy}
+        title={`Delete “${toDelete?.title}”?`}
+        message="The transcript and every task, decision and risk extracted from it are deleted. This cannot be undone."
+        confirmLabel="Delete meeting"
+        onClose={() => setToDelete(null)}
+        onConfirm={async () => {
+          await run(() => api.deleteMeeting(toDelete!.id), { success: "Meeting deleted", refresh: ["meetings", "tasks", "decisions", "risks", "insights", "review", "activity"] });
+          setToDelete(null);
+        }}
+      />
     </div>
   );
 }

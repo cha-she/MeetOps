@@ -109,7 +109,7 @@ export default function Review() {
                         <div className="mt-1 flex flex-wrap items-center gap-3 text-[12px] text-muted">
                           {i.kind === "Task" && (
                             <>
-                              <UserChip user={i.item.owner} />
+                              <UserChip user={i.item.owner} name={i.item.ownerName} />
                               <DueDate deadline={i.item.deadline} text={i.item.deadlineText} status={i.item.status} />
                             </>
                           )}

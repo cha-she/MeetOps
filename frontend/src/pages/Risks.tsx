@@ -5,11 +5,11 @@ import { api, type RiskFilters } from "../api/endpoints";
 import { useQuery } from "../api/hooks";
 import { useMe } from "../auth/AuthContext";
 import { mayEditItem } from "../auth/permissions";
-import { ConfidenceMeter, EvidenceQuote, OwnerMenu, ReviewBadge, ReviewButtons, riskStatusTone, severityTone, useUsers } from "../components/items";
+import { ConfidenceMeter, EvidenceQuote, OwnerMenu, ReviewBadge, ReviewButtons, ReviewSwitch, filterByReview, reviewViewOf, riskStatusTone, severityTone, useUsers } from "../components/items";
 import { Badge, DateRange, EmptyState, FilterSelect, Menu, PageHeader, QueryView, RowsSkeleton, SearchInput, Stat, Toggle, downloadCsv, formatDate } from "../components/ui";
 import { LIST_REFRESH_INTERVAL_MS } from "../config";
 import { useMutation } from "../hooks/useMutation";
-import type { ReviewStatus, Risk, RiskSeverity, RiskStatus } from "../types";
+import type { Risk, RiskSeverity, RiskStatus } from "../types";
 
 const REFRESH = ["risks", "insights", "review", "meetings", "activity"];
 
@@ -38,7 +38,6 @@ export default function Risks() {
     ownerId: get("owner") ? Number(get("owner")) : undefined,
     departmentId: get("dept") ? Number(get("dept")) : undefined,
     recurring: get("recurring") ? true : undefined,
-    review: get("review") as ReviewStatus | "",
     from: get("from") || undefined,
     to: get("to") || undefined,
   };
@@ -47,13 +46,15 @@ export default function Risks() {
   const depts = useQuery("departments", () => api.listDepartments());
   const meetings = useQuery("meetings:all", () => api.listMeetings());
   const highlight = get("highlight");
-  const active = ["q", "severity", "status", "meeting", "owner", "dept", "recurring", "review", "from", "to"].some((k) => params.get(k));
+  const active = ["q", "severity", "status", "meeting", "owner", "dept", "recurring", "from", "to"].some((k) => params.get(k));
+  const reviewView = reviewViewOf(params.get("review"));
+  const shown = useMemo(() => filterByReview(risks.data ?? [], reviewView), [risks.data, reviewView]);
 
   const stats = useMemo(() => {
-    const l = risks.data ?? [];
+    const l = shown;
     const open = l.filter((r) => r.status === "Open");
     return { open: open.length, high: open.filter((r) => r.severity === "High").length, recurring: l.filter((r) => r.recurring).length, unowned: open.filter((r) => !r.owner).length };
-  }, [risks.data]);
+  }, [shown]);
 
   const patch = (r: Risk, p: Parameters<typeof api.updateRisk>[1], success?: string) => run(() => api.updateRisk(r.id, p), { success, refresh: REFRESH });
   const review = (r: Risk, status: "confirmed" | "rejected") =>
@@ -72,7 +73,7 @@ export default function Risks() {
             onClick={() =>
               downloadCsv("meetops-risks.csv", [
                 ["Risk", "Severity", "Status", "Owner", "Raised by", "Raised", "Recurring", "Meeting", "Review", "Evidence"],
-                ...(risks.data ?? []).map((r) => [r.description, r.severity, r.status, r.owner?.name ?? "", r.raisedBy ?? "", r.raisedAt, r.recurring ? "yes" : "", r.meetingTitle, r.reviewStatus, r.evidence?.quote ?? ""]),
+                ...shown.map((r) => [r.description, r.severity, r.status, r.owner?.name ?? "", r.raisedBy ?? "", r.raisedAt, r.recurring ? "yes" : "", r.meetingTitle, r.reviewStatus, r.evidence?.quote ?? ""]),
               ])
             }
           >
@@ -81,6 +82,9 @@ export default function Risks() {
         }
       />
 
+      <div className="mb-3">
+        <ReviewSwitch items={risks.data} value={reviewView} onChange={(v) => set({ review: v === "reviewed" ? "" : v })} />
+      </div>
       <div className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Stat label="Open risks" value={stats.open} onClick={() => set({ status: "Open" })} />
         <Stat label="High severity" value={stats.high} tone="red" onClick={() => set({ severity: "High", status: "Open" })} />
@@ -95,7 +99,6 @@ export default function Risks() {
         <FilterSelect label="Owner" value={get("owner")} onChange={(v) => set({ owner: v })} options={(users.data ?? []).map((u) => ({ value: String(u.id), label: u.name }))} />
         <FilterSelect label="Meeting" value={get("meeting")} onChange={(v) => set({ meeting: v })} options={(meetings.data ?? []).map((m) => ({ value: String(m.id), label: m.title }))} />
         <FilterSelect label="Department" value={get("dept")} onChange={(v) => set({ dept: v })} options={(depts.data ?? []).map((d) => ({ value: String(d.id), label: d.name }))} />
-        <FilterSelect label="Review" value={get("review")} onChange={(v) => set({ review: v })} options={[{ value: "suggested", label: "Needs review" }, { value: "confirmed", label: "Confirmed" }]} />
         <Toggle active={!!get("recurring")} onClick={() => set({ recurring: get("recurring") ? "" : "1" })}>
           <Repeat className="h-3.5 w-3.5" /> Recurring
         </Toggle>
@@ -107,10 +110,10 @@ export default function Risks() {
         {...risks}
         onRetry={risks.reload}
         skeleton={<div className="panel"><RowsSkeleton rows={6} /></div>}
-        isEmpty={(d) => d.length === 0}
-        empty={<div className="panel"><EmptyState title={active ? "No risks match" : "No risks yet"} message={active ? "Try clearing a filter." : "Concerns raised in meetings appear here automatically."} /></div>}
+        isEmpty={() => shown.length === 0}
+        empty={<div className="panel"><EmptyState title={reviewView === "needs" ? "Nothing waiting for review" : active ? "No risks match" : reviewView === "reviewed" ? "No reviewed risks yet" : "No risks yet"} message={reviewView === "reviewed" && (risks.data ?? []).some((r) => r.reviewStatus === "suggested") ? "Some risks still need review. Switch to “Needs review” to confirm them." : active ? "Try clearing a filter." : "Concerns raised in meetings appear here automatically."} /></div>}
       >
-        {(list) => (
+        {() => (
           <div className="panel overflow-x-auto">
             <table className="table min-w-[900px]">
               <thead>
@@ -123,7 +126,7 @@ export default function Risks() {
                 </tr>
               </thead>
               <tbody>
-                {list.map((r) => {
+                {shown.map((r) => {
                   const editable = mayEditItem(me, r);
                   return (
                     <tr key={r.id} className={highlight === String(r.id) ? "bg-accent-soft/60" : r.reviewStatus === "suggested" ? "bg-amber-500/[0.03]" : ""}>

@@ -6,6 +6,7 @@ import {
   ArrowUp,
   Check,
   CheckCircle2,
+  ChevronDown,
   Circle,
   CircleDashed,
   CircleDot,
@@ -75,6 +76,53 @@ export function ReviewBadge({ status, source }: { status: ReviewStatus; source?:
   return null;
 }
 
+// ---------------------------------------------------------------------------
+// Reviewed / Needs review / All switch used by the three registers.
+// "Reviewed" (the default) = confirmed by a person, or confident enough to be confirmed automatically.
+// ---------------------------------------------------------------------------
+
+export type ReviewView = "reviewed" | "needs" | "all";
+
+export function reviewViewOf(param: string | null): ReviewView {
+  return param === "needs" || param === "all" ? param : "reviewed";
+}
+
+export function filterByReview<T extends { reviewStatus: ReviewStatus }>(items: T[], view: ReviewView): T[] {
+  if (view === "all") return items;
+  return items.filter((i) => (view === "needs" ? i.reviewStatus === "suggested" : i.reviewStatus === "confirmed"));
+}
+
+export function ReviewSwitch<T extends { reviewStatus: ReviewStatus }>({ items, value, onChange }: { items: T[] | undefined; value: ReviewView; onChange: (v: ReviewView) => void }) {
+  const list = items ?? [];
+  const reviewed = list.filter((i) => i.reviewStatus === "confirmed").length;
+  const needs = list.filter((i) => i.reviewStatus === "suggested").length;
+  const opts: { value: ReviewView; label: string; count: number }[] = [
+    { value: "reviewed", label: "Reviewed", count: reviewed },
+    { value: "needs", label: "Needs review", count: needs },
+    { value: "all", label: "All", count: list.length },
+  ];
+  return (
+    <div className="inline-flex h-9 items-center rounded-lg border border-line bg-subtle p-0.5" role="tablist" aria-label="Review state">
+      {opts.map((o) => (
+        <button
+          key={o.value}
+          role="tab"
+          aria-selected={value === o.value}
+          onClick={() => onChange(o.value)}
+          className={cn(
+            "flex h-full items-center gap-1.5 rounded-md px-3 text-[13px] font-medium transition",
+            value === o.value ? "bg-surface text-fg shadow-card" : "text-muted hover:text-fg"
+          )}
+        >
+          {o.value === "needs" && <Sparkles className="h-3.5 w-3.5 text-amber-500" />}
+          {o.label}
+          <span className={cn("rounded px-1.5 text-2xs tabular-nums", o.value === "needs" && o.count > 0 ? "bg-amber-500/15 text-amber-700 dark:text-amber-300" : "text-faint")}>{o.count}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export function ReviewButtons({ onConfirm, onReject, busy = false, size = "md" }: { onConfirm: () => void; onReject: () => void; busy?: boolean; size?: "sm" | "md" }) {
   const cls = size === "sm" ? "h-7 px-2 text-xs" : "";
   return (
@@ -111,6 +159,25 @@ export function EvidenceQuote({ evidence, meetingId, className = "" }: { evidenc
   );
 }
 
+// Small timestamp chip: opens the meeting at the line the item was taken from, which is then
+// scrolled to the centre, highlighted and briefly flashed.
+export function EvidenceTime({ evidence, meetingId, prefix }: { evidence: EvidenceRef | null; meetingId: number; prefix?: string | null }) {
+  if (!evidence) return null;
+  return (
+    <Link
+      to={`/meetings/${meetingId}?segment=${evidence.segmentId}`}
+      replace
+      preventScrollReset
+      className="inline-flex items-center gap-1 rounded px-1 py-0.5 text-2xs text-faint transition hover:bg-accent-soft hover:text-accent-text"
+      title="Show this line in the transcript"
+    >
+      <Quote className="h-3 w-3" />
+      {prefix && `${prefix} · `}
+      <span className="font-mono">{evidence.timestamp ?? "line"}</span>
+    </Link>
+  );
+}
+
 // ---------------------------------------------------------------------------
 // Task status / priority pickers
 // ---------------------------------------------------------------------------
@@ -137,8 +204,13 @@ export function StatusMenu({ value, onChange, disabled = false, compact = false 
       width={170}
       header="Status"
       trigger={() => (
-        <button className="inline-flex h-7 items-center gap-1.5 rounded-md px-1.5 text-[12px] text-muted hover:bg-hover hover:text-fg" aria-label={`Status: ${value}`}>
+        <button
+          className={cn("inline-flex h-7 items-center gap-1.5 rounded-md text-[12px] hover:bg-hover hover:text-fg", compact ? "px-1.5 text-muted" : "border border-line bg-surface px-2 text-fg")}
+          aria-label={`Status: ${value} (click to change)`}
+          title="Change status"
+        >
           <StatusIcon status={value} /> {!compact && value}
+          {!compact && <ChevronDown className="h-3 w-3 text-faint" />}
         </button>
       )}
       items={(["Open", "In Progress", "Completed"] as TaskStatus[]).map((s) => ({ label: s, icon: <StatusIcon status={s} />, checked: s === value, onSelect: () => onChange(s) }))}
@@ -177,7 +249,18 @@ export function useUsers() {
   return useQuery("users", () => api.listUsers(), { refreshMs: 60000 });
 }
 
-export function UserChip({ user, empty = "Unassigned" }: { user: User | null; empty?: string }) {
+// `name` is the person heard in the meeting when they have no account (e.g. an external participant).
+export function UserChip({ user, name, empty = "Unassigned" }: { user: User | null; name?: string | null; empty?: string }) {
+  if (!user && name)
+    return (
+      <span className="inline-flex min-w-0 items-center gap-1.5" title={`${name} was named in the meeting but has no MeetOps account. Assign the item to a member to track it.`}>
+        <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-dashed border-line-strong text-[9px] font-semibold text-muted">
+          {name.split(/\s+/).map((p) => p[0]).slice(0, 2).join("").toUpperCase()}
+        </span>
+        <span className="truncate text-[13px] text-fg">{name}</span>
+        <span className="shrink-0 text-2xs text-faint">no account</span>
+      </span>
+    );
   return user ? (
     <span className="inline-flex min-w-0 items-center gap-1.5">
       <Avatar name={user.name} initials={user.initials} size={20} />
@@ -193,16 +276,16 @@ export function UserChip({ user, empty = "Unassigned" }: { user: User | null; em
   );
 }
 
-export function OwnerMenu({ value, onChange, disabled = false, empty = "Unassigned" }: { value: User | null; onChange: (id: number | null) => void; disabled?: boolean; empty?: string }) {
+export function OwnerMenu({ value, name, onChange, disabled = false, empty = "Unassigned" }: { value: User | null; name?: string | null; onChange: (id: number | null) => void; disabled?: boolean; empty?: string }) {
   const users = useUsers();
-  if (disabled) return <UserChip user={value} empty={empty} />;
+  if (disabled) return <UserChip user={value} name={name} empty={empty} />;
   return (
     <Menu
       width={240}
       header="Assign to"
       trigger={() => (
         <button className="-mx-1.5 flex min-w-0 max-w-full items-center rounded-md px-1.5 py-1 hover:bg-hover">
-          <UserChip user={value} empty={empty} />
+          <UserChip user={value} name={name} empty={empty} />
         </button>
       )}
       items={[

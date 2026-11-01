@@ -30,7 +30,7 @@ export default function SearchPage() {
                   {r.tasks.map((t) => (
                     <Link key={t.id} to={`/tasks?task=${t.id}`} className="flex items-center gap-3 px-4 py-2.5 hover:bg-hover/50">
                       <span className="min-w-0 flex-1 truncate text-[13px] font-medium">{t.description}</span>
-                      <UserChip user={t.owner} />
+                      <UserChip user={t.owner} name={t.ownerName} />
                       <span className="w-40 truncate text-2xs text-faint">{t.meetingTitle}</span>
                     </Link>
                   ))}

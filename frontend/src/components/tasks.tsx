@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components -- task widgets and their hook */
 import { useState, type FormEvent, type ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { Check, ChevronDown, ChevronRight } from "lucide-react";
 import { api, type TaskPatch } from "../api/endpoints";
 import { useMe } from "../auth/AuthContext";
 import { canEditTask } from "../auth/permissions";
@@ -11,6 +11,7 @@ import {
   ConfidenceMeter,
   DueDate,
   EvidenceQuote,
+  EvidenceTime,
   OwnerMenu,
   PriorityMenu,
   ReviewBadge,
@@ -66,6 +67,26 @@ function groupTasks(tasks: Task[], by: GroupBy): [string, Task[]][] {
   return entries.map(([k, v]) => [by === "meeting" ? k.slice(11) : k.slice(2), v]);
 }
 
+// Round tick in front of every task: one click marks it completed, another click reopens it.
+function CompleteToggle({ task, disabled, onToggle }: { task: Task; disabled: boolean; onToggle: (s: TaskStatus) => void }) {
+  const done = task.status === "Completed";
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={() => onToggle(done ? "Open" : "Completed")}
+      title={disabled ? "Only the owner, their manager or an admin can change this" : done ? "Reopen task" : "Mark as complete"}
+      aria-label={done ? "Reopen task" : "Mark as complete"}
+      className={cn(
+        "group/tick mt-0.5 flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full border transition disabled:cursor-not-allowed disabled:opacity-60",
+        done ? "border-emerald-500 bg-emerald-500 text-white" : "border-line-strong text-transparent hover:border-emerald-500 hover:text-emerald-500"
+      )}
+    >
+      <Check className="h-3 w-3" strokeWidth={3} />
+    </button>
+  );
+}
+
 function TaskRow({ task, showMeeting, compact }: { task: Task; showMeeting: boolean; compact: boolean }) {
   const me = useMe();
   const editable = canEditTask(me, task);
@@ -74,21 +95,18 @@ function TaskRow({ task, showMeeting, compact }: { task: Task; showMeeting: bool
   if (compact)
     return (
       <div id={`task-${task.id}`} className={cn("grid grid-cols-[auto_1fr] items-start gap-x-2 border-b border-line px-3 py-2.5 last:border-0 hover:bg-hover/50", task.reviewStatus === "suggested" && "bg-amber-500/[0.03]")}>
-        <StatusMenu compact value={task.status} disabled={!editable} onChange={(s) => update(task, { status: s })} />
+        <CompleteToggle task={task} disabled={!editable} onToggle={(s) => update(task, { status: s }, s === "Completed" ? "Marked as completed" : "Reopened")} />
         <div className="min-w-0 py-0.5">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
             <span className={cn("text-[13px] font-medium text-fg", done && "text-muted line-through decoration-faint")}>{task.description}</span>
             <ReviewBadge status={task.reviewStatus} source={task.source} />
           </div>
           <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
-            <OwnerMenu value={task.owner} disabled={!editable} onChange={(id) => update(task, { ownerId: id }, "Owner updated")} />
+            <StatusMenu value={task.status} disabled={!editable} onChange={(s) => update(task, { status: s }, `Status: ${s}`)} />
+            <OwnerMenu value={task.owner} name={task.ownerName} disabled={!editable} onChange={(id) => update(task, { ownerId: id }, "Owner updated")} />
             <DueDate deadline={task.deadline} text={task.deadlineText} status={task.status} disabled={!editable} onChange={(d) => update(task, { deadline: d }, "Due date updated")} />
             <PriorityMenu value={task.priority} disabled={!editable} onChange={(p) => update(task, { priority: p })} />
-            {task.evidence && (
-              <a href={`#seg-${task.evidence.segmentId}`} className="text-2xs text-faint hover:text-accent-text">
-                {task.evidence.timestamp ?? "line"}
-              </a>
-            )}
+            <EvidenceTime evidence={task.evidence} meetingId={task.meetingId} />
           </div>
           {task.reviewStatus === "suggested" && editable && (
             <div className="mt-1.5 flex items-center gap-3">
@@ -100,8 +118,8 @@ function TaskRow({ task, showMeeting, compact }: { task: Task; showMeeting: bool
       </div>
     );
   return (
-    <div id={`task-${task.id}`} className={cn("group grid grid-cols-[auto_1fr] items-start gap-x-2 border-b border-line px-3 py-2 last:border-0 hover:bg-hover/50 md:grid-cols-[auto_1fr_170px_110px_32px] md:items-center", task.reviewStatus === "suggested" && "bg-amber-500/[0.03]")}>
-      <StatusMenu compact value={task.status} disabled={!editable} onChange={(s) => update(task, { status: s }, s === "Completed" ? "Marked as completed" : undefined)} />
+    <div id={`task-${task.id}`} className={cn("group grid grid-cols-[auto_1fr] items-start gap-x-2 border-b border-line px-3 py-2 last:border-0 hover:bg-hover/50 md:grid-cols-[auto_1fr_128px_170px_110px_32px] md:items-center", task.reviewStatus === "suggested" && "bg-amber-500/[0.03]")}>
+      <CompleteToggle task={task} disabled={!editable} onToggle={(s) => update(task, { status: s }, s === "Completed" ? "Marked as completed" : "Reopened")} />
       <div className="min-w-0 py-0.5">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <span className={cn("text-[13px] font-medium text-fg", done && "text-muted line-through decoration-faint")}>{task.description}</span>
@@ -120,8 +138,11 @@ function TaskRow({ task, showMeeting, compact }: { task: Task; showMeeting: bool
           </div>
         )}
       </div>
+      <div className="col-start-2 md:col-start-auto">
+        <StatusMenu value={task.status} disabled={!editable} onChange={(s) => update(task, { status: s }, `Status: ${s}`)} />
+      </div>
       <div className="col-start-2 flex min-w-0 items-center gap-2 md:col-start-auto">
-        <OwnerMenu value={task.owner} disabled={!editable} onChange={(id) => update(task, { ownerId: id }, "Owner updated")} />
+        <OwnerMenu value={task.owner} name={task.ownerName} disabled={!editable} onChange={(id) => update(task, { ownerId: id }, "Owner updated")} />
       </div>
       <div className="col-start-2 md:col-start-auto">
         <DueDate deadline={task.deadline} text={task.deadlineText} status={task.status} disabled={!editable} onChange={(d) => update(task, { deadline: d }, "Due date updated")} />
@@ -138,9 +159,10 @@ export function TaskList({ tasks, groupBy = "none", showMeeting = true, empty, c
   if (tasks.length === 0) return <>{empty ?? <EmptyState compact title="No tasks match" message="Try clearing a filter." />}</>;
   return (
     <div>
-      <div className={cn("hidden grid-cols-[auto_1fr_170px_110px_32px] gap-x-2 border-b border-line bg-subtle/60 px-3 py-2 text-2xs font-semibold uppercase tracking-wider text-faint", !compact && "md:grid")}>
+      <div className={cn("hidden grid-cols-[auto_1fr_128px_170px_110px_32px] gap-x-2 border-b border-line bg-subtle/60 px-3 py-2 text-2xs font-semibold uppercase tracking-wider text-faint", !compact && "md:grid")}>
         <span className="w-7" />
         <span>Task</span>
+        <span>Status</span>
         <span>Owner</span>
         <span>Due</span>
         <span />
@@ -221,7 +243,7 @@ export function TaskBoard({ tasks }: { tasks: Task[] }) {
                       <span className={cn("text-2xs", overdue ? "font-medium text-red-600 dark:text-red-400" : "text-faint")}>{t.deadline ? formatDate(t.deadline) : t.deadlineText ?? "No date"}</span>
                       <span className="flex items-center gap-1.5">
                         {t.reviewStatus === "suggested" && <ReviewBadge status="suggested" />}
-                        {t.owner ? <Avatar name={t.owner.name} initials={t.owner.initials} size={20} /> : <span className="text-2xs text-faint">Unassigned</span>}
+                        {t.owner ? <Avatar name={t.owner.name} initials={t.owner.initials} size={20} /> : <span className="text-2xs text-faint">{t.ownerName ?? "Unassigned"}</span>}
                       </span>
                     </div>
                   </div>

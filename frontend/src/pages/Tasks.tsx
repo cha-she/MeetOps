@@ -4,11 +4,11 @@ import { AlertTriangle, Download, KanbanSquare, List, ListChecks, Plus } from "l
 import { api, type TaskFilters } from "../api/endpoints";
 import { useQuery } from "../api/hooks";
 import { useMe } from "../auth/AuthContext";
-import { useUsers } from "../components/items";
+import { ReviewSwitch, filterByReview, reviewViewOf, useUsers } from "../components/items";
 import { NewTaskDialog, TaskBoard, TaskList, type GroupBy } from "../components/tasks";
 import { DateRange, EmptyState, FilterSelect, Menu, PageHeader, QueryView, RowsSkeleton, SearchInput, Segmented, Toggle, downloadCsv } from "../components/ui";
 import { LIST_REFRESH_INTERVAL_MS } from "../config";
-import type { Priority, ReviewStatus, TaskStatus } from "../types";
+import type { Priority, TaskStatus } from "../types";
 
 const GROUP_LABEL: Record<GroupBy, string> = { none: "No grouping", status: "Status", owner: "Owner", meeting: "Meeting", due: "Due date" };
 
@@ -45,7 +45,6 @@ export default function Tasks() {
     ownerId: owner && owner !== "me" && owner !== "none" ? Number(owner) : undefined,
     departmentId: get("dept") ? Number(get("dept")) : undefined,
     meetingId: get("meeting") ? Number(get("meeting")) : undefined,
-    review: get("review") as ReviewStatus | "",
     priority: get("priority") as Priority | "",
     overdue: !!get("overdue"),
     dueFrom: get("dueFrom") || undefined,
@@ -70,17 +69,16 @@ export default function Tasks() {
     return () => window.clearTimeout(t);
   }, [highlight, tasks.data]);
 
-  const counts = useMemo(() => {
-    const list = tasks.data ?? [];
-    return { open: list.filter((t) => t.status !== "Completed").length, total: list.length };
-  }, [tasks.data]);
+  const reviewView = reviewViewOf(params.get("review"));
+  const shown = useMemo(() => filterByReview(tasks.data ?? [], reviewView), [tasks.data, reviewView]);
+  const counts = useMemo(() => ({ open: shown.filter((t) => t.status !== "Completed").length, total: shown.length }), [shown]);
 
-  const activeFilters = ["status", "owner", "mine", "dept", "meeting", "review", "priority", "overdue", "dueFrom", "dueTo", "from", "to", "q"].some((k) => params.get(k));
+  const activeFilters = ["status", "owner", "mine", "dept", "meeting", "priority", "overdue", "dueFrom", "dueTo", "from", "to", "q"].some((k) => params.get(k));
 
   function exportCsv() {
     downloadCsv("meetops-tasks.csv", [
       ["Task", "Owner", "Department", "Due", "Status", "Priority", "Review", "Meeting", "Meeting date", "Evidence"],
-      ...(tasks.data ?? []).map((t) => [t.description, t.owner?.name ?? "", t.department?.name ?? "", t.deadline ?? t.deadlineText ?? "", t.status, t.priority, t.reviewStatus, t.meetingTitle, t.meetingDate, t.evidence?.quote ?? ""]),
+      ...shown.map((t) => [t.description, t.owner?.name ?? t.ownerName ?? "", t.department?.name ?? "", t.deadline ?? t.deadlineText ?? "", t.status, t.priority, t.reviewStatus, t.meetingTitle, t.meetingDate, t.evidence?.quote ?? ""]),
     ]);
   }
 
@@ -102,6 +100,10 @@ export default function Tasks() {
         }
       />
 
+      <div className="mb-3">
+        <ReviewSwitch items={tasks.data} value={reviewView} onChange={(v) => set({ review: v === "reviewed" ? "" : v })} />
+      </div>
+
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <SearchInput value={q} onChange={setQ} placeholder="Search tasks…" className="w-full sm:w-56" />
         <FilterSelect label="Status" value={get("status")} onChange={(v) => set({ status: v })} options={["Open", "In Progress", "Completed"].map((s) => ({ value: s, label: s }))} />
@@ -113,7 +115,6 @@ export default function Tasks() {
         />
         <FilterSelect label="Department" value={get("dept")} onChange={(v) => set({ dept: v })} options={(depts.data ?? []).map((d) => ({ value: String(d.id), label: d.name }))} />
         <FilterSelect label="Meeting" value={get("meeting")} onChange={(v) => set({ meeting: v })} options={(meetings.data ?? []).map((m) => ({ value: String(m.id), label: m.title }))} />
-        <FilterSelect label="Review" value={get("review")} onChange={(v) => set({ review: v })} options={[{ value: "suggested", label: "Needs review" }, { value: "confirmed", label: "Confirmed" }]} />
         <FilterSelect label="Priority" value={get("priority")} onChange={(v) => set({ priority: v })} options={["High", "Medium", "Low"].map((p) => ({ value: p, label: p }))} />
         <Toggle active={!!get("overdue")} tone="red" onClick={() => set({ overdue: get("overdue") ? "" : "1" })}>
           <AlertTriangle className="h-3.5 w-3.5" /> Overdue
@@ -157,7 +158,25 @@ export default function Tasks() {
         isEmpty={(d) => d.length === 0 && !activeFilters}
         empty={<div className="panel"><EmptyState title="No tasks yet" message="Tasks appear here automatically when a meeting is processed, or add one by hand." /></div>}
       >
-        {(list) => (view === "board" ? <TaskBoard tasks={list} /> : <div className="panel overflow-hidden"><TaskList tasks={list} groupBy={groupBy} /></div>)}
+        {() =>
+          view === "board" ? (
+            <TaskBoard tasks={shown} />
+          ) : (
+            <div className="panel overflow-hidden">
+              <TaskList
+                tasks={shown}
+                groupBy={groupBy}
+                empty={
+                  <EmptyState
+                    compact
+                    title={reviewView === "needs" ? "Nothing waiting for review" : reviewView === "reviewed" ? "No reviewed tasks match" : "No tasks match"}
+                    message={reviewView === "reviewed" && (tasks.data ?? []).some((t) => t.reviewStatus === "suggested") ? "Some tasks still need review. Switch to “Needs review” to confirm them." : "Try clearing a filter."}
+                  />
+                }
+              />
+            </div>
+          )
+        }
       </QueryView>
 
       {newTask && meetings.data && <NewTaskDialog open onClose={() => setNewTask(false)} meetings={meetings.data} defaultMeetingId={filters.meetingId} />}

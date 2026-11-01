@@ -73,6 +73,7 @@ export interface Task extends Reviewable {
   id: number;
   description: string;
   owner: User | null;
+  ownerName: string | null; // the owner's name as heard in the meeting (also set when they have no account)
   meetingId: number;
   meetingTitle: string;
   meetingDate: string;
@@ -89,6 +90,7 @@ export interface Decision extends Reviewable {
   id: number;
   statement: string;
   owner: User | null;
+  ownerName: string | null;
   meetingId: number;
   meetingTitle: string;
   department: DepartmentRef | null;
