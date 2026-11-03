@@ -98,7 +98,8 @@ def _run(db, meeting: models.Meeting, transcript_text: str | None) -> None:
         if d.kind == "Task":
             db.add(models.Task(description=d.description, owner_id=d.owner.id if d.owner else None,
                                owner_name=d.owner_name,
-                               deadline=d.deadline, deadline_text=d.deadline_text, status="Open", **common))
+                               deadline=d.deadline, deadline_time=extraction.deadline_time(d.deadline_text) if d.deadline else None,
+                               deadline_text=d.deadline_text, status="Open", **common))
         elif d.kind == "Decision":
             db.add(models.Decision(statement=d.description, owner_id=d.owner.id if d.owner else None,
                                    owner_name=d.owner_name,

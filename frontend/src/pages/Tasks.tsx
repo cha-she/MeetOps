@@ -78,7 +78,7 @@ export default function Tasks() {
   function exportCsv() {
     downloadCsv("meetops-tasks.csv", [
       ["Task", "Owner", "Department", "Due", "Status", "Priority", "Review", "Meeting", "Meeting date", "Evidence"],
-      ...shown.map((t) => [t.description, t.owner?.name ?? t.ownerName ?? "", t.department?.name ?? "", t.deadline ?? t.deadlineText ?? "", t.status, t.priority, t.reviewStatus, t.meetingTitle, t.meetingDate, t.evidence?.quote ?? ""]),
+      ...shown.map((t) => [t.description, t.owner?.name ?? t.ownerName ?? "", t.department?.name ?? "", (t.deadline ? t.deadline + (t.deadlineTime ? " " + t.deadlineTime.slice(0, 5) : "") : t.deadlineText ?? ""), t.status, t.priority, t.reviewStatus, t.meetingTitle, t.meetingDate, t.evidence?.quote ?? ""]),
     ]);
   }
 

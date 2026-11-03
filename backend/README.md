@@ -108,7 +108,7 @@ Tables are created automatically on start-up, and new nullable columns are added
 | `meetings` | one per upload: date, source, status, pipeline stage, department, uploader, summary, model used |
 | `meeting_participants` | speakers matched to accounts |
 | `segments` | one classified utterance: final label, confidence, the model's own label, the rule that changed it, corrected-by-a-person flag |
-| `tasks` | action items: owner (account, or the spoken name for people without one), deadline (+ the phrase said), status, priority, review status, confidence, source (ai / manual) |
+| `tasks` | action items: owner (account, or the spoken name for people without one), deadline (+ time of day when one was said, + the phrase said), status, priority, review status, confidence, source (ai / manual) |
 | `decisions` | agreed outcomes: decided by, date, review status |
 | `risks` | concerns: severity, status (open / mitigated / closed), owner, raised by, recurring flag, review status |
 | `notifications` | per user: overdue, due soon, assigned, status change, review needed |
@@ -155,7 +155,7 @@ the server. Try it with `samples/sprint8_planning.txt`.
 | POST | `/api/segments/{id}/category` | relabel a transcript line; creates or removes the register entry and records feedback |
 | GET | `/api/tasks` | `status`, `meetingId`, `ownerId`, `mine`, `unassigned`, `departmentId`, `review`, `priority`, `q`, `overdue`, `dueFrom`, `dueTo`, `from`, `to`, `sort=deadline|created|priority`, `limit` |
 | POST | `/api/tasks` | add a task by hand |
-| PATCH | `/api/tasks/{id}` | `{status, deadline, description, ownerId, priority, reviewStatus}`; editing a suggestion confirms it |
+| PATCH | `/api/tasks/{id}` | `{status, deadline, deadlineTime, description, ownerId, priority, reviewStatus}`; editing a suggestion confirms it |
 | GET / PATCH | `/api/decisions`, `/api/decisions/{id}` | filters `meetingId`, `ownerId`, `departmentId`, `review`, `from`, `to`, `q` |
 | GET / PATCH | `/api/risks`, `/api/risks/{id}` | filters `meetingId`, `severity`, `status`, `ownerId`, `departmentId`, `recurring`, `review`, `from`, `to`, `q` |
 | GET | `/api/review` | everything still *suggested*, for the review inbox |

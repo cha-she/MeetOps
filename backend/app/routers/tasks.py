@@ -67,7 +67,8 @@ def list_tasks(
     if date_to:
         stmt = stmt.where(models.Meeting.date <= date_to)
     if sort == "deadline":
-        stmt = stmt.order_by(models.Task.deadline.is_(None), models.Task.deadline, models.Task.id)
+        stmt = stmt.order_by(models.Task.deadline.is_(None), models.Task.deadline,
+                              models.Task.deadline_time.is_(None), models.Task.deadline_time, models.Task.id)
     elif sort == "priority":
         stmt = stmt.order_by(models.Task.priority.desc(), models.Task.deadline.is_(None), models.Task.deadline)
     else:
@@ -99,7 +100,8 @@ def create_task(body: schemas.TaskCreate, db: Session = Depends(get_db), user: m
         if not seg or seg.meeting_id != meeting.id:
             raise HTTPException(422, "The evidence line must belong to the same meeting")
     t = models.Task(meeting_id=meeting.id, segment_id=body.segment_id, description=body.description.strip(),
-                    owner_id=body.owner_id, deadline=body.deadline, priority=body.priority, status="Open",
+                    owner_id=body.owner_id, deadline=body.deadline,
+                    deadline_time=body.deadline_time if body.deadline else None, priority=body.priority, status="Open",
                     review_status="confirmed", source="manual", reviewed_by_id=user.id,
                     reviewed_at=datetime.now(timezone.utc))
     db.add(t)
@@ -127,6 +129,8 @@ def update_task(task_id: int, patch: schemas.TaskPatch, db: Session = Depends(ge
         raise HTTPException(422, "Unknown owner")
 
     review_status = changes.pop("review_status", None)
+    if "deadline" in changes and changes["deadline"] is None:
+        changes["deadline_time"] = None   # no date, no time of day
     before = {k: getattr(t, k) for k in changes}
     for key, value in changes.items():
         setattr(t, key, value)

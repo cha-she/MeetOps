@@ -1,7 +1,7 @@
-from datetime import date
+from datetime import date, time
 
 from app import models
-from app.services.extraction import parse_deadline, risk_severity, task_title, tidy
+from app.services.extraction import deadline_time, parse_deadline, risk_severity, task_title, tidy
 
 USERS = [models.User(id=i + 1, name=n, initials="".join(p[0] for p in n.split()))
          for i, n in enumerate(["Kasun Silva", "Nethmi Fernando", "Ishara Jayasuriya"])]
@@ -29,6 +29,24 @@ def test_deadlines_relative_to_meeting_date():
     d, phrase = parse_deadline("before the go-live", THU)
     assert d is None and phrase == "before the go-live"
     assert parse_deadline("no time words here", THU) == (None, None)
+
+
+def test_deadline_keeps_the_time_of_day():
+    cases = {
+        "I'll send it by Friday at 2 pm.": (date(2026, 10, 30), time(14, 0)),
+        "Can you finish it by 2pm on Friday?": (date(2026, 10, 30), time(14, 0)),
+        "Send the deck by tomorrow at 10:30.": (date(2026, 10, 30), time(10, 30)),
+        "Let's have it by Friday at 2.": (date(2026, 10, 30), time(14, 0)),
+        "Please share it by 5 pm.": (THU, time(17, 0)),
+        "Can you send it by noon tomorrow?": (date(2026, 10, 30), time(12, 0)),
+        "Deliver by 11 September 2026 at 14:00.": (date(2026, 9, 11), time(14, 0)),
+        "I'll do it by Friday.": (date(2026, 10, 30), None),
+        "Finish by Friday, 3 bugs are left.": (date(2026, 10, 30), None),
+    }
+    for text, (day, at) in cases.items():
+        d, phrase = parse_deadline(text, THU)
+        assert (d, deadline_time(phrase)) == (day, at), text
+    assert deadline_time("due 6.11.2026") is None   # a numeric date is not a time
 
 
 def test_explicit_dates_keep_their_year_and_numeric_dates_work():

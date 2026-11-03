@@ -38,6 +38,7 @@ import {
   cn,
   dotClass,
   formatDate,
+  formatTime,
   formatDuration,
 } from "../components/ui";
 import { useMutation } from "../hooks/useMutation";
@@ -164,7 +165,8 @@ function RiskRow({ r, editable }: { r: Risk; editable: boolean }) {
 // followed by what was decided, who does what by when, and the risks. Built from the live items,
 // so it follows every confirmation, rejection or correction. Rejected items never appear.
 function MeetingSummary({ meeting, tasks, decisions, risks }: { meeting: Meeting; tasks?: Task[]; decisions?: Decision[]; risks?: Risk[] }) {
-  // Collapsed by default so the task / decision / risk tabs stay in view; the choice is remembered.
+  // The overview paragraph is always shown; the point-by-point lists open on request so the
+  // task / decision / risk tabs stay in view. The choice is remembered.
   const [open, setOpen] = useState(() => {
     try {
       return localStorage.getItem("meetops.summaryOpen") === "1";
@@ -200,43 +202,35 @@ function MeetingSummary({ meeting, tasks, decisions, risks }: { meeting: Meeting
       icon={<Sparkles className="h-4 w-4 text-faint" />}
       actions={
         <button className="btn-ghost btn-sm" onClick={toggle} aria-expanded={open}>
-          {open ? "Show less" : "Show full summary"}
+          {open ? "Hide key points" : "Show key points"}
           {open ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
         </button>
       }
     >
-      {!open ? (
-        <button onClick={toggle} className="block w-full space-y-2 p-4 text-left text-[13px] leading-relaxed hover:bg-hover/40">
-          {meeting.summary && <p className="line-clamp-2 text-muted">{meeting.summary}</p>}
-          <p className="flex flex-wrap gap-x-3 gap-y-1 text-2xs text-faint">
-            <span>{decisions?.length ?? 0} decisions</span>
-            <span>{tasks?.length ?? 0} action items</span>
-            <span>{risks?.length ?? 0} risks</span>
-            {pending > 0 && <span className="text-amber-600 dark:text-amber-400">{pending} not yet reviewed</span>}
-          </p>
-        </button>
-      ) : (
       <div className="space-y-4 p-4 text-[13px] leading-relaxed">
-        {pending > 0 && <p className="text-2xs text-faint">{pending} item{pending === 1 ? "" : "s"} not yet reviewed</p>}
-        {meeting.summary && <p className="text-muted">{meeting.summary}</p>}
-        {section("Decisions", <Gavel className="h-3 w-3" />, decisions?.map((d) => (
+        {meeting.summary ? (
+          <p className="text-muted">{meeting.summary}</p>
+        ) : (
+          !open && <p className="text-muted">{decisions?.length ?? 0} decisions, {tasks?.length ?? 0} action items and {risks?.length ?? 0} risks.</p>
+        )}
+        {open && pending > 0 && <p className="text-2xs text-faint">{pending} item{pending === 1 ? "" : "s"} not yet reviewed</p>}
+        {open && section("Decisions", <Gavel className="h-3 w-3" />, decisions?.map((d) => (
           <li key={d.id} className="flex gap-2"><span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-emerald-500" /><span>{d.statement}{d.ownerName && <span className="text-faint"> · {d.ownerName}</span>}{mark(d.reviewStatus)}</span></li>
         )))}
-        {section("Action items", <ListChecks className="h-3 w-3" />, tasks?.map((t) => (
+        {open && section("Action items", <ListChecks className="h-3 w-3" />, tasks?.map((t) => (
           <li key={t.id} className="flex gap-2">
             <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-blue-500" />
             <span className={t.status === "Completed" ? "text-muted line-through" : ""}>
               <span className="font-medium">{t.owner?.name ?? t.ownerName ?? "Unassigned"}</span>: {t.description}
-              {(t.deadline || t.deadlineText) && <span className="text-faint"> · due {t.deadline ? formatDate(t.deadline, true) : t.deadlineText}</span>}
+              {(t.deadline || t.deadlineText) && <span className="text-faint"> · due {t.deadline ? formatDate(t.deadline, true) + (t.deadlineTime ? `, ${formatTime(t.deadlineTime)}` : "") : t.deadlineText}</span>}
               {mark(t.reviewStatus)}
             </span>
           </li>
         )))}
-        {section("Risks", <ShieldAlert className="h-3 w-3" />, risks?.map((r) => (
+        {open && section("Risks", <ShieldAlert className="h-3 w-3" />, risks?.map((r) => (
           <li key={r.id} className="flex gap-2"><span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-amber-500" /><span>{r.description} <span className="text-faint">· {r.severity}</span>{mark(r.reviewStatus)}</span></li>
         )))}
       </div>
-      )}
     </Panel>
   );
 }

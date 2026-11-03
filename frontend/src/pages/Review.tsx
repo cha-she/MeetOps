@@ -110,7 +110,7 @@ export default function Review() {
                           {i.kind === "Task" && (
                             <>
                               <UserChip user={i.item.owner} name={i.item.ownerName} />
-                              <DueDate deadline={i.item.deadline} text={i.item.deadlineText} status={i.item.status} />
+                              <DueDate deadline={i.item.deadline} time={i.item.deadlineTime} text={i.item.deadlineText} status={i.item.status} />
                             </>
                           )}
                           {i.kind === "Decision" && <span>Decided {formatDate(i.item.decidedAt)}</span>}

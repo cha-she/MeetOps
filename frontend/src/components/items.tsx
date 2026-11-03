@@ -10,6 +10,7 @@ import {
   Circle,
   CircleDashed,
   CircleDot,
+  Clock,
   Quote,
   Sparkles,
   UserRound,
@@ -19,7 +20,7 @@ import {
 import { api } from "../api/endpoints";
 import { useQuery } from "../api/hooks";
 import type { Category, Priority, ReviewStatus, RiskSeverity, RiskStatus, TaskStatus, User, EvidenceRef } from "../types";
-import { Avatar, Badge, Menu, cn, dueInfo, type Tone } from "./ui";
+import { Avatar, Badge, Menu, cn, dueInfo, formatTime, type Tone } from "./ui";
 
 // ---------------------------------------------------------------------------
 // Style maps
@@ -303,8 +304,16 @@ export function OwnerMenu({ value, name, onChange, disabled = false, empty = "Un
   );
 }
 
-export function DueDate({ deadline, status, text, onChange, disabled = false }: { deadline: string | null; status: string; text?: string | null; onChange?: (d: string | null) => void; disabled?: boolean }) {
-  const info = dueInfo(deadline, status);
+export function DueDate({ deadline, time, status, text, onChange, onTimeChange, disabled = false }: {
+  deadline: string | null;
+  time?: string | null;
+  status: string;
+  text?: string | null;
+  onChange?: (d: string | null) => void;
+  onTimeChange?: (t: string | null) => void;
+  disabled?: boolean;
+}) {
+  const info = dueInfo(deadline, status, time);
   const toneCls = info.tone === "red" ? "text-red-600 dark:text-red-400" : info.tone === "amber" ? "text-amber-600 dark:text-amber-400" : deadline ? "text-muted" : "text-faint";
   const title = text ? `Said in the meeting: “${text}”` : undefined;
   if (disabled || !onChange)
@@ -313,16 +322,41 @@ export function DueDate({ deadline, status, text, onChange, disabled = false }: 
         {deadline ? info.label : text ? <span className="italic">{text}</span> : "No date"}
       </span>
     );
+  // the day and the time are two separate pickers; "3d overdue" carries no time
+  const dayLabel = dueInfo(deadline, status).label;
+  const showTime = !!deadline && !!onTimeChange && !dayLabel.endsWith("overdue");
   return (
-    <label className={cn("relative inline-flex cursor-pointer items-center whitespace-nowrap rounded-md px-1.5 py-1 text-[12px] hover:bg-hover", toneCls)} title={title ?? "Change due date"}>
-      {deadline ? info.label : text ? <span className="italic">{text}</span> : "No date"}
-      <input
-        type="date"
-        value={deadline ?? ""}
-        onChange={(e) => onChange(e.target.value || null)}
-        className="absolute inset-0 cursor-pointer opacity-0"
-        aria-label="Due date"
-      />
-    </label>
+    <span className="group/due inline-flex items-center">
+      <label className={cn("relative inline-flex cursor-pointer items-center whitespace-nowrap rounded-md px-1.5 py-1 text-[12px] hover:bg-hover", toneCls)} title={title ?? "Change due date"}>
+        {deadline ? (showTime ? dayLabel : info.label) : text ? <span className="italic">{text}</span> : "No date"}
+        <input
+          type="date"
+          value={deadline ?? ""}
+          onChange={(e) => onChange(e.target.value || null)}
+          className="absolute inset-0 cursor-pointer opacity-0"
+          aria-label="Due date"
+        />
+      </label>
+      {/* time of day: shown when one was said, otherwise a clock appears on hover to add one */}
+      {showTime && (
+        <label
+          className={cn(
+            "relative -ml-1 inline-flex cursor-pointer items-center whitespace-nowrap rounded-md px-1 py-1 text-[12px] hover:bg-hover",
+            toneCls,
+            !time && "opacity-0 focus-within:opacity-100 group-hover/due:opacity-100",
+          )}
+          title={time ? "Change due time" : "Add a due time"}
+        >
+          {time ? `, ${formatTime(time)}` : <Clock className="h-3 w-3" />}
+          <input
+            type="time"
+            value={time?.slice(0, 5) ?? ""}
+            onChange={(e) => onTimeChange!(e.target.value ? `${e.target.value}:00` : null)}
+            className="absolute inset-0 cursor-pointer opacity-0"
+            aria-label="Due time"
+          />
+        </label>
+      )}
+    </span>
   );
 }

@@ -57,7 +57,7 @@ def task_out(t: models.Task) -> schemas.TaskOut:
         id=t.id, description=t.description, owner=user_out(t.owner),
         owner_name=t.owner.name if t.owner else t.owner_name, meeting_id=t.meeting_id,
         meeting_title=t.meeting.title, meeting_date=t.meeting.date, department=dept_ref(t.meeting.department),
-        deadline=t.deadline, deadline_text=t.deadline_text, status=t.status, priority=t.priority,
+        deadline=t.deadline, deadline_time=t.deadline_time, deadline_text=t.deadline_text, status=t.status, priority=t.priority,
         review_status=t.review_status, confidence=t.confidence, source=t.source,
         created_at=t.created_at, completed_at=t.completed_at, evidence=evidence(t.segment),
     )

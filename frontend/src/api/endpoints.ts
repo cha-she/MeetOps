@@ -69,7 +69,7 @@ export interface MeetingFilters {
   limit?: number;
 }
 
-export type TaskPatch = Partial<Pick<Task, "status" | "deadline" | "description" | "priority" | "reviewStatus">> & {
+export type TaskPatch = Partial<Pick<Task, "status" | "deadline" | "deadlineTime" | "description" | "priority" | "reviewStatus">> & {
   ownerId?: number | null;
 };
 

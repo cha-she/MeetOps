@@ -17,10 +17,10 @@ the model was confident on its own), ``rejected`` when dismissed.
 
 from __future__ import annotations
 
-from datetime import date, datetime, timezone
+from datetime import date, datetime, time, timezone
 
 from sqlalchemy import (Boolean, Column, Date, DateTime, Float, ForeignKey, Integer, String, Table,
-                        Text, UniqueConstraint)
+                        Text, Time, UniqueConstraint)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .database import Base
@@ -135,6 +135,7 @@ class Task(_Extracted, Base):
     owner_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), index=True)
     owner_name: Mapped[str | None] = mapped_column(String(120))   # spoken name when the person has no account
     deadline: Mapped[date | None] = mapped_column(Date)
+    deadline_time: Mapped[time | None] = mapped_column(Time)   # when a time of day was said ("Friday at 2 pm")
     deadline_text: Mapped[str | None] = mapped_column(String(80))
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="Open")  # Open|In Progress|Completed
     priority: Mapped[str] = mapped_column(String(10), nullable=False, default="Medium")  # Low|Medium|High

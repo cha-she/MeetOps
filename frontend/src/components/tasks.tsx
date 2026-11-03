@@ -20,7 +20,7 @@ import {
   StatusMenu,
   useUsers,
 } from "./items";
-import { Avatar, Dialog, EmptyState, Field, cn, daysUntil, formatDate, isOverdue } from "./ui";
+import { Avatar, Dialog, EmptyState, Field, cn, daysUntil, formatDate, formatTime, isOverdue } from "./ui";
 
 export const TASK_REFRESH = ["tasks", "insights", "review", "meetings", "activity", "notifications"];
 
@@ -48,7 +48,7 @@ function dueBucket(t: Task): string {
   if (t.status === "Completed") return "5 Completed";
   const d = daysUntil(t.deadline);
   if (d === null) return "4 No due date";
-  if (d < 0) return "0 Overdue";
+  if (isOverdue(t.deadline, t.status, t.deadlineTime)) return "0 Overdue";
   if (d === 0) return "1 Today";
   if (d < 7) return "2 This week";
   return "3 Later";
@@ -104,7 +104,7 @@ function TaskRow({ task, showMeeting, compact }: { task: Task; showMeeting: bool
           <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
             <StatusMenu value={task.status} disabled={!editable} onChange={(s) => update(task, { status: s }, `Status: ${s}`)} />
             <OwnerMenu value={task.owner} name={task.ownerName} disabled={!editable} onChange={(id) => update(task, { ownerId: id }, "Owner updated")} />
-            <DueDate deadline={task.deadline} text={task.deadlineText} status={task.status} disabled={!editable} onChange={(d) => update(task, { deadline: d }, "Due date updated")} />
+            <DueDate deadline={task.deadline} time={task.deadlineTime} text={task.deadlineText} status={task.status} disabled={!editable} onChange={(d) => update(task, { deadline: d }, "Due date updated")} onTimeChange={(t) => update(task, { deadlineTime: t }, "Due time updated")} />
             <PriorityMenu value={task.priority} disabled={!editable} onChange={(p) => update(task, { priority: p })} />
             <EvidenceTime evidence={task.evidence} meetingId={task.meetingId} />
           </div>
@@ -145,7 +145,7 @@ function TaskRow({ task, showMeeting, compact }: { task: Task; showMeeting: bool
         <OwnerMenu value={task.owner} name={task.ownerName} disabled={!editable} onChange={(id) => update(task, { ownerId: id }, "Owner updated")} />
       </div>
       <div className="col-start-2 md:col-start-auto">
-        <DueDate deadline={task.deadline} text={task.deadlineText} status={task.status} disabled={!editable} onChange={(d) => update(task, { deadline: d }, "Due date updated")} />
+        <DueDate deadline={task.deadline} time={task.deadlineTime} text={task.deadlineText} status={task.status} disabled={!editable} onChange={(d) => update(task, { deadline: d }, "Due date updated")} onTimeChange={(t) => update(task, { deadlineTime: t }, "Due time updated")} />
       </div>
       <div className="hidden md:block">
         <PriorityMenu value={task.priority} disabled={!editable} onChange={(p) => update(task, { priority: p })} />
@@ -223,7 +223,7 @@ export function TaskBoard({ tasks }: { tasks: Task[] }) {
             <div className="space-y-2">
               {items.map((t) => {
                 const editable = canEditTask(me, t);
-                const overdue = isOverdue(t.deadline, t.status);
+                const overdue = isOverdue(t.deadline, t.status, t.deadlineTime);
                 return (
                   <div
                     key={t.id}
@@ -240,7 +240,7 @@ export function TaskBoard({ tasks }: { tasks: Task[] }) {
                       {t.meetingTitle}
                     </Link>
                     <div className="mt-2 flex items-center justify-between gap-2">
-                      <span className={cn("text-2xs", overdue ? "font-medium text-red-600 dark:text-red-400" : "text-faint")}>{t.deadline ? formatDate(t.deadline) : t.deadlineText ?? "No date"}</span>
+                      <span className={cn("text-2xs", overdue ? "font-medium text-red-600 dark:text-red-400" : "text-faint")}>{t.deadline ? formatDate(t.deadline) + (t.deadlineTime ? `, ${formatTime(t.deadlineTime)}` : "") : t.deadlineText ?? "No date"}</span>
                       <span className="flex items-center gap-1.5">
                         {t.reviewStatus === "suggested" && <ReviewBadge status="suggested" />}
                         {t.owner ? <Avatar name={t.owner.name} initials={t.owner.initials} size={20} /> : <span className="text-2xs text-faint">{t.ownerName ?? "Unassigned"}</span>}

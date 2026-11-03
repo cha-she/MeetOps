@@ -35,6 +35,11 @@ _MONTH = r"(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*"
 _YEAR = r"(?:,?\s+\d{4})?"
 _TIME = r"(?:,?\s+(?:at\s+)?\d{1,2}(?:[:.]\d{2})?\s*(?:am|pm|a\.m\.|p\.m\.)?(?:\s*(?:utc|gmt|ist|sl time|local time))?)?"
 _LEAD = r"(?:by|before|until|till|due|on|no later than)"
+# a time of day that cannot be a count: "2 pm", "2:30pm", "14:00", "noon"
+_CLOCK = r"(?:\d{1,2}(?:[:.]\d{2})?\s*(?:am|pm|a\.m\.|p\.m\.)(?![a-z])|\d{1,2}:\d{2}\b|noon\b|midday\b|midnight\b)"
+# the same after a day ("Friday at 2 pm", "tomorrow, 10:30"); a bare hour only after "at" ("Friday at 2")
+_AT_CLOCK = rf"(?:,?\s+(?:(?:at|by|before)\s+)?{_CLOCK}|,?\s+at\s+\d{{1,2}}(?:\s*o'?clock)?\b(?![:.]?\d))"
+_DAY = r"(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday|tomorrow|today|tonight)"
 
 DEADLINE_PATTERNS = [
     # explicit calendar dates first, with optional year and time: "by 11 September 2026 at 14:00 UTC"
@@ -42,7 +47,10 @@ DEADLINE_PATTERNS = [
     rf"\b{_LEAD}\s+{_MONTH}\s+\d{{1,2}}(?:st|nd|rd|th)?{_YEAR}{_TIME}",
     rf"\b{_LEAD}\s+\d{{1,2}}[/.-]\d{{1,2}}[/.-]\d{{2,4}}{_TIME}",
     r"\b\d{4}-\d{2}-\d{2}\b",
-    r"\b(?:by|before|until|till|due|on)\s+(?:the\s+)?(?:end of\s+)?(?:this|next|coming)?\s*(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday|weekend|week|month|sprint|quarter|tomorrow|today|tonight)(?:\s+(?:morning|afternoon|evening))?\b",
+    # the time first: "by 2 pm on Friday", "before 10:30 tomorrow"
+    rf"\b(?:by|before|until|till|at)\s+{_CLOCK}\s+(?:on\s+)?(?:this\s+|next\s+|coming\s+)?{_DAY}\b",
+    r"\b(?:by|before|until|till|due|on)\s+(?:the\s+)?(?:end of\s+)?(?:this|next|coming)?\s*(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday|weekend|week|month|sprint|quarter|tomorrow|today|tonight)(?:\s+(?:morning|afternoon|evening))?\b"
+    rf"(?:{_AT_CLOCK})?",
     r"\b(?:by|before)\s+(?:the\s+)?next\s+(?:meeting|standup|stand-up|sprint|review|session|call)\b",
     r"\b(?:by|before|on)\s+the\s+(?:" + _ORD + r"|\d{1,2}(?:st|nd|rd|th)?)(?:\s+at the latest)?\b",
     r"\bbefore\s+(?:the\s+)?(?:go-live|launch|release|freeze|deadline|demo|review|sending)\b",
@@ -52,7 +60,8 @@ DEADLINE_PATTERNS = [
     r"\bafter (?:this|the) (?:call|meeting)\b",
     r"\b(?:by |for |at |in )?(?:the )?next (?:meeting|time|session)\b",
     r"\bbefore (?:lunch|the break|the end of (?:the )?(?:meeting|call))\b",
-    r"\btomorrow\b|\btoday\b|\btonight\b|\bthis afternoon\b|\bthis evening\b",
+    rf"(?:\btomorrow\b|\btoday\b|\btonight\b|\bthis afternoon\b|\bthis evening\b)(?:{_AT_CLOCK})?",
+    rf"\b(?:by|before|until|till)\s+{_CLOCK}",   # a time only: the meeting day
 ]
 _DEADLINE = re.compile("|".join(f"(?:{p})" for p in DEADLINE_PATTERNS), re.I)
 
@@ -242,6 +251,8 @@ def resolve_deadline(phrase: str, base: date) -> date | None:
             return _next_weekday(base, i)   # the coming <day>, after the meeting date
     if "tomorrow" in p:
         return base + timedelta(days=1)
+    if re.fullmatch(rf"(?:{_LEAD}\s+)?{_CLOCK}", p):
+        return base
     if any(w in p for w in ("today", "tonight", "this afternoon", "this evening")):
         return base
 
@@ -249,6 +260,35 @@ def resolve_deadline(phrase: str, base: date) -> date | None:
                               settings={"RELATIVE_BASE": datetime.combine(base, time.min),
                                         "PREFER_DATES_FROM": "future", "PREFER_DAY_OF_MONTH": "first"})
     return (parsed.date() if parsed else None)
+
+
+def deadline_time(phrase: str | None) -> time | None:
+    """The time of day in a deadline phrase ("by Friday at 2 pm" -> 14:00), None when only a day was said.
+
+    Without am / pm ("at 2", "2:30") the hour is read as working hours: 1-7 means the afternoon.
+    """
+    if not phrase:
+        return None
+    p = re.sub(r"\d{1,2}[/.-]\d{1,2}[/.-]\d{2,4}", " ", phrase.lower())   # numeric dates are not times
+    if re.search(r"\b(noon|midday)\b", p):
+        return time(12, 0)
+    if re.search(r"\bmidnight\b", p):
+        return time(23, 59)
+    m = (re.search(r"\b(\d{1,2})(?:[:.](\d{2}))?\s*(am|pm|a\.m\.|p\.m\.)(?![a-z])", p)
+         or re.search(r"\b(\d{1,2}):(\d{2})\b()", p)
+         or re.search(r"\bat\s+(\d{1,2})()()(?:\s*o'?clock)?\b(?![:.]?\d)", p))
+    if not m:
+        return None
+    hour, minute, half = int(m.group(1)), int(m.group(2) or 0), (m.group(3) or "").replace(".", "")
+    if half == "pm" and hour < 12:
+        hour += 12
+    elif half == "am" and hour == 12:
+        hour = 0
+    elif not half and 1 <= hour <= 7:
+        hour += 12
+    if hour > 23 or minute > 59:
+        return None
+    return time(hour, minute)
 
 
 def task_fields(text: str, speaker: str | None, meeting_date: date, users: list[models.User]) -> TaskFields:

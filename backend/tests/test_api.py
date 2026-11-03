@@ -142,6 +142,21 @@ def test_upload_transcript(client, member):
     assert tasks[0]["description"] == "Fix the login bug"
 
 
+def test_deadline_keeps_time_of_day(client, member):
+    text = ("[00:00:20] Ravindu: Kasun, can you send the release notes by Friday at 2 pm?\n"
+            "[00:00:40] Kasun: Sure, I'll do it.\n")
+    r = client.post("/api/meetings/upload", data={"title": "Release check", "date": "2026-10-29"},
+                    files={"file": ("t.txt", text.encode(), "text/plain")}, headers=member)
+    tasks = client.get("/api/tasks", params={"meetingId": r.json()["id"]}, headers=member).json()
+    assert len(tasks) == 1
+    t = tasks[0]
+    assert t["deadline"] == "2026-10-30" and t["deadlineTime"] == "14:00:00"
+    r = client.patch(f"/api/tasks/{t['id']}", json={"deadlineTime": "16:30:00"}, headers=member)
+    assert r.json()["deadlineTime"] == "16:30:00"
+    r = client.patch(f"/api/tasks/{t['id']}", json={"deadline": None}, headers=member)
+    assert r.json()["deadline"] is None and r.json()["deadlineTime"] is None   # no day, no time
+
+
 def test_upload_time_comma_transcript_with_external_people(client, member):
     """Lines like '03:28, Jon: “I’ll …”', speakers without accounts, a follow-up deadline and a confirmation."""
     from pathlib import Path

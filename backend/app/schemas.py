@@ -7,7 +7,7 @@ snake_case; the JSON uses camelCase through the alias generator.
 
 from __future__ import annotations
 
-from datetime import date, datetime, timezone
+from datetime import date, datetime, time, timezone
 from typing import Annotated, Literal
 
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field, PlainSerializer
@@ -170,6 +170,7 @@ class TaskOut(CamelModel):
     meeting_date: date
     department: DepartmentRef | None
     deadline: date | None
+    deadline_time: time | None
     deadline_text: str | None
     status: TaskStatus
     priority: Priority
@@ -186,6 +187,7 @@ class TaskCreate(CamelModel):
     meeting_id: int
     owner_id: int | None = None
     deadline: date | None = None
+    deadline_time: time | None = None
     priority: Priority = "Medium"
     segment_id: int | None = None
 
@@ -193,6 +195,7 @@ class TaskCreate(CamelModel):
 class TaskPatch(CamelModel):
     status: TaskStatus | None = None
     deadline: date | None = None
+    deadline_time: time | None = None
     description: str | None = Field(default=None, min_length=1, max_length=2000)
     owner_id: int | None = None
     priority: Priority | None = None

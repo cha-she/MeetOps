@@ -53,22 +53,40 @@ export function daysUntil(iso: string | null): number | null {
   return Math.round((parseIso(iso).getTime() - today.getTime()) / 86_400_000);
 }
 
-export function isOverdue(deadline: string | null, status: string): boolean {
+// "14:00:00" -> "2 pm", "10:30:00" -> "10:30 am"
+export function formatTime(time: string | null | undefined): string {
+  if (!time) return "";
+  const [h, m] = time.split(":").map(Number);
+  const suffix = h < 12 ? "am" : "pm";
+  const hour = h % 12 === 0 ? 12 : h % 12;
+  return m ? `${hour}:${String(m).padStart(2, "0")} ${suffix}` : `${hour} ${suffix}`;
+}
+
+// due today at a time that has already passed
+function pastTimeToday(time: string | null | undefined): boolean {
+  if (!time) return false;
+  const [h, m] = time.split(":").map(Number);
+  const now = new Date();
+  return now.getHours() * 60 + now.getMinutes() > h * 60 + m;
+}
+
+export function isOverdue(deadline: string | null, status: string, time?: string | null): boolean {
   const d = daysUntil(deadline);
-  return status !== "Completed" && d !== null && d < 0;
+  return status !== "Completed" && d !== null && (d < 0 || (d === 0 && pastTimeToday(time)));
 }
 
 export type Tone = "neutral" | "accent" | "blue" | "green" | "amber" | "red" | "violet";
 
-export function dueInfo(deadline: string | null, status: string): { label: string; tone: Tone } {
+export function dueInfo(deadline: string | null, status: string, time?: string | null): { label: string; tone: Tone } {
   const d = daysUntil(deadline);
   if (d === null) return { label: "No date", tone: "neutral" };
-  if (status === "Completed") return { label: formatDate(deadline), tone: "neutral" };
+  const at = time ? `, ${formatTime(time)}` : "";
+  if (status === "Completed") return { label: formatDate(deadline) + at, tone: "neutral" };
   if (d < 0) return { label: `${Math.abs(d)}d overdue`, tone: "red" };
-  if (d === 0) return { label: "Today", tone: "amber" };
-  if (d === 1) return { label: "Tomorrow", tone: "amber" };
-  if (d < 7) return { label: parseIso(deadline!).toLocaleDateString("en-GB", { weekday: "short" }) + " " + formatDate(deadline), tone: "neutral" };
-  return { label: formatDate(deadline), tone: "neutral" };
+  if (d === 0) return { label: "Today" + at, tone: pastTimeToday(time) ? "red" : "amber" };
+  if (d === 1) return { label: "Tomorrow" + at, tone: "amber" };
+  if (d < 7) return { label: parseIso(deadline!).toLocaleDateString("en-GB", { weekday: "short" }) + " " + formatDate(deadline) + at, tone: "neutral" };
+  return { label: formatDate(deadline) + at, tone: "neutral" };
 }
 
 export function formatDuration(min: number | null): string {

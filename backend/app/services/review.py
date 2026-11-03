@@ -72,6 +72,7 @@ def reclassify_segment(db: Session, seg: models.Segment, category: str, user: mo
         owner_user, owner_name = extraction.find_owner_name(seg.text, seg.speaker, users, speakers)
         item = models.Task(description=extraction.task_title(seg.text, users) or extraction.tidy(seg.text),
                            owner_id=owner_user.id if owner_user else None, owner_name=owner_name, deadline=f.deadline,
+                           deadline_time=extraction.deadline_time(f.deadline_text) if f.deadline else None,
                            deadline_text=f.deadline_text, status="Open", reviewed_by_id=user.id, **common)
     elif category == "Decision":
         owner = extraction.match_user(seg.speaker, users)

@@ -79,6 +79,7 @@ export interface Task extends Reviewable {
   meetingDate: string;
   department: DepartmentRef | null;
   deadline: string | null;
+  deadlineTime: string | null; // "14:00:00" when a time of day was said
   deadlineText: string | null;
   status: TaskStatus;
   priority: Priority;

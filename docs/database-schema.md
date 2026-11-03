@@ -85,6 +85,7 @@ erDiagram
         text description
         int owner_id FK
         date deadline
+        time deadline_time "when a time was said"
         string deadline_text "phrase said"
         string status "Open | In Progress | Completed"
         string priority "Low | Medium | High"
@@ -177,7 +178,9 @@ erDiagram
   literals) rather than database enums, so SQLite and PostgreSQL behave the
   same and adding a value is a code change only.
 - **Timestamps** are stored in UTC and sent to the browser marked as UTC.
-  Dates people speak about (`deadline`, `decided_at`) are plain dates.
+  Dates people speak about (`deadline`, `decided_at`) are plain dates; a time
+  of day said with a deadline ("Friday at 2 pm") is kept separately in
+  `deadline_time`, so tasks with only a day stay whole-day tasks.
 
 ## After `python -m app.seed --demo`
 
