@@ -32,23 +32,29 @@ prepared with `python -m app.seed --demo`, signed in as the administrator).
 
 ![New meeting](screenshots/upload.png)
 
-Upload a transcript with title, date and department. The page follows the
-backend through `upload → transcribe → preprocess → classify → extract →
-save` and then links to the meeting and its review items. Text transcripts
-(`Speaker: text`, optional `[hh:mm:ss]`) are processed end-to-end; audio and
-video are accepted and reported as "transcription in the next phase".
+Upload a transcript or a recording with title, date and department. The page
+follows the backend through `upload → transcribe → preprocess → classify →
+extract → save` and then links to the meeting and its review items. Text
+transcripts (`Speaker: text`, timestamps, Teams/Zoom exports, VTT/SRT, plain
+minutes) are read directly. Audio and video (mp3, wav, m4a, mp4, mov …, up to
+500 MB) are transcribed on the server with Whisper; voices are grouped into
+Speaker 1, 2 … and named afterwards on the meeting page ("Who is who?", with
+names suggested from the conversation).
 
 What happens inside:
 
-- **Classify:** the TF-IDF model labels every sentence; a rule layer then
+- **Classify:** the fine-tuned DistilBERT model labels every sentence (TF-IDF
+  when PyTorch is not installed); a rule layer then
   corrects explicit requests, commitments, agreements and concerns, and
   removes agenda lines and open questions (`ml/README.md` §3.7–3.8).
 - **Organise:** a request and its acceptance become one task; titles are
   rewritten as actions; owner and due date come from whoever was asked or
   accepted and whatever time was said; vague agreements quote what was
   agreed; duplicates are merged.
-- **Review state:** confident model predictions are confirmed automatically;
-  everything else is a *suggestion* for a person to confirm.
+- **Review state:** with DistilBERT every item is a *suggestion* for a person
+  to confirm (its confidence was measured to be unreliable for skipping review,
+  `ml/README.md` §3.12); with TF-IDF, items the model alone is at least 80 %
+  sure of are confirmed automatically.
 
 ## 4. Review
 
@@ -133,6 +139,7 @@ administrators add, edit, reset passwords and deactivate.
 
 ## 12. Planned for the next phase
 
-Audio/video ingestion (FFmpeg + Whisper), DistilBERT classifier with context
-features trained on the collected label feedback, learned owner/deadline
-extraction, email reminders for deadlines, PDF export of the registers.
+Risk clustering into themes across meetings, retraining DistilBERT on the
+collected label feedback, tracking deadline changes later in a meeting,
+learned owner/deadline extraction, email reminders for deadlines, PDF export of
+the registers.
