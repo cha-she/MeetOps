@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Download, Repeat, ShieldAlert } from "lucide-react";
+import { Download, Plus, Repeat, ShieldAlert } from "lucide-react";
 import { api, type RiskFilters } from "../api/endpoints";
 import { useQuery } from "../api/hooks";
 import { useMe } from "../auth/AuthContext";
 import { mayEditItem } from "../auth/permissions";
+import { NewRiskDialog } from "../components/newItems";
 import { ConfidenceMeter, EvidenceQuote, OwnerMenu, ReviewBadge, ReviewButtons, ReviewSwitch, filterByReview, reviewViewOf, riskStatusTone, severityTone, useUsers } from "../components/items";
 import { Badge, DateRange, EmptyState, FilterSelect, Menu, PageHeader, QueryView, RowsSkeleton, SearchInput, Stat, Toggle, downloadCsv, formatDate } from "../components/ui";
 import { LIST_REFRESH_INTERVAL_MS } from "../config";
@@ -24,6 +25,7 @@ export default function Risks() {
     setParams(next, { replace: true });
   };
   const [q, setQ] = useState(get("q"));
+  const [adding, setAdding] = useState(false);
   useEffect(() => {
     const t = window.setTimeout(() => q !== (params.get("q") ?? "") && set({ q }), 250);
     return () => window.clearTimeout(t);
@@ -67,6 +69,7 @@ export default function Risks() {
         title="Risks"
         description="The risk log: concerns and blockers raised in meetings, with severity, owner and status."
         actions={
+          <>
           <button
             className="btn-secondary"
             disabled={!risks.data?.length}
@@ -79,6 +82,10 @@ export default function Risks() {
           >
             <Download className="h-4 w-4" /> Export
           </button>
+          <button className="btn-primary" onClick={() => setAdding(true)} disabled={!meetings.data?.length}>
+            <Plus className="h-4 w-4" /> New risk
+          </button>
+          </>
         }
       />
 
@@ -182,6 +189,7 @@ export default function Risks() {
           </div>
         )}
       </QueryView>
+      {adding && meetings.data && <NewRiskDialog open onClose={() => setAdding(false)} meetings={meetings.data} defaultMeetingId={filters.meetingId} />}
     </div>
   );
 }

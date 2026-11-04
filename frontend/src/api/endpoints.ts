@@ -16,6 +16,7 @@ import type {
   RiskStatus,
   Role,
   SearchResults,
+  SpeakerInfo,
   Task,
   TaskStatus,
   TranscriptSegment,
@@ -89,6 +90,9 @@ export const api = {
   getSegments: (id: number | string) => http.get<TranscriptSegment[]>(`/meetings/${id}/segments`),
   uploadMeeting: (formData: FormData) => http.upload<Meeting>("/meetings/upload", formData),
   deleteMeeting: (id: number) => http.del<void>(`/meetings/${id}`),
+  listSpeakers: (meetingId: number) => http.get<SpeakerInfo[]>(`/meetings/${meetingId}/speakers`),
+  renameSpeaker: (meetingId: number, speaker: string, name: string) =>
+    http.post<Meeting>(`/meetings/${meetingId}/speakers`, { speaker, name }),
   reclassifySegment: (segmentId: number, category: Category) =>
     http.post<TranscriptSegment>(`/segments/${segmentId}/category`, { category }),
 
@@ -100,6 +104,10 @@ export const api = {
   listDecisions: (params?: DecisionFilters) => http.get<Decision[]>("/decisions", { ...params }),
   updateDecision: (id: number, patch: { statement?: string; ownerId?: number | null; reviewStatus?: ReviewStatus }) =>
     http.patch<Decision>(`/decisions/${id}`, patch),
+  createDecision: (body: { statement: string; meetingId: number; ownerId?: number | null; segmentId?: number }) =>
+    http.post<Decision>("/decisions", body),
+  createRisk: (body: { description: string; meetingId: number; severity: RiskSeverity; ownerId?: number | null; segmentId?: number }) =>
+    http.post<Risk>("/risks", body),
   listRisks: (params?: RiskFilters) => http.get<Risk[]>("/risks", { ...params }),
   updateRisk: (
     id: number,

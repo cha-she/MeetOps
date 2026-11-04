@@ -73,6 +73,14 @@ MEDIUM = re.compile(r"\b(problem|problems|issue|expensive|costly|late|slow|not s
                     r"concern\w*|difficult|hard|risk|risky|fragile|break|tight|never tested|untested|gap)\b", re.I)
 
 
+SPEAKER_NUMBER = re.compile(r"(?:speaker|participant|guest|attendee|caller)\s+\d{1,2}", re.I)
+
+
+def is_speaker_number(name: str | None) -> bool:
+    """A numbered label from a recording ("Speaker 2"), not a person's name."""
+    return bool(name) and bool(SPEAKER_NUMBER.fullmatch(name.strip()))
+
+
 @dataclass
 class TaskFields:
     owner: models.User | None

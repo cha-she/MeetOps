@@ -37,7 +37,7 @@ def meeting_out(m: models.Meeting) -> schemas.MeetingOut:
     tasks, decisions, risks = _visible(m.tasks), _visible(m.decisions), _visible(m.risks)
     return schemas.MeetingOut(
         id=m.id, title=m.title, date=m.date, duration_min=m.duration_min, source=m.source,
-        status=m.status, pipeline_stage=m.pipeline_stage, error_message=m.error_message,
+        status=m.status, pipeline_stage=m.pipeline_stage, progress=m.progress, error_message=m.error_message,
         participants=[user_out(p) for p in m.participants], department=dept_ref(m.department),
         uploaded_by=user_out(m.uploaded_by),
         task_count=len(tasks), decision_count=len(decisions), risk_count=len(risks),

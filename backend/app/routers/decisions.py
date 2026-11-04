@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select
@@ -44,6 +44,22 @@ def list_decisions(
         stmt = stmt.where(models.Decision.statement.ilike(f"%{q}%"))
     stmt = stmt.order_by(models.Decision.decided_at.desc(), models.Decision.id)
     return [decision_out(d) for d in db.scalars(stmt)]
+
+
+@router.post("", response_model=schemas.DecisionOut, status_code=201)
+def create_decision(body: schemas.DecisionCreate, db: Session = Depends(get_db),
+                    user: models.User = Depends(current_user)):
+    """Add a decision by hand (one the model missed)."""
+    meeting, seg = review.manual_item_context(db, body.meeting_id, body.owner_id, body.segment_id, user, "decisions")
+    d = models.Decision(meeting_id=meeting.id, segment_id=seg.id if seg else None, statement=body.statement.strip(),
+                        owner_id=body.owner_id, decided_at=meeting.date, review_status="confirmed", source="manual",
+                        reviewed_by_id=user.id, reviewed_at=datetime.now(timezone.utc))
+    db.add(d)
+    db.flush()
+    audit.log(db, "decision", d.id, "created", d.statement, actor_id=user.id, meeting_id=meeting.id)
+    db.commit()
+    db.refresh(d)
+    return decision_out(d)
 
 
 @router.patch("/{decision_id}", response_model=schemas.DecisionOut)

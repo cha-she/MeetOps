@@ -157,6 +157,64 @@ def test_deadline_keeps_time_of_day(client, member):
     assert r.json()["deadline"] is None and r.json()["deadlineTime"] is None   # no day, no time
 
 
+def test_upload_recording_and_name_speakers(client, member, monkeypatch):
+    """Audio goes through speech-to-text (stubbed here: no model download in tests), then the text pipeline."""
+    from app.services import pipeline
+
+    said = ("[00:00:12] Speaker 1: Kasun, can you run the load test by Friday at 2 pm?\n"
+            "[00:00:17] Speaker 2: Yes, I will do it.\n"
+            "[00:00:31] Speaker 1: I will talk to the testing manager tomorrow.\n")
+    calls = {}
+
+    def fake(path, names, num_speakers, progress):
+        calls.update(names=names, speakers=num_speakers)
+        progress(0.5)
+        return said, 95.0
+
+    monkeypatch.setattr(pipeline.transcribe, "available", lambda: True)
+    monkeypatch.setattr(pipeline.transcribe, "recording_to_transcript", fake)
+    r = client.post("/api/meetings/upload", data={"title": "Stand-up recording", "date": "2026-10-29", "speakers": "2"},
+                    files={"file": ("standup.m4a", b"not really audio", "audio/mp4")}, headers=member)
+    assert r.status_code == 201 and r.json()["source"] == "audio"
+    mid = r.json()["id"]
+    m = client.get(f"/api/meetings/{mid}", headers=member).json()
+    assert m["status"] == "Processed", m["errorMessage"]
+    assert m["durationMin"] == 2 and calls["speakers"] == 2 and "Kasun Silva" in calls["names"]
+
+    tasks = {t["description"]: t for t in client.get("/api/tasks", params={"meetingId": mid}, headers=member).json()}
+    assert tasks["Run the load test"]["owner"]["name"] == "Kasun Silva"     # the name heard beats "Speaker 2"
+    assert tasks["Talk to the testing manager"]["ownerName"] == "Speaker 1"
+
+    found = {x["speaker"]: x for x in client.get(f"/api/meetings/{mid}/speakers", headers=member).json()}
+    assert found["Speaker 2"]["suggestion"] == "Kasun Silva" and found["Speaker 2"]["heardIn"].startswith("Kasun, can you")
+    assert found["Speaker 1"]["suggestion"] is None and found["Speaker 1"]["lines"] == 2
+
+    r = client.post(f"/api/meetings/{mid}/speakers", json={"speaker": "Speaker 1", "name": "Nethmi"}, headers=member)
+    assert r.status_code == 200 and "Nethmi Fernando" in [p["name"] for p in r.json()["participants"]]
+    segs = client.get(f"/api/meetings/{mid}/segments", headers=member).json()
+    assert {s["speaker"] for s in segs} == {"Nethmi Fernando", "Speaker 2"}
+    task = next(t for t in client.get("/api/tasks", params={"meetingId": mid}, headers=member).json()
+                if t["description"] == "Talk to the testing manager")
+    assert task["owner"]["name"] == "Nethmi Fernando"
+    r = client.post(f"/api/meetings/{mid}/speakers", json={"speaker": "Speaker 9", "name": "Ravindu"}, headers=member)
+    assert r.status_code == 422
+
+
+def test_add_decision_and_risk_by_hand(client, admin, member):
+    meeting = client.get("/api/meetings", headers=admin).json()[0]
+    seg = client.get(f"/api/meetings/{meeting['id']}/segments", headers=admin).json()[0]
+    r = client.post("/api/risks", json={"description": "The staging server is running out of disk space",
+                                        "meetingId": meeting["id"], "severity": "High", "segmentId": seg["id"]}, headers=admin)
+    assert r.status_code == 201
+    risk = r.json()
+    assert risk["source"] == "manual" and risk["reviewStatus"] == "confirmed" and risk["evidence"]["segmentId"] == seg["id"]
+    r = client.post("/api/decisions", json={"statement": "Postpone dark mode to the next sprint", "meetingId": meeting["id"]},
+                    headers=admin)
+    assert r.status_code == 201 and r.json()["source"] == "manual"
+    r = client.post("/api/risks", json={"description": "Nope", "meetingId": 99999}, headers=admin)
+    assert r.status_code == 422
+
+
 def test_upload_time_comma_transcript_with_external_people(client, member):
     """Lines like '03:28, Jon: “I’ll …”', speakers without accounts, a follow-up deadline and a confirmation."""
     from pathlib import Path

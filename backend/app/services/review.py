@@ -7,6 +7,8 @@ Human review of extracted items, and corrections of the classifier.
   Decision, Risk or Other. The item linked to that line is replaced by one of
   the new type (confirmed, because a person chose it) and the correction is
   stored as label feedback.
+* ``rename_speaker`` replaces a speaker label from a recording ("Speaker 2")
+  with the person's name throughout the meeting.
 
 The ``label_feedback`` table is the training data for the next model version.
 """
@@ -87,3 +89,56 @@ def reclassify_segment(db: Session, seg: models.Segment, category: str, user: mo
     audit.log(db, "segment", seg.id, "reclassified", f"{before} -> {category}: {seg.text[:80]}",
               actor_id=user.id, meeting_id=meeting.id)
     return item
+
+
+def rename_speaker(db: Session, meeting: models.Meeting, speaker: str, name: str, user: models.User) -> int:
+    """Give a speaker label a real name in the transcript, task and decision owners and risks.
+
+    When the name matches an account, items owned by that speaker are assigned to the account and
+    the person becomes a participant. Returns the number of transcript lines changed.
+    """
+    users = db.scalars(select(models.User).where(models.User.is_active.is_(True))).all()
+    account = extraction.match_user(name.strip(), users)
+    name = account.name if account else name.strip()
+    if name == speaker:
+        return 0
+    lines = 0
+    for s in meeting.segments:
+        if s.speaker == speaker:
+            s.speaker = name
+            lines += 1
+    for item in [*meeting.tasks, *meeting.decisions]:
+        if item.owner_name == speaker:
+            item.owner_name = name
+            if account and item.owner_id is None:
+                item.owner_id = account.id
+    for r in meeting.risks:
+        if r.raised_by == speaker:
+            r.raised_by = name
+    if account and account not in meeting.participants:
+        meeting.participants.append(account)
+    if lines:
+        audit.log(db, "meeting", meeting.id, "speaker renamed", f"{speaker} -> {name}",
+                  actor_id=user.id, meeting_id=meeting.id)
+    return lines
+
+
+def manual_item_context(db: Session, meeting_id: int, owner_id: int | None, segment_id: int | None,
+                        user: models.User, kind: str) -> tuple[models.Meeting, models.Segment | None]:
+    """Checks for a task, decision or risk added by hand: the meeting, the owner and the evidence line."""
+    from fastapi import HTTPException
+
+    from ..security import can_edit_meeting_items, ensure
+
+    meeting = db.get(models.Meeting, meeting_id)
+    if not meeting:
+        raise HTTPException(422, "Unknown meeting")
+    ensure(can_edit_meeting_items(user, meeting), f"You can only add {kind} to meetings you attended or manage.")
+    if owner_id and not db.get(models.User, owner_id):
+        raise HTTPException(422, "Unknown owner")
+    seg = None
+    if segment_id:
+        seg = db.get(models.Segment, segment_id)
+        if not seg or seg.meeting_id != meeting.id:
+            raise HTTPException(422, "The evidence line must belong to the same meeting")
+    return meeting, seg

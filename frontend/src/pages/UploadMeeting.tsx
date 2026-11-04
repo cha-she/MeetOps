@@ -13,7 +13,7 @@ import type { Meeting, PipelineStage } from "../types";
 // meeting's `pipelineStage` advances.
 const STEPS: { key: PipelineStage; label: string; detail: string }[] = [
   { key: "upload", label: "Upload", detail: "File stored and meeting created" },
-  { key: "transcribe", label: "Transcribe", detail: "Speech-to-text for audio and video (next phase)" },
+  { key: "transcribe", label: "Transcribe", detail: "Recordings: speech-to-text (Whisper) and who spoke when, on this server" },
   { key: "preprocess", label: "Preprocess", detail: "Split into speaker turns and sentences, clean the text" },
   { key: "classify", label: "Classify", detail: "Model + rule layer label every sentence Task, Decision, Risk or Other" },
   { key: "extract", label: "Extract", detail: "Owners, deadlines, titles; merge replies; recurring risks" },
@@ -25,6 +25,12 @@ type Phase = "idle" | "uploading" | "processing" | "done" | "failed";
 
 function titleFromFilename(name: string): string {
   return name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ").replace(/\s+/g, " ").trim().replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+const isRecording = (name: string) => /\.(mp3|wav|m4a|ogg|mp4|mkv|webm|mov)$/i.test(name);
+
+function fileSize(bytes: number): string {
+  return bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed(1)} MB` : `${(bytes / 1024).toFixed(1)} KB`;
 }
 
 function fileIcon(name: string) {
@@ -42,6 +48,7 @@ export default function UploadMeeting() {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(todayIso());
   const [deptId, setDeptId] = useState<number | "">(me.department?.id ?? "");
+  const [speakers, setSpeakers] = useState("");
   const [dragOver, setDragOver] = useState(false);
   const [phase, setPhase] = useState<Phase>("idle");
   const [meeting, setMeeting] = useState<Meeting | null>(null);
@@ -64,6 +71,7 @@ export default function UploadMeeting() {
     form.append("title", title.trim() || titleFromFilename(file.name));
     form.append("date", date);
     if (deptId) form.append("departmentId", String(deptId));
+    if (speakers && isRecording(file.name)) form.append("speakers", speakers);
     try {
       const created = await api.uploadMeeting(form);
       setMeeting(created);
@@ -96,6 +104,7 @@ export default function UploadMeeting() {
     setFile(null);
     setTitle("");
     setDate(todayIso());
+    setSpeakers("");
     setMeeting(null);
     setPhase("idle");
     setError(null);
@@ -105,7 +114,7 @@ export default function UploadMeeting() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <PageHeader title="New meeting" description="Upload a transcript and MeetOps turns it into tasks, decisions and risks, each linked to the line it came from." />
+      <PageHeader title="New meeting" description="Upload a transcript or a recording and MeetOps turns it into tasks, decisions and risks, each linked to the line it came from." />
 
       {phase === "idle" ? (
         <form onSubmit={submit} className="panel space-y-4 p-5">
@@ -129,7 +138,7 @@ export default function UploadMeeting() {
                 <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-subtle text-muted">{fileIcon(file.name)}</span>
                 <span className="text-left">
                   <span className="block text-[13px] font-medium">{file.name}</span>
-                  <span className="block text-2xs text-faint">{(file.size / 1024).toFixed(1)} KB · click to change</span>
+                  <span className="block text-2xs text-faint">{fileSize(file.size)} · click to change</span>
                 </span>
                 <button
                   type="button"
@@ -148,6 +157,7 @@ export default function UploadMeeting() {
                 <UploadCloud className="mb-2 h-6 w-6 text-faint" />
                 <div className="text-[13px] font-medium">Drop a file here or click to browse</div>
                 <div className="mt-1 text-[12px] text-faint">Transcripts (.txt, .vtt, .srt): “Speaker: text” lines, Teams/Zoom exports or plain minutes</div>
+                <div className="mt-0.5 text-[12px] text-faint">Recordings (.mp3, .wav, .m4a, .mp4, .mov, up to 500 MB): transcribed on this server, nothing is sent out</div>
               </>
             )}
           </div>
@@ -170,6 +180,12 @@ export default function UploadMeeting() {
               </select>
             </Field>
           </div>
+
+          {file && isRecording(file.name) && (
+            <Field label="Number of speakers (optional)" hint="Helps tell voices apart. Leave empty to detect it; you can name each speaker after processing.">
+              <input className="field w-32" type="number" min={1} max={20} value={speakers} onChange={(e) => setSpeakers(e.target.value)} placeholder="Auto" />
+            </Field>
+          )}
 
           {error && <div className="rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-[13px] text-red-700 dark:text-red-300">{error}</div>}
 
@@ -208,6 +224,14 @@ export default function UploadMeeting() {
                       {skipped && <span className="ml-2 text-2xs font-normal text-faint">skipped for text transcripts</span>}
                     </span>
                     <span className="block text-[12px] text-faint">{s.detail}</span>
+                    {running && s.key === "transcribe" && meeting?.progress != null && (
+                      <span className="mt-1.5 flex items-center gap-2">
+                        <span className="h-1.5 w-48 overflow-hidden rounded-full bg-subtle">
+                          <span className="block h-full rounded-full bg-accent transition-all" style={{ width: `${meeting.progress}%` }} />
+                        </span>
+                        <span className="text-2xs tabular-nums text-faint">{meeting.progress}%</span>
+                      </span>
+                    )}
                   </span>
                 </li>
               );

@@ -5,14 +5,17 @@ Meeting processing pipeline.
 
 Runs in a background task after the upload request returns, updating
 ``meeting.pipeline_stage`` as it goes so the dashboard can show progress.
-Audio/video transcription (Whisper) is scheduled for the next phase; for now
-those uploads stop at the transcribe stage with a clear message.
+Text transcripts skip the transcribe stage. Audio and video recordings are
+turned into a transcript with speaker numbers by ``transcribe.py`` (Whisper +
+voice clustering, locally); from there both take the same path.
 """
 
 from __future__ import annotations
 
 import logging
+import math
 import time
+from pathlib import Path
 
 from meetops_ml.preprocessing import segment_transcript
 from sqlalchemy import select
@@ -20,7 +23,7 @@ from sqlalchemy import select
 from .. import models
 from ..config import settings
 from ..database import SessionLocal
-from . import audit, extraction, notifications, organise, summary
+from . import audit, extraction, notifications, organise, summary, transcribe
 from .classifier import get_classifier, model_name
 
 log = logging.getLogger("meetops.pipeline")
@@ -31,19 +34,20 @@ STAGES = ("upload", "transcribe", "preprocess", "classify", "extract", "save")
 def _set_stage(db, meeting: models.Meeting, stage: str) -> None:
     meeting.status = "Processing"
     meeting.pipeline_stage = stage
+    meeting.progress = None
     db.commit()
     if settings.pipeline_stage_delay:
         time.sleep(settings.pipeline_stage_delay)
 
 
-def process_meeting(meeting_id: int, transcript_text: str | None) -> None:
+def process_meeting(meeting_id: int, transcript_text: str | None, recording: Path | None = None) -> None:
     db = SessionLocal()
     try:
         meeting = db.get(models.Meeting, meeting_id)
         if not meeting:
             return
         try:
-            _run(db, meeting, transcript_text)
+            _run(db, meeting, transcript_text, recording)
         except Exception as exc:  # noqa: BLE001 - any failure is recorded on the meeting
             log.exception("pipeline failed for meeting %s", meeting_id)
             db.rollback()
@@ -56,13 +60,35 @@ def process_meeting(meeting_id: int, transcript_text: str | None) -> None:
         db.close()
 
 
-def _run(db, meeting: models.Meeting, transcript_text: str | None) -> None:
+def _transcribe_recording(db, meeting: models.Meeting, recording: Path, users) -> str:
+    """Speech-to-text with speaker numbers; the transcript is kept next to the recording."""
+    if not transcribe.available():
+        raise RuntimeError("Speech-to-text is not installed on the server (pip install faster-whisper sherpa-onnx).")
+    last = -1
+
+    def progress(fraction: float) -> None:
+        nonlocal last
+        pct = int(fraction * 100)
+        if pct >= last + 5:            # a database write every 5 %
+            last = pct
+            meeting.progress = pct
+            db.commit()
+
+    text, seconds = transcribe.recording_to_transcript(recording, [u.name for u in users],
+                                                       meeting.num_speakers, progress)
+    recording.with_suffix(".transcript.txt").write_text(text, encoding="utf-8")
+    meeting.duration_min = max(1, math.ceil(seconds / 60))
+    return text
+
+
+def _run(db, meeting: models.Meeting, transcript_text: str | None, recording: Path | None = None) -> None:
     users = db.scalars(select(models.User).where(models.User.is_active.is_(True))).all()
 
     _set_stage(db, meeting, "transcribe")
     if meeting.source != "transcript":
-        raise RuntimeError("Audio and video transcription (Whisper) is planned for the next phase. "
-                           "Upload a text transcript (.txt, .vtt or .srt) for now.")
+        if recording is None:
+            raise RuntimeError("The recording file is missing.")
+        transcript_text = _transcribe_recording(db, meeting, recording, users)
     if not transcript_text or not transcript_text.strip():
         raise RuntimeError("The transcript file is empty.")
 
@@ -126,6 +152,7 @@ def _run(db, meeting: models.Meeting, transcript_text: str | None) -> None:
     meeting.model_name = model_name()
     meeting.status = "Processed"
     meeting.pipeline_stage = None
+    meeting.progress = None
     meeting.error_message = None
 
     db.flush()

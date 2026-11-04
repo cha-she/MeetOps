@@ -52,6 +52,8 @@ erDiagram
         date date
         int duration_min
         string source "audio | video | transcript"
+        int num_speakers "given at upload, if known"
+        int progress "percent while transcribing"
         string status "Queued | Processing | Processed | Failed"
         string pipeline_stage
         text error_message

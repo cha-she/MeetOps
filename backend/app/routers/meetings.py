@@ -10,7 +10,7 @@ from ..config import settings
 from ..database import get_db
 from ..security import can_delete_meeting, can_edit_meeting_items, current_user, ensure
 from ..serializers import meeting_out, segment_out
-from ..services import audit, review
+from ..services import audit, review, speakers
 from ..services.pipeline import process_meeting
 
 router = APIRouter(tags=["meetings"])
@@ -68,6 +68,39 @@ def get_segments(meeting_id: int, db: Session = Depends(get_db), _: models.User 
     return [segment_out(s) for s in _get(db, meeting_id).segments]
 
 
+@router.get("/meetings/{meeting_id}/speakers", response_model=list[schemas.SpeakerOut])
+def list_speakers(meeting_id: int, db: Session = Depends(get_db), _: models.User = Depends(current_user)):
+    """Numbered speakers of a recording, each with a sample line and a name suggestion from the conversation."""
+    m = _get(db, meeting_id)
+    users = db.scalars(select(models.User).where(models.User.is_active.is_(True))).all()
+    hints = speakers.suggest_names(m.segments, users)
+    out: dict[str, schemas.SpeakerOut] = {}
+    for s in m.segments:
+        if not speakers.is_speaker_number(s.speaker):
+            continue
+        cur = out.get(s.speaker)
+        if cur is None:
+            name, heard = hints.get(s.speaker, (None, None))
+            cur = out[s.speaker] = schemas.SpeakerOut(speaker=s.speaker, lines=0, sample="", suggestion=name, heard_in=heard)
+        cur.lines += 1
+        if len(cur.sample) < len(s.text) < 140:
+            cur.sample = s.text
+    return list(out.values())
+
+
+@router.post("/meetings/{meeting_id}/speakers", response_model=schemas.MeetingOut)
+def rename_speaker(meeting_id: int, body: schemas.SpeakerRename, db: Session = Depends(get_db),
+                   user: models.User = Depends(current_user)):
+    """Name a speaker from a recording ("Speaker 2" -> "Nethmi Fernando") throughout the meeting."""
+    m = _get(db, meeting_id)
+    ensure(can_edit_meeting_items(user, m))
+    if not review.rename_speaker(db, m, body.speaker, body.name, user):
+        raise HTTPException(422, f"No transcript line is spoken by '{body.speaker}'")
+    db.commit()
+    db.refresh(m)
+    return meeting_out(m)
+
+
 @router.post("/meetings/upload", response_model=schemas.MeetingOut, status_code=201)
 async def upload_meeting(
     background: BackgroundTasks,
@@ -77,34 +110,46 @@ async def upload_meeting(
     title: str = Form(..., min_length=1, max_length=200),
     date_: date = Form(..., alias="date"),
     department_id: int | None = Form(default=None, alias="departmentId"),
+    num_speakers: int | None = Form(default=None, alias="speakers", ge=1, le=20),
 ):
     ext = Path(file.filename or "").suffix.lower()
     source = SOURCE_BY_EXT.get(ext)
     if not source:
         raise HTTPException(415, f"Unsupported file type '{ext or 'none'}'. Upload a transcript (.txt, .md, .vtt, .srt) or an audio/video file.")
-
-    data = await file.read()
-    if len(data) > settings.max_upload_mb * 1024 * 1024:
-        raise HTTPException(413, f"File larger than {settings.max_upload_mb} MB")
     if department_id and not db.get(models.Department, department_id):
         raise HTTPException(422, "Unknown department")
+    limit_mb = settings.max_upload_mb if source == "transcript" else settings.max_media_mb
 
     meeting = models.Meeting(title=title.strip(), date=date_, source=source, status="Queued",
                              pipeline_stage="upload", file_name=file.filename,
+                             num_speakers=num_speakers if source != "transcript" else None,
                              department_id=department_id or user.department_id, uploaded_by_id=user.id)
     db.add(meeting)
     db.flush()
 
+    # written in chunks: a recording can be hundreds of megabytes
     settings.upload_dir.mkdir(parents=True, exist_ok=True)
-    (settings.upload_dir / f"{meeting.id}{ext}").write_bytes(data)
+    path = settings.upload_dir / f"{meeting.id}{ext}"
+    size = 0
+    with path.open("wb") as out:
+        while chunk := await file.read(1024 * 1024):
+            size += len(chunk)
+            if size > limit_mb * 1024 * 1024:
+                out.close()
+                path.unlink(missing_ok=True)
+                db.rollback()
+                raise HTTPException(413, f"File larger than {limit_mb} MB")
+            out.write(chunk)
 
-    audit.log(db, "meeting", meeting.id, "created", f"uploaded {file.filename} ({len(data)} bytes)",
+    audit.log(db, "meeting", meeting.id, "created", f"uploaded {file.filename} ({size} bytes)",
               actor_id=user.id, meeting_id=meeting.id)
     db.commit()
     db.refresh(meeting)
 
-    transcript = data.decode("utf-8", errors="replace") if source == "transcript" else None
-    background.add_task(process_meeting, meeting.id, transcript)
+    if source == "transcript":
+        background.add_task(process_meeting, meeting.id, path.read_text(encoding="utf-8", errors="replace"))
+    else:
+        background.add_task(process_meeting, meeting.id, None, path)
     return meeting_out(meeting)
 
 

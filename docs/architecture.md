@@ -36,7 +36,8 @@ flowchart LR
 | ML | scikit-learn, pandas, joblib | Utterance classifier (Task / Decision / Risk / Other), preprocessing shared with the backend |
 | Extraction | Rule-based (regex + dateparser) | Owner, deadline, risk severity, recurring-risk similarity, extractive summary |
 | Data | AMI Meeting Corpus (CC BY 4.0), Label Studio | Labelled training/test sets, see [annotation-guidelines.md](annotation-guidelines.md) |
-| Planned (semester 2) | FFmpeg, Whisper / faster-whisper, DistilBERT | Audio/video ingestion, ASR, semantic classifier |
+| Speech | faster-whisper (Whisper on CTranslate2), PyAV, sherpa-onnx (WeSpeaker ResNet34), scikit-learn clustering | Audio/video → text with timestamps and speaker numbers, locally on the CPU |
+| Planned (semester 2) | DistilBERT | Semantic classifier |
 
 ## 2. Request flow for an upload
 
@@ -75,7 +76,7 @@ can draw progress. Failures are recorded on the meeting (`status: Failed`,
 | Stage | Module | What it does |
 |-------|--------|--------------|
 | upload | `backend/app/routers/meetings.py` | Validates the file type and size, stores the file, creates the meeting row |
-| transcribe | `services/pipeline.py` | Skipped for text transcripts. Audio/video will go through FFmpeg → Whisper (next phase); today they stop here with a clear message |
+| transcribe | `services/transcribe.py` | Skipped for text transcripts. Recordings: audio track decoded to 16 kHz mono (PyAV) → Whisper `base.en` with word timestamps, cut into sentences (the workspace's names as the initial prompt) → one voice fingerprint per sentence → agglomerative clustering into Speaker 1, 2 … (speaker count given at upload, or chosen by silhouette score) → a `[hh:mm:ss] Speaker N: text` transcript. People name the speakers afterwards on the meeting page |
 | preprocess | `ml/src/meetops_ml/preprocessing.py` | `segment_transcript` splits `Speaker: text` lines (optional `[hh:mm:ss]`) into one utterance per sentence. `clean_text` normalises text for the model: joins spelled letters (T_V_ → tv), expands contractions (I'll → i will), removes fillers (um, uh, you know), collapses stutters (we we → we) |
 | classify | `ml/src/meetops_ml/features.py`, `models.py`, `rules.py` | Word TF-IDF (1–2-grams) + character TF-IDF (2–5-grams) + a risk-cue lexicon, Logistic Regression with balanced class weights; then the rule layer corrects explicit requests, commitments, agreements and concerns and removes agenda lines and open questions. The model's label, the final label, the confidence and the rule are all stored |
 | extract | `backend/app/services/organise.py`, `extraction.py` | A request and its acceptance become one task; the title is rewritten as an action; owner = person addressed or who accepted, else the speaker of "I'll …"; deadline = time expression in the exchange, resolved from the meeting date; vague agreements quote what was agreed; duplicate tasks merged; risk severity from cue words |

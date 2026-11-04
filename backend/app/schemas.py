@@ -121,6 +121,7 @@ class MeetingOut(CamelModel):
     source: MeetingSource
     status: MeetingStatus
     pipeline_stage: PipelineStage | None
+    progress: int | None
     error_message: str | None
     participants: list[UserOut]
     department: DepartmentRef | None
@@ -156,6 +157,19 @@ class SegmentOut(CamelModel):
 
 class ReclassifyIn(CamelModel):
     category: Category
+
+
+class SpeakerOut(CamelModel):
+    speaker: str                  # numbered label from a recording, e.g. "Speaker 2"
+    lines: int
+    sample: str                   # one of their lines, to recognise the voice
+    suggestion: str | None        # a name heard in the conversation (not saved until confirmed)
+    heard_in: str | None          # the line the suggestion comes from
+
+
+class SpeakerRename(CamelModel):
+    speaker: str = Field(min_length=1, max_length=120)   # the label in the transcript, e.g. "Speaker 2"
+    name: str = Field(min_length=1, max_length=120)      # who it really is
 
 
 # ---------------------------------------------------------------- registers
@@ -217,6 +231,13 @@ class DecisionOut(CamelModel):
     evidence: EvidenceRef | None
 
 
+class DecisionCreate(CamelModel):
+    statement: str = Field(min_length=3, max_length=2000)
+    meeting_id: int
+    owner_id: int | None = None
+    segment_id: int | None = None
+
+
 class DecisionPatch(CamelModel):
     statement: str | None = Field(default=None, min_length=1, max_length=2000)
     owner_id: int | None = None
@@ -239,6 +260,14 @@ class RiskOut(CamelModel):
     confidence: float | None
     source: ItemSource
     evidence: EvidenceRef | None
+
+
+class RiskCreate(CamelModel):
+    description: str = Field(min_length=3, max_length=2000)
+    meeting_id: int
+    severity: RiskSeverity = "Medium"
+    owner_id: int | None = None
+    segment_id: int | None = None
 
 
 class RiskPatch(CamelModel):

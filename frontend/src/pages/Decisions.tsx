@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Download, Gavel, Pencil } from "lucide-react";
+import { Download, Gavel, Pencil, Plus } from "lucide-react";
 import { api, type DecisionFilters } from "../api/endpoints";
 import { useQuery } from "../api/hooks";
 import { useMe } from "../auth/AuthContext";
 import { mayEditItem } from "../auth/permissions";
+import { NewDecisionDialog } from "../components/newItems";
 import { ConfidenceMeter, EvidenceQuote, OwnerMenu, ReviewBadge, ReviewButtons, ReviewSwitch, filterByReview, reviewViewOf, useUsers } from "../components/items";
 import { DateRange, Dialog, EmptyState, Field, FilterSelect, PageHeader, QueryView, RowsSkeleton, SearchInput, downloadCsv, formatDate } from "../components/ui";
 import { LIST_REFRESH_INTERVAL_MS } from "../config";
@@ -56,6 +57,7 @@ export default function Decisions() {
     return () => window.clearTimeout(t);
   });
   const [editing, setEditing] = useState<Decision | null>(null);
+  const [adding, setAdding] = useState(false);
   const { run, busy } = useMutation();
 
   const filters: DecisionFilters = {
@@ -85,6 +87,7 @@ export default function Decisions() {
         title="Decisions"
         description="The decision register: what was agreed, by whom, in which meeting."
         actions={
+          <>
           <button
             className="btn-secondary"
             disabled={!decisions.data?.length}
@@ -97,6 +100,10 @@ export default function Decisions() {
           >
             <Download className="h-4 w-4" /> Export
           </button>
+          <button className="btn-primary" onClick={() => setAdding(true)} disabled={!meetings.data?.length}>
+            <Plus className="h-4 w-4" /> New decision
+          </button>
+          </>
         }
       />
       <div className="mb-3">
@@ -172,6 +179,7 @@ export default function Decisions() {
         )}
       </QueryView>
       {editing && <EditDecision decision={editing} onClose={() => setEditing(null)} />}
+      {adding && meetings.data && <NewDecisionDialog open onClose={() => setAdding(false)} meetings={meetings.data} defaultMeetingId={filters.meetingId} />}
     </div>
   );
 }

@@ -118,7 +118,7 @@ function TaskRow({ task, showMeeting, compact }: { task: Task; showMeeting: bool
       </div>
     );
   return (
-    <div id={`task-${task.id}`} className={cn("group grid grid-cols-[auto_1fr] items-start gap-x-2 border-b border-line px-3 py-2 last:border-0 hover:bg-hover/50 md:grid-cols-[auto_1fr_128px_170px_110px_32px] md:items-center", task.reviewStatus === "suggested" && "bg-amber-500/[0.03]")}>
+    <div id={`task-${task.id}`} className={cn("group grid grid-cols-[auto_1fr] items-start gap-x-2 border-b border-line px-3 py-2 last:border-0 hover:bg-hover/50 md:grid-cols-[auto_1fr_128px_210px_110px_32px] md:items-center", task.reviewStatus === "suggested" && "bg-amber-500/[0.03]")}>
       <CompleteToggle task={task} disabled={!editable} onToggle={(s) => update(task, { status: s }, s === "Completed" ? "Marked as completed" : "Reopened")} />
       <div className="min-w-0 py-0.5">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
@@ -159,7 +159,7 @@ export function TaskList({ tasks, groupBy = "none", showMeeting = true, empty, c
   if (tasks.length === 0) return <>{empty ?? <EmptyState compact title="No tasks match" message="Try clearing a filter." />}</>;
   return (
     <div>
-      <div className={cn("hidden grid-cols-[auto_1fr_128px_170px_110px_32px] gap-x-2 border-b border-line bg-subtle/60 px-3 py-2 text-2xs font-semibold uppercase tracking-wider text-faint", !compact && "md:grid")}>
+      <div className={cn("hidden grid-cols-[auto_1fr_128px_210px_110px_32px] gap-x-2 border-b border-line bg-subtle/60 px-3 py-2 text-2xs font-semibold uppercase tracking-wider text-faint", !compact && "md:grid")}>
         <span className="w-7" />
         <span>Task</span>
         <span>Status</span>

@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select
@@ -53,6 +53,25 @@ def list_risks(
         stmt = stmt.where(models.Risk.description.ilike(f"%{q}%"))
     stmt = stmt.order_by(models.Risk.raised_at.desc(), models.Risk.id)
     return [risk_out(r) for r in db.scalars(stmt)]
+
+
+@router.post("", response_model=schemas.RiskOut, status_code=201)
+def create_risk(body: schemas.RiskCreate, db: Session = Depends(get_db), user: models.User = Depends(current_user)):
+    """Add a risk by hand (a concern the model missed)."""
+    meeting, seg = review.manual_item_context(db, body.meeting_id, body.owner_id, body.segment_id, user, "risks")
+    r = models.Risk(meeting_id=meeting.id, segment_id=seg.id if seg else None, description=body.description.strip(),
+                    severity=body.severity, owner_id=body.owner_id, raised_at=meeting.date,
+                    raised_by=seg.speaker if seg else user.name, review_status="confirmed", source="manual",
+                    reviewed_by_id=user.id, reviewed_at=datetime.now(timezone.utc))
+    db.add(r)
+    db.flush()
+    if r.owner_id and r.owner_id != user.id:
+        notifications.add(db, r.owner_id, "assigned", f"{user.name} made you the owner of the risk “{r.description}”.",
+                          meeting_id=meeting.id)
+    audit.log(db, "risk", r.id, "created", r.description, actor_id=user.id, meeting_id=meeting.id)
+    db.commit()
+    db.refresh(r)
+    return risk_out(r)
 
 
 @router.patch("/{risk_id}", response_model=schemas.RiskOut)

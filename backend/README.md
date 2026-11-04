@@ -20,6 +20,7 @@ backend/
 │   ├── routers/               auth, meetings, tasks, decisions, risks, users (+ departments), insights (+ review, activity), search, notifications
 │   └── services/
 │       ├── pipeline.py        upload -> transcribe -> preprocess -> classify -> extract -> save
+│       ├── transcribe.py      recordings: Whisper speech-to-text + voice clustering into speakers
 │       ├── classifier.py      loads the trained model (newest ml/models/vN) with the rule layer
 │       ├── organise.py        merges replies into one task, picks titles, sets review status
 │       ├── extraction.py      owner, deadline, action titles, risk severity (rules)
@@ -128,7 +129,7 @@ polls `GET /api/meetings/{id}` to draw the progress.
 
 | Stage | What happens |
 |-------|--------------|
-| transcribe | text transcripts skip this; audio/video stop here with a clear message until Whisper is integrated (next phase) |
+| transcribe | text transcripts skip this. Recordings (`.mp3 .wav .m4a .ogg .mp4 .mkv .webm .mov`, up to `MAX_MEDIA_MB`) are transcribed locally by `transcribe.py`: Whisper (`WHISPER_MODEL`, default `base.en`, int8 on the CPU) with word timestamps, cut into sentences; each sentence gets a voice fingerprint (WeSpeaker ResNet34 via sherpa-onnx) and the fingerprints are clustered (agglomerative, cosine distance) into Speaker 1, 2 …. The number of speakers is the one given at upload; otherwise one speaker if all voices are within `SPEAKER_THRESHOLD` (0.3) of each other, else the number of groups (2–8) with the best silhouette score, preferring fewer unless more are clearly better. `progress` reports the percentage. The transcript is saved next to the recording |
 | preprocess | `segment_transcript` reads any common layout: `Speaker: text`, `[00:12] Speaker: text`, `00:12, Speaker: “text”`, `Speaker (00:12): text`, Teams/Otter exports (name and time on one line, text below), Zoom/Teams `.vtt` and `.srt` files, and plain minutes without speakers. Typographic quotes are normalised, then each turn is split into sentences |
 | classify | the newest `ml/models/vN` classifier labels every utterance; the rule layer (`ml/src/meetops_ml/rules.py`) then corrects explicit requests, commitments, agreements, concerns, agenda lines and open questions. Both labels are stored |
 | extract | `organise.py` merges request → acceptance exchanges (and follow-ups such as "Can we have it by Friday?" → "Confirmed.") into one task, rewrites titles, takes owner and deadline from the exchange (rules + spaCy, `EXTRACTION_ENGINE`); decisions and risks get readable statements and a severity; recurring risks are found by TF-IDF cosine similarity with earlier meetings |
@@ -149,7 +150,8 @@ the server. Try it with `samples/sprint8_planning.txt`.
 | GET / POST / PATCH | `/api/users`, `/api/users/{id}` | list (all); create and change role, department, password, active (admin) |
 | GET / POST / PATCH / DELETE | `/api/departments`, `/api/departments/{id}` | list (all); manage (admin) |
 | GET | `/api/meetings` | `q`, `departmentId`, `participantId`, `status`, `from`, `to`, `limit` |
-| POST | `/api/meetings/upload` | multipart `file`, `title`, `date`, `departmentId` → 201 Meeting |
+| POST | `/api/meetings/upload` | multipart `file`, `title`, `date`, `departmentId`, `speakers` (recordings, optional) → 201 Meeting |
+| POST | `/api/meetings/{id}/speakers` | `{speaker, name}`: name a recording's speaker throughout the meeting (links the account if the name matches) |
 | GET / DELETE | `/api/meetings/{id}` | delete cascades to segments and extracted items |
 | GET | `/api/meetings/{id}/segments` | transcript with labels, confidence, model label and rule |
 | POST | `/api/segments/{id}/category` | relabel a transcript line; creates or removes the register entry and records feedback |
@@ -166,3 +168,21 @@ the server. Try it with `samples/sprint8_planning.txt`.
 | POST | `/api/notifications/read-all` | 204 |
 
 JSON keys are camelCase and match `frontend/src/types.ts`. Timestamps are UTC.
+
+## 6. Audio and video
+
+The models are downloaded on first use and cached: Whisper from Hugging Face
+(`base.en`, about 140 MB), the speaker model from the sherpa-onnx releases into
+`ml/models/speech/` (26 MB). Nothing is sent anywhere else; transcription runs
+on the server's CPU.
+
+Try it on a file without the API:
+
+```bash
+cd backend
+python -m app.services.transcribe path/to/recording.m4a --speakers 3 --names "Kasun Silva, Nethmi Fernando"
+```
+
+On a 12-core laptop CPU, `base.en` transcribes about three times faster than
+real time (a one-hour meeting takes roughly 20 minutes); `small.en` is more
+accurate but about real time.

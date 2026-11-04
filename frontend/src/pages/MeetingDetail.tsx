@@ -15,13 +15,15 @@ import {
   ShieldAlert,
   Sparkles,
   Trash2,
+  UsersRound,
   Wand2,
 } from "lucide-react";
 import { api } from "../api/endpoints";
 import { invalidate, useQuery } from "../api/hooks";
 import { useMe } from "../auth/AuthContext";
 import { canDeleteMeeting, canEditMeetingItems } from "../auth/permissions";
-import { CategoryChip, ConfidenceMeter, EvidenceTime, OwnerMenu, ReviewBadge, ReviewButtons, SeverityBadge, categoryTone } from "../components/items";
+import { CategoryChip, ConfidenceMeter, EvidenceTime, OwnerMenu, ReviewBadge, ReviewButtons, SeverityBadge, categoryTone, useUsers } from "../components/items";
+import { NewDecisionDialog, NewRiskDialog } from "../components/newItems";
 import { NewTaskDialog, TASK_REFRESH, TaskList } from "../components/tasks";
 import {
   AvatarStack,
@@ -42,7 +44,7 @@ import {
   formatDuration,
 } from "../components/ui";
 import { useMutation } from "../hooks/useMutation";
-import type { Category, Decision, Meeting, Risk, Task, TranscriptSegment } from "../types";
+import type { Category, Decision, Meeting, Risk, SpeakerInfo, Task, TranscriptSegment } from "../types";
 
 const RULE_TEXT: Record<string, string> = {
   request: "a request with a follow-up action",
@@ -56,7 +58,7 @@ const RULE_TEXT: Record<string, string> = {
   open_question: "an open question",
 };
 
-const REFRESH = [...TASK_REFRESH, "decisions", "risks", "segments"];
+const REFRESH = [...TASK_REFRESH, "decisions", "risks", "segments", "speakers"];
 
 function TranscriptLine({ seg, highlighted, editable, onReclassify }: { seg: TranscriptSegment; highlighted: boolean; editable: boolean; onReclassify: (c: Category) => void }) {
   const changed = seg.rule && seg.modelLabel && seg.modelLabel !== seg.category;
@@ -235,6 +237,68 @@ function MeetingSummary({ meeting, tasks, decisions, risks }: { meeting: Meeting
   );
 }
 
+// Recordings come back with "Speaker 1", "Speaker 2" ...: name them once and the transcript,
+// task owners and risks follow. A name that matches an account links that person. Names heard
+// in the conversation ("Hi Kasun, ...") are filled in as suggestions; nothing is saved until Save.
+function SpeakerNames({ meeting }: { meeting: Meeting }) {
+  const users = useUsers();
+  const speakers = useQuery(`speakers:${meeting.id}`, () => api.listSpeakers(meeting.id));
+  const { run, busy } = useMutation();
+  const [names, setNames] = useState<Record<string, string>>({});
+  const list = speakers.data ?? [];
+  if (!list.length) return null;
+
+  const valueOf = (s: SpeakerInfo) => names[s.speaker] ?? s.suggestion ?? "";
+  const save = (s: SpeakerInfo) => {
+    const name = valueOf(s).trim();
+    if (!name) return;
+    return run(() => api.renameSpeaker(meeting.id, s.speaker, name), { success: `${s.speaker} is now ${name}`, refresh: REFRESH });
+  };
+  return (
+    <Panel title="Who is who?" icon={<UsersRound className="h-4 w-4 text-faint" />} className="mb-5">
+      <p className="px-4 pt-3 text-[12px] text-muted">
+        Voices in this recording were told apart automatically. Name each speaker; owners and risks raised by them are updated, and a name that matches a colleague links their account.
+      </p>
+      <datalist id="people-names">{(users.data ?? []).map((u) => <option key={u.id} value={u.name} />)}</datalist>
+      <div className="divide-y divide-line">
+        {list.map((s) => {
+          const suggested = !(s.speaker in names) && !!s.suggestion;
+          return (
+            <form
+              key={s.speaker}
+              className="flex flex-col gap-2 px-4 py-2.5 sm:flex-row sm:items-center"
+              onSubmit={(e) => {
+                e.preventDefault();
+                void save(s);
+              }}
+            >
+              <div className="min-w-0 flex-1">
+                <div className="text-[13px] font-medium">{s.speaker} <span className="font-normal text-faint">· {s.lines} line{s.lines === 1 ? "" : "s"}</span></div>
+                <div className="truncate text-[12px] text-muted">“{s.sample}”</div>
+                {suggested && s.heardIn && (
+                  <div className="truncate text-2xs text-accent-text" title={s.heardIn}>
+                    <Sparkles className="mr-1 inline h-3 w-3" />
+                    Suggested from “{s.heardIn}”
+                  </div>
+                )}
+              </div>
+              <input
+                className={cn("field sm:w-52", suggested && "border-accent/50")}
+                list="people-names"
+                placeholder="Name"
+                aria-label={`Name for ${s.speaker}`}
+                value={valueOf(s)}
+                onChange={(e) => setNames((n) => ({ ...n, [s.speaker]: e.target.value }))}
+              />
+              <button className="btn-secondary btn-sm" disabled={busy || !valueOf(s).trim()}>Save</button>
+            </form>
+          );
+        })}
+      </div>
+    </Panel>
+  );
+}
+
 function Header({ m }: { m: Meeting }) {
   const me = useMe();
   const navigate = useNavigate();
@@ -294,7 +358,7 @@ export default function MeetingDetail() {
   const me = useMe();
   const [tab, setTab] = useState<"tasks" | "decisions" | "risks">("tasks");
   const [filter, setFilter] = useState<"all" | "items">("all");
-  const [newTask, setNewTask] = useState(false);
+  const [adding, setAdding] = useState<"tasks" | "decisions" | "risks" | null>(null);
   const { run } = useMutation();
 
   const meeting = useQuery(`meetings:detail:${id}`, () => api.getMeeting(id), { refreshMs: 15000 });
@@ -333,10 +397,12 @@ export default function MeetingDetail() {
       {processing && (
         <div className="panel mb-5 flex items-center gap-3 border-blue-500/30 bg-blue-500/5 p-4 text-[13px]">
           <span className="h-2 w-2 animate-pulse rounded-full bg-blue-500" />
-          Processing: {m.pipelineStage ?? m.status}…
+          Processing: {m.pipelineStage === "transcribe" ? "transcribing the recording" : m.pipelineStage ?? m.status}
+          {m.progress != null && ` ${m.progress}%`}…
         </div>
       )}
       {m.status === "Failed" && <div className="panel mb-5 border-red-500/30 bg-red-500/5 p-4 text-[13px] text-red-700 dark:text-red-300">{m.errorMessage}</div>}
+      {editable && m.source !== "transcript" && m.status === "Processed" && <SpeakerNames meeting={m} />}
 
       <div className="grid gap-5 xl:grid-cols-[1fr_440px]">
         <Panel
@@ -392,21 +458,23 @@ export default function MeetingDetail() {
               />
             }
             actions={
-              tab === "tasks" && editable ? (
-                <button className="btn-ghost btn-sm" onClick={() => setNewTask(true)}>
+              editable ? (
+                <button className="btn-ghost btn-sm" onClick={() => setAdding(tab)} title={`Add a ${tab.slice(0, -1)} the system missed`}>
                   <Plus className="h-3.5 w-3.5" /> Add
                 </button>
               ) : undefined
             }
           >
             {tab === "tasks" && (tasks.data ? <TaskList compact tasks={tasks.data} showMeeting={false} empty={<EmptyState compact title="No tasks" message="Mark a transcript line as a Task, or add one." />} /> : <RowsSkeleton rows={4} />)}
-            {tab === "decisions" && (decisions.data ? (decisions.data.length ? decisions.data.map((d) => <DecisionRow key={d.id} d={d} editable={editable} />) : <EmptyState compact title="No decisions" />) : <RowsSkeleton rows={3} />)}
-            {tab === "risks" && (risks.data ? (risks.data.length ? risks.data.map((r) => <RiskRow key={r.id} r={r} editable={editable} />) : <EmptyState compact title="No risks" />) : <RowsSkeleton rows={3} />)}
+            {tab === "decisions" && (decisions.data ? (decisions.data.length ? decisions.data.map((d) => <DecisionRow key={d.id} d={d} editable={editable} />) : <EmptyState compact title="No decisions" message="Mark a transcript line as a Decision, or add one." />) : <RowsSkeleton rows={3} />)}
+            {tab === "risks" && (risks.data ? (risks.data.length ? risks.data.map((r) => <RiskRow key={r.id} r={r} editable={editable} />) : <EmptyState compact title="No risks" message="Mark a transcript line as a Risk, or add one." />) : <RowsSkeleton rows={3} />)}
           </Panel>
         </div>
       </div>
 
-      {newTask && <NewTaskDialog open onClose={() => setNewTask(false)} meetings={[m]} defaultMeetingId={m.id} />}
+      {adding === "tasks" && <NewTaskDialog open onClose={() => setAdding(null)} meetings={[m]} defaultMeetingId={m.id} />}
+      {adding === "decisions" && <NewDecisionDialog open onClose={() => setAdding(null)} meetings={[m]} defaultMeetingId={m.id} />}
+      {adding === "risks" && <NewRiskDialog open onClose={() => setAdding(null)} meetings={[m]} defaultMeetingId={m.id} />}
     </div>
   );
 }

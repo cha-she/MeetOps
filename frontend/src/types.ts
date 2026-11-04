@@ -41,6 +41,7 @@ export interface Meeting {
   source: MeetingSource;
   status: MeetingStatus;
   pipelineStage: PipelineStage | null;
+  progress: number | null; // percent of the current stage (transcription of recordings)
   errorMessage: string | null;
   participants: User[];
   department: DepartmentRef | null;
@@ -206,4 +207,13 @@ export interface SearchResults {
 export interface AuthResponse {
   token: string;
   user: User;
+}
+
+// A numbered speaker of a recording ("Speaker 2"), with a name heard in the conversation.
+export interface SpeakerInfo {
+  speaker: string;
+  lines: number;
+  sample: string;
+  suggestion: string | null;
+  heardIn: string | null;
 }

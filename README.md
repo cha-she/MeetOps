@@ -25,7 +25,7 @@ are generated automatically from the meetings they already hold.
 | Accounts, departments, role-based access, audit log | ✅ Done        |
 | Human review of extracted items, label feedback   | ✅ Done         |
 | Summaries, recurring risks, evidence links        | ✅ v1 (extractive / TF-IDF similarity) |
-| Audio/video pipeline (FFmpeg + Whisper)           | ⏳ Semester 2   |
+| Audio/video pipeline (Whisper + speaker separation) | ✅ v1 (local, CPU) |
 | DistilBERT classifier, email reminders, PDF export | ⏳ Semester 2   |
 
 ## Repository layout
@@ -84,7 +84,7 @@ Details per part: `frontend/README.md`, `backend/README.md`, `ml/README.md`,
 Audio / Video / Transcript
         │
         ▼
- Ingestion ──► FFmpeg (video → audio) ──► Whisper ASR ──► Transcript
+ Ingestion ──► audio track (PyAV) ──► Whisper ASR + voice clustering ──► Transcript with speakers
                                                               │
                                                               ▼
                                      Preprocessing: cleaning + utterance segmentation
@@ -107,7 +107,7 @@ Audio / Video / Transcript
 - **Frontend:** React 18, TypeScript, Vite, Tailwind CSS, React Router, Recharts
 - **Backend:** FastAPI (Python), SQLAlchemy, PostgreSQL (SQLite for development), pytest
 - **Machine learning / NLP:** scikit-learn (TF-IDF, Logistic Regression, Linear SVM, Naive Bayes, Random Forest), rule-based extraction with dateparser; DistilBERT and spaCy planned
-- **Speech and media (next phase):** Whisper / Faster-Whisper, FFmpeg
+- **Speech and media:** faster-whisper (Whisper, CTranslate2), PyAV (FFmpeg libraries), sherpa-onnx speaker embeddings
 - **Dataset:** AMI Meeting Corpus, annotated with Label Studio
 - **Tooling:** GitHub Actions (frontend, backend and ML checks), Docker Compose
 

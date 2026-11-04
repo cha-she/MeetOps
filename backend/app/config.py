@@ -28,7 +28,14 @@ class Settings(BaseSettings):
     model_dir: Path | None = None          # default: newest version under ml/models/
     cors_origins: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
     pipeline_stage_delay: float = 0.4      # seconds between stages so the UI progress is visible
-    max_upload_mb: int = 25
+    max_upload_mb: int = 25                # text transcripts
+    max_media_mb: int = 500                # audio / video recordings
+
+    # Speech-to-text and speaker separation for audio / video (services/transcribe.py)
+    whisper_model: str = "base.en"         # faster-whisper size: tiny.en | base.en | small.en | medium.en
+    whisper_language: str = "en"
+    speech_model_dir: Path = REPO_ROOT / "ml" / "models" / "speech"
+    speaker_threshold: float = 0.3         # voices this far apart (cosine distance) mean more than one speaker
 
     secret_key: str = "dev-only-change-me"  # override in backend/.env for any shared deployment
     token_hours: int = 12

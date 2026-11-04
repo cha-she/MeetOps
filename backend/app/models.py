@@ -79,6 +79,8 @@ class Meeting(Base):
     source: Mapped[str] = mapped_column(String(20), nullable=False, default="transcript")  # audio|video|transcript
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="Queued")       # Queued|Processing|Processed|Failed
     pipeline_stage: Mapped[str | None] = mapped_column(String(20))
+    progress: Mapped[int | None] = mapped_column(Integer)          # percent of the current stage (transcription)
+    num_speakers: Mapped[int | None] = mapped_column(Integer)      # given at upload for recordings, if known
     error_message: Mapped[str | None] = mapped_column(Text)
     summary: Mapped[str | None] = mapped_column(Text)
     file_name: Mapped[str | None] = mapped_column(String(255))

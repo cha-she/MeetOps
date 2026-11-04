@@ -254,7 +254,7 @@ export function useUsers() {
 export function UserChip({ user, name, empty = "Unassigned" }: { user: User | null; name?: string | null; empty?: string }) {
   if (!user && name)
     return (
-      <span className="inline-flex min-w-0 items-center gap-1.5" title={`${name} was named in the meeting but has no MeetOps account. Assign the item to a member to track it.`}>
+      <span className="inline-flex min-w-0 max-w-full shrink-0 items-center gap-1.5" title={`${name} was named in the meeting but has no MeetOps account. Assign the item to a member to track it.`}>
         <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-dashed border-line-strong text-[9px] font-semibold text-muted">
           {name.split(/\s+/).map((p) => p[0]).slice(0, 2).join("").toUpperCase()}
         </span>
@@ -263,7 +263,7 @@ export function UserChip({ user, name, empty = "Unassigned" }: { user: User | nu
       </span>
     );
   return user ? (
-    <span className="inline-flex min-w-0 items-center gap-1.5">
+    <span className="inline-flex min-w-0 max-w-full shrink-0 items-center gap-1.5" title={user.name}>
       <Avatar name={user.name} initials={user.initials} size={20} />
       <span className="truncate text-[13px] text-fg">{user.name}</span>
     </span>
@@ -285,7 +285,7 @@ export function OwnerMenu({ value, name, onChange, disabled = false, empty = "Un
       width={240}
       header="Assign to"
       trigger={() => (
-        <button className="-mx-1.5 flex min-w-0 max-w-full items-center rounded-md px-1.5 py-1 hover:bg-hover">
+        <button className="flex min-w-0 max-w-full shrink-0 items-center rounded-md px-1.5 py-1 hover:bg-hover">
           <UserChip user={value} name={name} empty={empty} />
         </button>
       )}
@@ -327,7 +327,7 @@ export function DueDate({ deadline, time, status, text, onChange, onTimeChange, 
   const showTime = !!deadline && !!onTimeChange && !dayLabel.endsWith("overdue");
   return (
     <span className="group/due inline-flex items-center">
-      <label className={cn("relative inline-flex cursor-pointer items-center whitespace-nowrap rounded-md px-1.5 py-1 text-[12px] hover:bg-hover", toneCls)} title={title ?? "Change due date"}>
+      <label className={cn("relative inline-flex cursor-pointer items-center whitespace-nowrap rounded-md px-1.5 py-1 text-[12px] hover:bg-hover", time && showTime && "pr-0", toneCls)} title={title ?? "Change due date"}>
         {deadline ? (showTime ? dayLabel : info.label) : text ? <span className="italic">{text}</span> : "No date"}
         <input
           type="date"
@@ -341,7 +341,8 @@ export function DueDate({ deadline, time, status, text, onChange, onTimeChange, 
       {showTime && (
         <label
           className={cn(
-            "relative -ml-1 inline-flex cursor-pointer items-center whitespace-nowrap rounded-md px-1 py-1 text-[12px] hover:bg-hover",
+            "relative inline-flex cursor-pointer items-center whitespace-nowrap rounded-md py-1 pr-1.5 text-[12px] hover:bg-hover",
+            !time && "pl-1",
             toneCls,
             !time && "opacity-0 focus-within:opacity-100 group-hover/due:opacity-100",
           )}

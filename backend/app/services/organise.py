@@ -135,16 +135,23 @@ def _task_draft(chain: list[models.Segment], meeting_date: date, users: list[mod
     if not title:
         title = extraction.tidy(chain[0].text)
 
-    # Owner: named addressee or first-person speaker; an acceptance by someone else wins
+    # Owner: named addressee or first-person speaker; an acceptance by someone else wins.
+    # A speaker number from a recording ("Speaker 2") never replaces a name already heard:
+    # in "Kasun, can you …" / Speaker 2: "Yes, I'll do it", Speaker 2 is Kasun.
+    def keeps_name(name: str | None) -> bool:
+        return bool(owner_name) and not extraction.is_speaker_number(owner_name) \
+            and extraction.is_speaker_number(name)
+
     owner, owner_name = None, None
     for seg in chain:
         if seg.category != "Task":
             continue
         o, name = extraction.find_owner_name(seg.text, seg.speaker, users, speakers)
-        if o or name:
+        if (o or name) and not keeps_name(name):
             owner, owner_name = o, name
     for seg in chain[1:]:
-        if ACCEPTANCE.search(seg.text) and seg.speaker and seg.speaker != "Unknown" and seg.speaker != chain[0].speaker                 and not extraction.FIRST_PERSON.search(chain[0].text):
+        if ACCEPTANCE.search(seg.text) and seg.speaker and seg.speaker != "Unknown" and seg.speaker != chain[0].speaker \
+                and not extraction.FIRST_PERSON.search(chain[0].text) and not keeps_name(seg.speaker):
             owner, owner_name = extraction.match_user(seg.speaker, users) or owner, seg.speaker
 
     # Deadline: first sentence of the exchange that states one
