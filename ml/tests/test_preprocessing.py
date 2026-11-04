@@ -65,3 +65,10 @@ def test_plain_minutes_and_content_labels():
     utts = segment_transcript(raw)
     assert {u.speaker for u in utts} == {"Unknown"}            # "Action items" and "Note" are not people
     assert [u.text for u in utts][1] == "Dr. Perera approved the budget."   # no split after "Dr."
+
+
+def test_numbered_speakers_from_recorders():
+    text = "[00:00:05] Speaker 1: Can you send it?\nSpeaker 12 (00:01:00): Yes.\nStep 1: install the app.\n"
+    u = segment_transcript(text)
+    assert [(x.speaker, x.start_time) for x in u] == [("Speaker 1", 5.0), ("Speaker 12", 60.0), ("Speaker 12", 60.0)]
+    assert u[2].text == "Step 1: install the app."     # "Step 1" is not a speaker

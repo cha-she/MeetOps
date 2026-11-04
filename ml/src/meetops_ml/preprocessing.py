@@ -153,7 +153,9 @@ class Utterance:
 # Blank lines end a turn. Lines without a speaker continue the current turn.
 
 _TS = r"(?:\d{1,2}:)?\d{1,2}:\d{2}(?:[.,]\d{1,3})?"
-_NAME = r"[A-Za-z][A-Za-z.'\-]*(?:\s+[A-Za-z][A-Za-z.'\-]*){0,3}"
+# generic numbered labels from recorders and speech-to-text ("Speaker 1", "Participant 2"), or a name
+_NUMBERED = r"(?:[Ss]peaker|[Pp]articipant|[Gg]uest|[Aa]ttendee|[Cc]aller)\s+\d{1,2}"
+_NAME = rf"(?:{_NUMBERED}|[A-Za-z][A-Za-z.'\-]*(?:\s+[A-Za-z][A-Za-z.'\-]*){{0,3}})"
 _SEP = r"\s*[:\-–—|]\s*"
 
 _TS_FIRST = re.compile(rf"^\s*[\[(]?(?P<ts>{_TS})[\])]?\s*[,\-–—|:]?\s*(?P<speaker>{_NAME}){_SEP}(?P<text>.+)$")
@@ -195,6 +197,8 @@ def _valid_speaker(name: str | None) -> bool:
     if not name:
         return False
     n = name.strip()
+    if re.fullmatch(_NUMBERED, n):
+        return True
     return 0 < len(n) <= 40 and n.lower().rstrip(".") not in _NOT_SPEAKERS and not re.search(r"\d", n)
 
 
