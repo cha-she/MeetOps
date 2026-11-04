@@ -37,7 +37,7 @@ flowchart LR
 | Extraction | Rule-based (regex + dateparser) | Owner, deadline, risk severity, recurring-risk similarity, extractive summary |
 | Data | AMI Meeting Corpus (CC BY 4.0), Label Studio | Labelled training/test sets, see [annotation-guidelines.md](annotation-guidelines.md) |
 | Speech | faster-whisper (Whisper on CTranslate2), PyAV, sherpa-onnx (WeSpeaker ResNet34), scikit-learn clustering | Audio/video → text with timestamps and speaker numbers, locally on the CPU |
-| Planned (semester 2) | DistilBERT | Semantic classifier |
+| Transformer | PyTorch, Hugging Face transformers (DistilBERT) | Fine-tuned utterance classifier (v6), TF-IDF as fallback |
 
 ## 2. Request flow for an upload
 

@@ -142,6 +142,35 @@ summary links point at whole stretches of discussion, not just the utterance
 that states the problem. The other 239 rows stay in the set as hard negatives,
 utterances that look like Risks but are not. The test set is unchanged.
 
+### 2.6 Labelled dataset v3 (4 Nov 2026): Task/Decision batch and a second test set
+
+Two problems remained after v2: few Tasks (62) and Decisions (89) to learn
+from, and a test set too small to show whether a change is real (6 Tasks,
+6 Decisions, 8 Risks: one prediction moves a class F1 by about 0.15).
+
+```bash
+# Second test set: the two remaining kickoff meetings with no labelled line
+python scripts/labelstudio_tasks.py --mode full --meetings TS3003a TS3006a --out ml/labelstudio/tasks_test2.json
+# Training batch 3: Task / Decision candidates, never-labelled lines, test meetings excluded
+python scripts/labelstudio_tasks.py --mode enriched --focus Task Decision --series ES IS TS --exclude ES2002a ES2003a TS3003a TS3006a --exclude-labeled ml/data/labeled/train_v2.csv ml/data/labeled/test_v1.csv --max-tasks 1000 --other-ratio 0.25 --seed 11 --out ml/labelstudio/tasks_train3.json
+```
+
+Both batches were labelled with the same guideline
+([`docs/annotation-guidelines.md`](../docs/annotation-guidelines.md)); the
+`notes` column gives the reason for each non-Other label.
+
+| File | Rows | Task | Decision | Risk | Other | Pre-label agreement |
+|------|------|------|----------|------|-------|---------------------|
+| `test_v2.csv` (TS3003a, TS3006a, complete) | 482 | 20 | 10 | 3 | 449 | 93.6 % |
+| `train_batch3.csv` | 1,000 | 108 | 198 | 15 | 679 | 48.8 % |
+| `train_v3.csv` (= v2 + batch 3) | 2,600 | 170 | 287 | 177 | 1,966 | |
+| `test_v1v2.csv` (= test v1 + v2) | 875 | 26 | 16 | 11 | 822 | |
+
+No meeting of either test set has a line in the training data. AMI's own
+annotations are not used as training labels directly: checked against the
+manual labels, its "decisions" links were right for 31 % of utterances and
+its "problems" links for 23 %, so they only serve to find candidates.
+
 ## 3. Classification
 
 The ML code is an installable package in `ml/src/meetops_ml/` so the backend
@@ -156,6 +185,7 @@ ml/src/meetops_ml/
 ├── train.py           cross-validation, model selection, test evaluation, reports
 ├── rules.py           rule layer applied after the classifier (section 3.7)
 ├── evaluate.py        model vs model + rules on the test sets (section 3.8)
+├── transformer.py     fine-tuned DistilBERT: training, evaluation, TransformerClassifier (section 3.12)
 └── predict.py         Classifier.load() / predict() used by the backend and CLI
 ml/tests/              pytest unit tests
 ml/models/<version>/   classifier.joblib + metadata.json + reports/ (local only, ignored by Git)
@@ -421,6 +451,97 @@ python -m meetops_ml.predict --no-rules "..."                  # model only, wit
 
 With rules, each line shows which rule changed the model's label, e.g.
 `Task 0.08  Kasun, can you connect … [rule request: model said Other]`.
+
+### 3.11 More data, same model: v4 (TF-IDF on dataset v3)
+
+```bash
+python -m meetops_ml.train --version v4 --train ml/data/labeled/train_v3.csv --test ml/data/labeled/test_v1v2.csv --features full
+python -m meetops_ml.evaluate --model-dir ml/models/v4 --data ml/data/labeled/test_v1.csv ml/data/labeled/test_v2.csv ml/data/labeled/test_v1v2.csv ml/data/labeled/indomain_v1.csv
+```
+
+Cross-validation selected LinearSVM (CV macro-F1 0.598). Cross-validation
+scores of v3 and v4 are not comparable (different training sets); the fixed
+test sets are. Model only:
+
+| Test set | Model | Training rows | Macro-F1 | Task F1 | Decision F1 | Risk F1 |
+|----------|-------|---------------|----------|---------|-------------|---------|
+| AMI `test_v1v2` (875) | v3 LogReg | 1,600 | 0.451 | 0.45 | 0.26 | 0.16 |
+| AMI `test_v1v2` (875) | v4 LogReg | 2,600 | 0.457 | 0.36 | 0.43 | 0.12 |
+| AMI `test_v1v2` (875) | v4 LinearSVM (selected) | 2,600 | 0.482 | 0.39 | 0.52 | 0.07 |
+| In-domain (89) | v3 LogReg | 1,600 | 0.404 | 0.58 | 0.00 | 0.40 |
+| In-domain (89) | v4 LinearSVM | 2,600 | 0.357 | 0.45 | 0.00 | 0.33 |
+
+More data doubled Decision F1, the class with explicit wording ("we decided",
+"let's go with"), but did not help Tasks or Risks, and in-domain scores fell.
+Precision is the weak point: on `test_v1v2` Task precision is 0.32, because the
+training set is enriched (24 % Task/Decision/Risk) while real meetings are
+about 6 %. Word counts cannot separate "you're gonna be working on the design"
+(Task) from "we were working on the design" (Other): the limit of bag-of-words
+features, and the reason for a contextual model.
+
+### 3.12 Fine-tuned DistilBERT: v5 (with the previous line) and v6 (sentence only)
+
+`transformer.py` fine-tunes `distilbert-base-uncased` (Sanh et al., 2019): the
+pre-trained network plus a four-class output layer, all weights updated on
+`train_v3.csv`. Settings: 4 epochs, batch 16, learning rate 3e-5 with linear
+warm-up and decay, maximum 96 tokens, loss weighted by 1 / sqrt(class
+frequency); the epoch is chosen on a stratified 10 % of the training set, never
+on a test set. v5 gives the model the previous line as a second segment
+("other speaker: Kasun, can you send it by Friday?"); v6 sees the sentence only.
+
+```bash
+pip install torch --index-url https://download.pytorch.org/whl/cpu
+pip install -e "ml[transformer]"
+python -m meetops_ml.transformer train --version v5 --train ml/data/labeled/train_v3.csv --test ml/data/labeled/test_v1.csv ml/data/labeled/test_v2.csv ml/data/labeled/test_v1v2.csv ml/data/labeled/indomain_v1.csv
+python -m meetops_ml.transformer train --version v6 --train ml/data/labeled/train_v3.csv --test ml/data/labeled/test_v1.csv ml/data/labeled/test_v2.csv ml/data/labeled/test_v1v2.csv ml/data/labeled/indomain_v1.csv --no-context
+```
+
+Training took 23 minutes (v6) on a 12-core laptop CPU. Model only:
+
+| Model | AMI `test_v1v2` macro-F1 | Task F1 | Decision F1 | Risk F1 | In-domain macro-F1 | In-domain + rules |
+|-------|--------------------------|---------|-------------|---------|--------------------|-------------------|
+| TF-IDF v3 (LogReg, 1,600 rows) | 0.451 | 0.45 | 0.26 | 0.16 | 0.404 | 0.783 |
+| TF-IDF v4 (LinearSVM, 2,600 rows) | 0.482 | 0.39 | 0.52 | 0.07 | 0.357 | 0.762 |
+| DistilBERT + previous line (v5) | 0.536 | 0.53 | 0.50 | 0.18 | 0.597 | 0.740 |
+| **DistilBERT, sentence (v6)** | **0.557** | 0.51 | 0.47 | **0.30** | **0.652** | **0.776** |
+
+- DistilBERT is better on every test set: +0.08 macro-F1 on AMI over the best
+  TF-IDF model, and +0.30 on the business meetings, where TF-IDF suffered from
+  domain shift. It learns how commitments and concerns are phrased, not AMI's
+  topic words.
+- The model now carries most of the work: on the business meetings the rules
+  add 0.12 (TF-IDF: 0.40), and on AMI they change nothing.
+- The previous line gave no measurable gain (v5 0.02 below v6, within run-to-run
+  noise): the line before is often filler ("Let's see.", "Okay."). v6 is
+  deployed.
+- Remaining error: precision in natural meetings. On `test_v1v2` v6 finds 73 %
+  of Tasks and 81 % of Decisions, but its Task precision is 0.40 and Decision
+  precision 0.33. Human review removes these false alarms.
+- Caveats: one training run per model (one seed) and small test classes
+  (11 Risks), so differences of a few points are not significant; the gap
+  between TF-IDF and DistilBERT is consistent across all four test sets.
+
+**Auto-confirm for DistilBERT.** Its probabilities are over-confident on natural
+meetings. Precision of v6's model-only Task/Decision/Risk predictions:
+
+| Threshold | In-domain: items / precision | AMI `test_v1v2`: items / precision |
+|-----------|------------------------------|------------------------------------|
+| 0.8 | 25 / 0.80 | 80 / 0.42 |
+| 0.9 | 21 / 0.86 | 51 / 0.55 |
+| 0.95 | 8 / 1.00 | 33 / 0.64 |
+
+Requiring the TF-IDF model to agree raised AMI precision at 0.95 to 0.77
+(22 items), still not safe. A transformer model therefore auto-confirms nothing
+(`TransformerClassifier.auto_confirm` is None unless set in its
+`metadata.json`): every extracted item goes to review. TF-IDF models keep
+`AUTO_CONFIRM_CONFIDENCE`.
+
+**In the backend.** `Classifier.load()` returns a `TransformerClassifier` for a
+folder with `transformer/`, with the same `predict()`; the newest version under
+`ml/models/` is used (v6). Without PyTorch installed, the newest TF-IDF model is
+used instead, which is what CI runs. Classifying 700 utterances (about a
+one-hour meeting) takes 12.5 s on the CPU (TF-IDF: 0.2 s); loading takes about
+10 s once per process.
 
 ## 4. Extraction and organisation (owner, deadline, merged items)
 

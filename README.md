@@ -26,7 +26,8 @@ are generated automatically from the meetings they already hold.
 | Human review of extracted items, label feedback   | ✅ Done         |
 | Summaries, recurring risks, evidence links        | ✅ v1 (extractive / TF-IDF similarity) |
 | Audio/video pipeline (Whisper + speaker separation) | ✅ v1 (local, CPU) |
-| DistilBERT classifier, email reminders, PDF export | ⏳ Semester 2   |
+| DistilBERT classifier (fine-tuned, deployed)      | ✅ v6, macro-F1 0.56 AMI / 0.65 in-domain |
+| Email reminders, PDF export                       | ⏳ Semester 2   |
 
 ## Repository layout
 
@@ -106,7 +107,7 @@ Audio / Video / Transcript
 
 - **Frontend:** React 18, TypeScript, Vite, Tailwind CSS, React Router, Recharts
 - **Backend:** FastAPI (Python), SQLAlchemy, PostgreSQL (SQLite for development), pytest
-- **Machine learning / NLP:** scikit-learn (TF-IDF, Logistic Regression, Linear SVM, Naive Bayes, Random Forest), rule-based extraction with dateparser; DistilBERT and spaCy planned
+- **Machine learning / NLP:** scikit-learn (TF-IDF, Logistic Regression, Linear SVM, Naive Bayes, Random Forest), fine-tuned DistilBERT (PyTorch, Hugging Face transformers), rule-based and spaCy extraction with dateparser
 - **Speech and media:** faster-whisper (Whisper, CTranslate2), PyAV (FFmpeg libraries), sherpa-onnx speaker embeddings
 - **Dataset:** AMI Meeting Corpus, annotated with Label Studio
 - **Tooling:** GitHub Actions (frontend, backend and ML checks), Docker Compose

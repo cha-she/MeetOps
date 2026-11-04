@@ -13,7 +13,8 @@ ROOT = Path(__file__).resolve().parents[3]  # repository root
 DEFAULT_TRAIN = ROOT / "ml" / "data" / "labeled" / "train_v1.csv"
 DEFAULT_TEST = ROOT / "ml" / "data" / "labeled" / "test_v1.csv"
 MODELS_ROOT = ROOT / "ml" / "models"
-MODEL_FILENAME = "classifier.joblib"
+MODEL_FILENAME = "classifier.joblib"          # TF-IDF pipeline (train.py)
+TRANSFORMER_DIR = "transformer"                # fine-tuned DistilBERT (transformer.py)
 
 
 def model_dir(version: str) -> Path:
@@ -21,9 +22,12 @@ def model_dir(version: str) -> Path:
     return MODELS_ROOT / version
 
 
-def latest_model_dir() -> Path:
-    """Highest version folder that contains a trained classifier (v1 < v2 < v10)."""
-    candidates = [p for p in MODELS_ROOT.glob("v*") if (p / MODEL_FILENAME).exists()]
+def latest_model_dir(transformers: bool = True) -> Path:
+    """Highest version folder that contains a trained classifier (v1 < v2 < v10).
+
+    ``transformers=False`` skips DistilBERT folders (when PyTorch is not installed)."""
+    candidates = [p for p in MODELS_ROOT.glob("v*")
+                  if (p / MODEL_FILENAME).exists() or (transformers and (p / TRANSFORMER_DIR / "config.json").exists())]
     if not candidates:
         raise FileNotFoundError(f"no trained model under {MODELS_ROOT}; run `python -m meetops_ml.train`")
     return max(candidates, key=lambda p: int(p.name[1:]) if p.name[1:].isdigit() else -1)

@@ -21,7 +21,7 @@ from pathlib import Path
 import joblib
 import numpy as np
 
-from .data import MODEL_FILENAME, latest_model_dir
+from .data import MODEL_FILENAME, TRANSFORMER_DIR, latest_model_dir
 from .preprocessing import segment_transcript
 from .rules import apply_rules
 
@@ -40,11 +40,26 @@ class Classifier:
         self.pipeline = pipeline
         self.metadata = metadata or {}
         self.model_dir = model_dir
+        self.auto_confirm = "default"   # TF-IDF: the backend's AUTO_CONFIRM_CONFIDENCE applies
 
     @classmethod
-    def load(cls, model_dir: Path | str | None = None) -> "Classifier":
-        """Load from a version folder; by default the newest one under ml/models/."""
-        model_dir = Path(model_dir) if model_dir else latest_model_dir()
+    def load(cls, model_dir: Path | str | None = None):
+        """Load from a version folder; by default the newest one under ml/models/.
+
+        A DistilBERT folder (transformer.py) gives a ``TransformerClassifier`` with the same
+        ``predict``. Without PyTorch installed, the newest TF-IDF model is used instead.
+        """
+        explicit = model_dir is not None
+        model_dir = Path(model_dir) if explicit else latest_model_dir()
+        if (model_dir / TRANSFORMER_DIR).is_dir():
+            try:
+                from .transformer import TransformerClassifier
+
+                return TransformerClassifier.load(model_dir)
+            except ImportError:
+                if explicit:
+                    raise
+                model_dir = latest_model_dir(transformers=False)
         pipeline = joblib.load(model_dir / MODEL_FILENAME)
         meta_path = model_dir / "metadata.json"
         metadata = json.loads(meta_path.read_text(encoding="utf-8")) if meta_path.exists() else {}
@@ -65,8 +80,10 @@ class Classifier:
         e = np.exp(margins - margins.max(axis=1, keepdims=True))
         return e / e.sum(axis=1, keepdims=True), classes
 
-    def predict(self, texts: list[str], use_rules: bool = True) -> list[Prediction]:
-        """Label utterances. With ``use_rules`` the rule layer (rules.py) refines the model's labels."""
+    def predict(self, texts: list[str], use_rules: bool = True, contexts: list[str] | None = None) -> list[Prediction]:
+        """Label utterances. With ``use_rules`` the rule layer (rules.py) refines the model's labels.
+
+        ``contexts`` (the previous line of each utterance) is only used by transformer models."""
         if not texts:
             return []
         proba, classes = self._probabilities(texts)

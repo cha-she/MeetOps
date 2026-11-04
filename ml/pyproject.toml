@@ -17,6 +17,8 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8"]
+# fine-tuned DistilBERT (meetops_ml.transformer); CPU wheels: pip install torch --index-url https://download.pytorch.org/whl/cpu
+transformer = ["torch>=2.2", "transformers>=4.44,<5"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

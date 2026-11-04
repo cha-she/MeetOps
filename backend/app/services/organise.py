@@ -33,8 +33,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 from meetops_ml.preprocessing import clean_text
 
 from .. import models
-from ..config import settings
 from . import extraction
+from .classifier import auto_confirm_threshold
 
 ACCEPTANCE = re.compile(r"^\W*(yes|yeah|yep|yup|sure|okay|ok|no problem|will do|on it|of course|absolutely|"
                         r"fine|alright|confirmed|understood|noted|agreed|done|deal|"
@@ -65,9 +65,10 @@ class Draft:
 
     @property
     def review_status(self) -> str:
-        # Only confident model predictions skip review. Measured on the in-domain set, items at
-        # >= 0.8 were all correct; lower thresholds let wrong items through (see ml/README.md 3.8).
-        confident = (self.confidence is not None and self.confidence >= settings.auto_confirm_confidence
+        # Only confident model predictions skip review. For TF-IDF v3 items at >= 0.8 were all
+        # correct on the in-domain set (ml/README.md 3.8); DistilBERT has no safe level (3.12).
+        threshold = auto_confirm_threshold()
+        confident = (threshold is not None and self.confidence is not None and self.confidence >= threshold
                      and not self.rule_changed)
         return "confirmed" if confident else "suggested"
 

@@ -15,6 +15,16 @@ def get_classifier() -> Classifier:
     return Classifier.load(settings.model_dir)
 
 
+def auto_confirm_threshold() -> float | None:
+    """Model-only confidence at which an item skips review; None = every item is reviewed.
+
+    TF-IDF models use AUTO_CONFIRM_CONFIDENCE. A transformer brings its own value (none by
+    default): its probabilities were measured to be over-confident on natural meetings.
+    """
+    own = getattr(get_classifier(), "auto_confirm", "default")
+    return settings.auto_confirm_confidence if own == "default" else own
+
+
 def model_name() -> str | None:
     try:
         name = get_classifier().name

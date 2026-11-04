@@ -99,7 +99,10 @@ def _run(db, meeting: models.Meeting, transcript_text: str | None, recording: Pa
 
     _set_stage(db, meeting, "classify")
     clf = get_classifier()
-    preds = clf.predict([u.text for u in utterances], use_rules=settings.use_rules)
+    # the line before each utterance, for models trained with context (TF-IDF ignores it)
+    contexts = [""] + [f"{'same' if p.speaker == u.speaker else 'other'} speaker: {p.text}"
+                       for p, u in zip(utterances, utterances[1:])]
+    preds = clf.predict([u.text for u in utterances], use_rules=settings.use_rules, contexts=contexts)
 
     segments = []
     for pos, (u, p) in enumerate(zip(utterances, preds)):
