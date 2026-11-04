@@ -232,3 +232,25 @@ def test_upload_time_comma_transcript_with_external_people(client, member):
     assert "Nia" in tasks
     decisions = [d["statement"] for d in client.get("/api/decisions", params={"meetingId": mid}, headers=member).json()]
     assert "No customer migration is approved." in decisions
+
+
+def test_model_is_loaded_once_when_requests_arrive_together(client):
+    """Several threads asking at once (health check + uploads) must share one fully loaded model."""
+    import threading
+
+    from app.services import classifier
+
+    classifier._classifier = None
+    seen, errors = [], []
+
+    def ask():
+        try:
+            seen.append(id(classifier.get_classifier()))
+        except Exception as exc:  # noqa: BLE001
+            errors.append(exc)
+
+    threads = [threading.Thread(target=ask) for _ in range(4)]
+    [t.start() for t in threads]
+    [t.join() for t in threads]
+    assert not errors and len(set(seen)) == 1
+    assert classifier.get_classifier().predict(["We decided to go with the rubber buttons."])[0].label

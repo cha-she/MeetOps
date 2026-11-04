@@ -37,6 +37,7 @@ import json
 import math
 import os
 import random
+import threading
 import time
 from pathlib import Path
 
@@ -51,6 +52,10 @@ from .rules import apply_rules
 BASE_MODEL = "distilbert-base-uncased"
 UTTERANCES = ROOT / "ml" / "data" / "processed" / "ami_utterances.csv"
 MAX_LENGTH = 96          # tokens for utterance + context; longer pairs are cut from the context side
+
+# Loading a model and running the tokenizer are not safe in parallel threads (two loads at the
+# same moment can leave one model half-initialised, on the "meta" device). One lock each.
+_LOAD_LOCK = threading.Lock()
 
 
 # ---------------------------------------------------------------- context
@@ -206,6 +211,7 @@ class TransformerClassifier:
 
     def __init__(self, model, tokenizer, metadata: dict, model_dir: Path):
         self.model, self.tokenizer, self.metadata, self.model_dir = model, tokenizer, metadata, model_dir
+        self._predict_lock = threading.Lock()
         self.uses_context = bool(metadata.get("context"))
         # Fine-tuned transformers are over-confident on natural meetings (ml/README.md, 3.12):
         # at >= 0.95 only 64 % of AMI test predictions were right, so nothing skips review.
@@ -226,7 +232,8 @@ class TransformerClassifier:
         if not texts:
             return []
         ctx = (contexts or [""] * len(texts)) if self.uses_context else None
-        proba = predict_proba(self.model, self.tokenizer, list(texts), ctx)
+        with self._predict_lock:
+            proba = predict_proba(self.model, self.tokenizer, list(texts), ctx)
         out = []
         for text, row in zip(texts, proba):
             model_label = LABELS[int(row.argmax())]
@@ -239,11 +246,14 @@ class TransformerClassifier:
 
 
 def load(model_path: Path):
-    from transformers import AutoModelForSequenceClassification, AutoTokenizer
+    with _LOAD_LOCK:
+        from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
-    meta = json.loads((model_path / "metadata.json").read_text(encoding="utf-8"))
-    path = model_path / TRANSFORMER_DIR
-    return AutoModelForSequenceClassification.from_pretrained(path), AutoTokenizer.from_pretrained(path), meta
+        meta = json.loads((model_path / "metadata.json").read_text(encoding="utf-8"))
+        path = model_path / TRANSFORMER_DIR
+        model = AutoModelForSequenceClassification.from_pretrained(path)
+        model.eval()
+        return model, AutoTokenizer.from_pretrained(path), meta
 
 
 def main(argv: list[str] | None = None) -> int:

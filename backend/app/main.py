@@ -8,6 +8,7 @@ Interactive docs: http://localhost:8000/docs
 
 from __future__ import annotations
 
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -17,13 +18,17 @@ from . import __version__, schemas
 from .config import settings
 from .database import init_db
 from .routers import auth, decisions, insights, meetings, notifications, risks, search, tasks, users
-from .services.classifier import model_name
+from .services.classifier import get_classifier, model_name
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     init_db()
     settings.upload_dir.mkdir(parents=True, exist_ok=True)
+    try:
+        get_classifier()        # load the model now, not during the first upload
+    except FileNotFoundError:
+        logging.getLogger("meetops").warning("no trained classifier under ml/models/: train one first")
     yield
 
 

@@ -21,6 +21,7 @@ the rule-based extractor in ``extraction.py``.
 from __future__ import annotations
 
 import re
+import threading
 from functools import lru_cache
 
 PAST = re.compile(r"\b(last|ago|yesterday|earlier|previous|past|since)\b", re.I)
@@ -31,13 +32,17 @@ PRONOUN_GROUP = {"we", "us", "everyone", "everybody", "someone", "somebody", "te
 NAME_LABELS = {"PERSON", "ORG", "GPE", "NORP"}   # names the small model often mislabels
 
 
+_LOAD_LOCK = threading.Lock()
+
+
 @lru_cache(maxsize=1)
 def _nlp():
-    try:
-        import spacy
-        return spacy.load("en_core_web_sm", disable=["lemmatizer"])
-    except Exception:   # spaCy or the model not installed
-        return None
+    with _LOAD_LOCK:    # one load at a time when several requests arrive together
+        try:
+            import spacy
+            return spacy.load("en_core_web_sm", disable=["lemmatizer"])
+        except Exception:   # spaCy or the model not installed
+            return None
 
 
 def available() -> bool:

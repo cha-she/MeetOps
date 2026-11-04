@@ -25,6 +25,7 @@ from __future__ import annotations
 import logging
 import os
 import re
+import threading
 import urllib.request
 from dataclasses import dataclass
 from functools import lru_cache
@@ -48,6 +49,11 @@ MAX_SPEAKERS = 8       # most groupings tried when the number of speakers is not
 CLEARLY_BETTER = 0.05  # silhouette gain needed to prefer one more speaker
 SENTENCE_END = re.compile(r"[.?!]['\"”’)]*$")
 
+# The speech models are loaded once and used by one recording at a time: two loads in parallel
+# threads can corrupt each other, and two transcriptions would only compete for the CPU.
+_LOAD_LOCK = threading.Lock()
+_RUN_LOCK = threading.Lock()
+
 
 @dataclass
 class Sentence:
@@ -69,14 +75,20 @@ def available() -> bool:
 @lru_cache(maxsize=1)
 def _whisper():
     os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
-    from faster_whisper import WhisperModel
+    with _LOAD_LOCK:
+        from faster_whisper import WhisperModel
 
-    # downloaded from Hugging Face on first use, then cached
-    return WhisperModel(settings.whisper_model, device="cpu", compute_type="int8", cpu_threads=THREADS)
+        # downloaded from Hugging Face on first use, then cached
+        return WhisperModel(settings.whisper_model, device="cpu", compute_type="int8", cpu_threads=THREADS)
 
 
 @lru_cache(maxsize=1)
 def _voice_model():
+    with _LOAD_LOCK:
+        return _load_voice_model()
+
+
+def _load_voice_model():
     import sherpa_onnx
 
     path = Path(settings.speech_model_dir) / VOICE_MODEL
@@ -238,10 +250,11 @@ def recording_to_transcript(path: str | Path, names: Iterable[str] = (), num_spe
                             progress: Callable[[float], None] | None = None) -> tuple[str, float]:
     """(transcript text, recording length in seconds) for an audio or video file."""
     audio = load_audio(path)
-    sentences = transcribe(audio, names, progress)
-    if not sentences:
-        raise RuntimeError("No speech was recognised in this recording.")
-    assign_speakers(audio, sentences, num_speakers)
+    with _RUN_LOCK:   # a second recording waits here until the first is transcribed
+        sentences = transcribe(audio, names, progress)
+        if not sentences:
+            raise RuntimeError("No speech was recognised in this recording.")
+        assign_speakers(audio, sentences, num_speakers)
     return to_transcript(sentences), audio.size / SAMPLE_RATE
 
 
