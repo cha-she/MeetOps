@@ -1,0 +1,1001 @@
+segment_id,meeting_id,speaker,start_time,end_time,text,label,owner_span,deadline_span,decided_by_span,notes,prelabel,prelabel_source,annotated_at
+ES2002b.B.dialog-act.dharshi.19,ES2002b,B (PM),141.68,145.41,"So um, we're just gonna keep it simple and it'll just control the T_V_.",Decision,,,,"Scope settled: keep it simple, TV only.",Decision,summlink,2026-11-04
+ES2002b.B.dialog-act.dharshi.20,ES2002b,B (PM),145.41,150.49,And the other thing was that the company want the corporate colour and slogan to be implemented in the new design.,Decision,,,,Management directive: corporate colour and slogan in the design.,Decision,summlink,2026-11-04
+ES2002b.B.dialog-act.dharshi.249,ES2002b,B (PM),1706.57,1708.05,so we could stay with tha,Other,,,,,Decision,summlink,2026-11-04
+ES2002b.B.dialog-act.dharshi.284,ES2002b,B (PM),1846.32,1854.36,Are we all happy about the idea of um aiming the product at um the fifteen to thirty five bracket?,Other,,,,,Decision,summlink,2026-11-04
+ES2002b.B.dialog-act.dharshi.302,ES2002b,B (PM),1974.01,1979.36,Um and then we're gonna have thirty minutes of working on the next stage.,Other,,,,,Decision,rule,2026-11-04
+ES2002b.B.dialog-act.dharshi.307,ES2002b,B (PM),2004.28,2007.49,and marketing you're gonna be thinking about trend watching.,Task,you,,,Marketing assigned trend watching.,Task,summlink,2026-11-04
+ES2002b.B.dialog-act.dharshi.339,ES2002b,B (PM),2135.12,2139.45,"Um so yeah, I guess just things to think about are you know like the fact it's gotta look good,",Other,,,,,Decision,summlink,2026-11-04
+ES2002c.B.dialog-act.dharshi.5,ES2002c,B (PM),34.60,39.05,"and we decided that it was gonna be non-rechargeable battery-powered,",Decision,,,,Recap: non-rechargeable battery power decided.,Decision,rule,2026-11-04
+ES2002c.D.dialog-act.dharshi.60,ES2002c,D (ME),323.50,325.82,Well that's I guess where we're gonna go with this.,Other,,,,,Decision,rule,2026-11-04
+ES2002c.D.dialog-act.dharshi.63,ES2002c,D (ME),333.76,335.89,which as we've agreed is a priority.,Decision,,,,Agreed: fashion style is a priority.,Decision,rule,2026-11-04
+ES2002c.A.dialog-act.dharshi.37,ES2002c,A (ID),994.38,1002.61,"Um and the lower components, the power, the logic, the transmitter, and the infrared, um they affect you in terms of the size of your device,",Other,,,,,Other,default,2026-11-04
+ES2002c.A.dialog-act.dharshi.50,ES2002c,A (ID),1052.46,1058.45,"um 'cause they got back to me with like different requirements, or different offerings of what components availa",Other,,,,,Other,default,2026-11-04
+ES2002c.C.dialog-act.dharshi.66,ES2002c,C (UI),1469.46,1476.63,Um I think we could go for like um maybe not a p a fruit shape but a very sort of curvy type shape.,Other,,,,,Decision,summlink,2026-11-04
+ES2002c.B.dialog-act.dharshi.190,ES2002c,B (PM),1662.33,1664.09,so yeah should we go with that?,Other,,,,,Decision,rule,2026-11-04
+ES2002c.B.dialog-act.dharshi.252,ES2002c,B (PM),1981.77,1983.12,"we're gonna have to wrap up quite quickly,",Other,,,,,Decision,rule,2026-11-04
+ES2002c.B.dialog-act.dharshi.318,ES2002c,B (PM),2267.71,2272.26,Um and I'll get the the minutes up as soon as possible.,Task,I,as soon as possible,,PM commits to put the minutes up.,Task,rule,2026-11-04
+ES2002c.D.dialog-act.dharshi.371,ES2002c,D (ME),2316.85,2322.49,"and also t plastic I've seen can get really textured, so you can get plastics that actually feel soft in your hand.",Other,,,,,Decision,summlink,2026-11-04
+ES2002d.B.dialog-act.dharshi.11,ES2002d,B (PM),42.53,47.55,"it was hopefully gonna be kinetic power and battery uh with rubber buttons,",Decision,,,,"Recap of agreed design: kinetic power and battery, rubber buttons.",Other,default,2026-11-04
+ES2002d.B.dialog-act.dharshi.86,ES2002d,B (PM),423.20,424.94,Do we have kinetic as well?,Other,,,,,Decision,summlink,2026-11-04
+ES2002d.A.dialog-act.dharshi.63,ES2002d,A (ID),424.42,424.78,No.,Other,,,,,Decision,summlink,2026-11-04
+ES2002d.B.dialog-act.dharshi.90,ES2002d,B (PM),431.02,433.02,And that's because of cost restraints is it?,Other,,,,,Decision,summlink,2026-11-04
+ES2002d.A.dialog-act.dharshi.66,ES2002d,A (ID),432.42,432.75,Yep.,Other,,,,,Decision,summlink,2026-11-04
+ES2002d.B.dialog-act.dharshi.102,ES2002d,B (PM),471.93,472.83,So I'll have to put that,Other,,,,,Task,rule,2026-11-04
+ES2002d.A.dialog-act.dharshi.82,ES2002d,A (ID),498.69,499.90,We've got push buttons as well.,Decision,,,,Design includes push buttons.,Decision,summlink,2026-11-04
+ES2002d.C.dialog-act.dharshi.158,ES2002d,C (ME),1078.11,1079.22,Okay let's go with five then.,Decision,,,,Agreed: go with five.,Decision,rule,2026-11-04
+ES2002d.C.dialog-act.dharshi.361,ES2002d,C (ME),1852.43,1865.81,"but um but actually if you if you imagine not entire the completely same task given to us but us said okay, first thing we have to do is come up with um let's say um a design concept,",Other,,,,,Task,rule,2026-11-04
+ES2003b.B.dialog-act.vkaraisk.23,ES2003b,B (PM),83.14,87.88,Teletext has become outdated due to the populat popularity of the internet.,Other,,,,,Decision,summlink,2026-11-04
+ES2003b.B.dialog-act.vkaraisk.24,ES2003b,B (PM),87.88,97.04,Remote control should only be used for the T_V_. Um due for uh time to market and possibly also cost issues.,Decision,,,,Management directive: remote for the TV only.,Decision,summlink,2026-11-04
+ES2003b.B.dialog-act.vkaraisk.26,ES2003b,B (PM),100.58,107.12,um f uh your colour and slogan of course is down at the bottom there.,Other,,,,,Decision,summlink,2026-11-04
+ES2003b.D.dialog-act.vkaraisk.43,ES2003b,D (ID),961.62,967.27,um obviously there'll be more details once we've decided what we're putting on the user interface.,Other,,,,,Decision,rule,2026-11-04
+ES2003b.B.dialog-act.vkaraisk.208,ES2003b,B (PM),1664.53,1668.65,Um we have to decide exactly what we're going to do with the remote.,Other,,,,,Task,rule,2026-11-04
+ES2003b.B.dialog-act.vkaraisk.211,ES2003b,B (PM),1673.41,1675.22,this is how we're gonna make ourselves look unique.,Other,,,,,Decision,rule,2026-11-04
+ES2003b.B.dialog-act.vkaraisk.222,ES2003b,B (PM),1727.62,1730.81,"Vol Volume selection okay, yep,",Other,,,,,Other,default,2026-11-04
+ES2003b.B.dialog-act.vkaraisk.230,ES2003b,B (PM),1746.52,1751.24,"maybe is it one more button to say that you're using the menu system,",Other,,,,,Other,default,2026-11-04
+ES2003b.B.dialog-act.vkaraisk.239,ES2003b,B (PM),1815.62,1821.43,Do we incorporate the idea of trying to f locate the remote control again via a beeping noise?,Other,,,,,Decision,summlink,2026-11-04
+ES2003c.D.dialog-act.vkaraisk.18,ES2003c,D (ID),168.75,178.42,"Uh joystick we'll probably if we're gonna use it, um could be plastic w or rubber even as well. Um",Other,,,,,Decision,rule,2026-11-04
+ES2003c.D.dialog-act.vkaraisk.99,ES2003c,D (ID),580.49,584.23,Um we have to decide on what buttons we're gonna use.,Other,,,,,Task,rule,2026-11-04
+ES2003c.A.dialog-act.vkaraisk.40,ES2003c,A (UI),824.28,835.70,"Um now the reason I was particularly interested in using rubber for this is that if we're going to have a highly ergonomic design, um it needs to be ergonomic for left or right handed people.",Other,,,,,Decision,rule,2026-11-04
+ES2003c.C.dialog-act.vkaraisk.104,ES2003c,C (ME),1317.22,1322.34,"but if we go with spongy, we can stress that you can drop this as many times as you want,",Other,,,,,Decision,rule,2026-11-04
+ES2003c.C.dialog-act.vkaraisk.126,ES2003c,C (ME),1361.15,1364.39,"If we're gonna use spongy material we have to think of how practical it is,",Other,,,,,Decision,rule,2026-11-04
+ES2003c.B.dialog-act.vkaraisk.154,ES2003c,B (PM),1579.20,1586.82,if we take some of the ideas why don't we make the damn thing yellow to incorporate the des the colour of the logo?,Other,,,,,Decision,summlink,2026-11-04
+ES2003c.C.dialog-act.vkaraisk.183,ES2003c,C (ME),1929.01,1934.47,"product evaluation, doesn't that come after actually seen a product prototype.",Other,,,,,Task,summlink,2026-11-04
+ES2003d.B.dialog-act.vkaraisk.7,ES2003d,B (PM),35.64,41.21,"just to try and roughly go over what we agreed in the last one, um",Other,,,,,Decision,rule,2026-11-04
+ES2003d.A.dialog-act.vkaraisk.20,ES2003d,A (UI),184.79,194.46,this design could be done with um with uh plastic casing.,Other,,,,,Decision,summlink,2026-11-04
+ES2003d.B.dialog-act.vkaraisk.79,ES2003d,B (PM),704.59,705.95,we've got the use of the L_C_D_.,Decision,,,,Design includes the LCD.,Decision,summlink,2026-11-04
+ES2003d.C.dialog-act.vkaraisk.81,ES2003d,C (ME),769.12,772.83,I mean can you get the entire thing printed with a design um?,Other,,,,,Task,rule,2026-11-04
+ES2003d.B.dialog-act.vkaraisk.102,ES2003d,B (PM),802.73,805.19,"Um plastic for some reason incurs no cost,",Other,,,,,Decision,summlink,2026-11-04
+ES2003d.B.dialog-act.vkaraisk.171,ES2003d,B (PM),1237.22,1238.44,we'll definitely won't go with that one.,Decision,,,,Rejected option: will not go with that one.,Decision,rule,2026-11-04
+ES2003d.C.dialog-act.vkaraisk.239,ES2003d,C (ME),1565.77,1570.87,But Th th they're referring to the fruit and veg thing.,Other,,,,,Other,default,2026-11-04
+ES2003d.D.dialog-act.vkaraisk.97,ES2003d,D (ID),2036.24,2039.03,We're burs bursting with creativity.,Other,,,,,Other,default,2026-11-04
+ES2004a.B.dialog-act.s9553330.32,ES2004a,B (PM),142.83,146.26,"Okay, um, first is the functional design,",Other,,,,,Task,summlink,2026-11-04
+ES2004a.B.dialog-act.s9553330.34,ES2004a,B (PM),149.58,153.98,"um what needs need to be fulfilled by the product,",Other,,,,,Task,summlink,2026-11-04
+ES2004a.C.dialog-act.s9553330.61,ES2004a,C (ID),852.17,861.94,"'cause I mean, menus on sort of new phones now they've sort of got all these pictures and stuff which makes it fairly obvious what you're trying to do.",Other,,,,,Other,default,2026-11-04
+ES2004b.D.dialog-act.s9553330.28,ES2004b,D (ME),803.09,805.69,Have I got to keep this here?,Other,,,,,Other,default,2026-11-04
+ES2004b.B.dialog-act.s9553330.180,ES2004b,B (PM),1844.69,1849.39,But we should focus on making the manual as user-friendly as possible,Other,,,,,Decision,summlink,2026-11-04
+ES2004b.B.dialog-act.s9553330.220,ES2004b,B (PM),2026.40,2030.26,Can you look into the company logo?,Task,you,,,Asked to look into the company logo.,Task,rule,2026-11-04
+ES2004b.B.dialog-act.s9553330.228,ES2004b,B (PM),2131.00,2138.40,So you could have like psychedelic ones for younger people and sleek ones and,Other,,,,,Decision,summlink,2026-11-04
+ES2004b.B.dialog-act.s9553330.237,ES2004b,B (PM),2206.97,2214.44,"It's kinda takes the place of having a button to press for the date and having the button to press for the channel, things like that.",Other,,,,,Other,default,2026-11-04
+ES2004b.B.dialog-act.s9553330.254,ES2004b,B (PM),2276.63,2278.09,so it should be fine,Other,,,,,Other,default,2026-11-04
+ES2004c.D.dialog-act.dharshi.12,ES2004c,D (ME),220.07,221.93,so we decided on our market,Decision,,,,Recap: market decided.,Decision,rule,2026-11-04
+ES2004c.A.dialog-act.dharshi.24,ES2004c,A (UI),609.69,611.61,"what are the life of the kinetic battery,",Other,,,,,Other,default,2026-11-04
+ES2004c.B.dialog-act.dharshi.86,ES2004c,B (PM),801.89,806.29,"Okay, can we add in uh an attachment to closing feature?",Other,,,,,Other,default,2026-11-04
+ES2004c.A.dialog-act.dharshi.114,ES2004c,A (UI),1675.57,1682.73,"We have to check into the for financial f feasibility whether we can incorporate it this at a low cost,",Task,We,,,Check financial feasibility of speech recognition.,Task,rule,2026-11-04
+ES2004c.A.dialog-act.dharshi.137,ES2004c,A (UI),1810.14,1810.81,The kinetic.,Other,,,,,Decision,summlink,2026-11-04
+ES2004c.B.dialog-act.dharshi.222,ES2004c,B (PM),2100.11,2106.96,"you could have um a plain black one, you could have sparkly pink glittery ones for your little",Other,,,,,Decision,summlink,2026-11-04
+ES2004c.A.dialog-act.dharshi.169,ES2004c,A (UI),2204.25,2208.13,So we can if financially voice recognition is not feasible we could go for a whistle.,Other,,,,,Decision,summlink,2026-11-04
+ES2004d.C.dialog-act.vkaraisk.15,ES2004d,C (ID),152.77,165.55,"It's gonna have a a plastic body um with a sort of standard colour, either we're thinking some something fairly neutral like a a white or a light blue or something.",Other,,,,,Decision,summlink,2026-11-04
+ES2004d.C.dialog-act.vkaraisk.17,ES2004d,C (ID),171.45,174.40,um which there'd be sort of a wide choice,Other,,,,,Decision,summlink,2026-11-04
+ES2004d.C.dialog-act.vkaraisk.23,ES2004d,C (ID),193.58,209.65,"and uh the um the top L_C_D_ screen that you can see that would b would be sort of um how do you say, it's yeah yeah, it would be sort of inset into the into the top",Other,,,,,Other,default,2026-11-04
+ES2004d.C.dialog-act.vkaraisk.60,ES2004d,C (ID),348.01,356.32,"The top screen, as we said, is would be an inset um black and white L_C_D_ s touch screen",Decision,,,,Agreed: inset black and white LCD touch screen.,Decision,summlink,2026-11-04
+ES2004d.B.dialog-act.vkaraisk.81,ES2004d,B (PM),871.45,877.19,"the type of button that we're gonna use in the bottom half, the material, minimises R_S_I_",Other,,,,,Decision,rule,2026-11-04
+ES2004d.D.dialog-act.vkaraisk.156,ES2004d,D (ME),932.65,935.61,have the designers come to any dec real decision on that?,Other,,,,,Other,default,2026-11-04
+ES2004d.C.dialog-act.vkaraisk.114,ES2004d,C (ID),934.54,938.99,"Yeah, it was it was uh a voice voice recognition,",Decision,,,,Designers decided on voice recognition.,Decision,summlink,2026-11-04
+ES2004d.D.dialog-act.vkaraisk.159,ES2004d,D (ME),940.33,944.33,"And are we happy with the costs on that? That is going to be feasible, cost-wise.",Other,,,,,Decision,summlink,2026-11-04
+ES2004d.C.dialog-act.vkaraisk.116,ES2004d,C (ID),942.76,945.35,"Yeah, yeah, that yeah, that's feasible.",Decision,,,,Confirmed feasible on cost.,Decision,summlink,2026-11-04
+ES2004d.D.dialog-act.vkaraisk.181,ES2004d,D (ME),1031.23,1039.46,"and I really doubt if on the basis of current technology and our current capabilities, we could actually do much more to minimise that.",Other,,,,,Decision,summlink,2026-11-04
+ES2004d.D.dialog-act.vkaraisk.239,ES2004d,D (ME),1527.56,1530.37,But we need to work to that specification to start with.,Other,,,,,Task,rule,2026-11-04
+ES2004d.D.dialog-act.vkaraisk.249,ES2004d,D (ME),1565.40,1567.68,So if we take voice recognition out,Other,,,,,Decision,summlink,2026-11-04
+ES2004d.C.dialog-act.vkaraisk.227,ES2004d,C (ID),1567.94,1573.89,That'll do it. Twelve point three five.,Other,,,,,Decision,summlink,2026-11-04
+ES2004d.B.dialog-act.vkaraisk.295,ES2004d,B (PM),2069.75,2072.99,"with recommendations that they the budget be increased,",Other,,,,,Task,summlink,2026-11-04
+ES2004d.B.dialog-act.vkaraisk.315,ES2004d,B (PM),2152.40,2158.90,"we've got about fifty minutes to catch up with everything that I fell behind with,",Other,,,,,Task,summlink,2026-11-04
+ES2005a.C.dialog-act.vkaraisk.44,ES2005a,C (PM),194.65,210.53,"and you could look into um basically how how it's made I_E_ like how you make it all in one, how what sort of materials are available to you whatever.",Task,you,,,Assigned: look into how it is made and materials.,Task,summlink,2026-11-04
+ES2005a.D.dialog-act.vkaraisk.38,ES2005a,D (UI),217.76,219.73,So you want me to look at shapes and everything you said?,Other,,,,,Task,summlink,2026-11-04
+ES2005a.C.dialog-act.vkaraisk.48,ES2005a,C (PM),219.33,223.95,Shapes and colours and um basically how to make it attractive.,Task,,,,"Assignment specified: shapes, colours, attractiveness; accepted.",Task,summlink,2026-11-04
+ES2005b.C.dialog-act.dharshi.141,ES2005b,C (PM),1255.62,1256.99,um I'll take that back.,Other,,,,,Task,rule,2026-11-04
+ES2005b.C.dialog-act.dharshi.174,ES2005b,C (PM),1394.69,1397.56,We'll use the the basic functions for a television.,Decision,,,,Agreed: basic TV functions.,Decision,rule,2026-11-04
+ES2005b.B.dialog-act.dharshi.136,ES2005b,B (ME),2012.07,2013.02,Glow in dark.,Other,,,,,Decision,summlink,2026-11-04
+ES2005c.B.dialog-act.dharshi.61,ES2005c,B (ME),306.39,308.31,So these are my views.,Other,,,,,Other,default,2026-11-04
+ES2005c.D.dialog-act.dharshi.110,ES2005c,D (UI),610.12,612.58,"Yeah, that's true. Yeah.",Other,,,,,Other,default,2026-11-04
+ES2005c.D.dialog-act.dharshi.183,ES2005c,D (UI),870.32,871.86,"Easy to use, it seems quite easy to use.",Other,,,,,Other,default,2026-11-04
+ES2005c.A.dialog-act.dharshi.45,ES2005c,A (ID),928.80,932.72,"I guess there are a lot of options that we're gonna have to choose from among,",Other,,,,,Decision,rule,2026-11-04
+ES2005c.A.dialog-act.dharshi.80,ES2005c,A (ID),1062.50,1065.24,"which we have to decide, you know, what's it gonna be,",Other,,,,,Task,rule,2026-11-04
+ES2005c.C.dialog-act.dharshi.121,ES2005c,C (PM),1117.44,1123.21,so maybe s uh a sort of uh plastic initial plastic with a a latex kinda sheath?,Other,,,,,Decision,summlink,2026-11-04
+ES2005c.C.dialog-act.dharshi.136,ES2005c,C (PM),1201.48,1203.76,I mean if we are gonna make it a novel,Other,,,,,Decision,rule,2026-11-04
+ES2005c.C.dialog-act.dharshi.170,ES2005c,C (PM),1383.88,1389.61,"I mean for the specific functions, you know, up and down, uh play, stop.",Other,,,,,Other,default,2026-11-04
+ES2005c.C.dialog-act.dharshi.176,ES2005c,C (PM),1409.09,1411.42,"Uh speech recognition, I think,",Other,,,,,Decision,summlink,2026-11-04
+ES2005c.A.dialog-act.dharshi.186,ES2005c,A (ID),1730.79,1732.88,"s I guess we decided on material,",Other,,,,,Decision,summlink,2026-11-04
+ES2005c.D.dialog-act.dharshi.345,ES2005c,D (UI),1767.80,1776.37,"but something ergonomically shaped and organic, like good to hold, based on fruits and natural things like that,",Other,,,,,Decision,summlink,2026-11-04
+ES2005c.C.dialog-act.dharshi.245,ES2005c,C (PM),1788.17,1793.34,"So again I mean like we could have, uh I mean, we could quite easily have the the main body be a different",Other,,,,,Decision,summlink,2026-11-04
+ES2005c.C.dialog-act.dharshi.316,ES2005c,C (PM),2101.18,2103.27,"Um yeah, Project, Project Documents.",Other,,,,,Other,default,2026-11-04
+ES2005d.C.dialog-act.dharshi.6,ES2005d,C (PM),58.64,61.19,but I will do.,Task,I,,,Commits to mail the minutes.,Task,rule,2026-11-04
+ES2005d.D.dialog-act.dharshi.14,ES2005d,D (UI),163.07,164.28,mainly speak recognition.,Other,,,,,Decision,summlink,2026-11-04
+ES2005d.D.dialog-act.dharshi.63,ES2005d,D (UI),308.82,314.63,and and um we have the banana-based one too.,Other,,,,,Decision,summlink,2026-11-04
+ES2005d.A.dialog-act.dharshi.21,ES2005d,A (ID),315.07,318.14,"This one is uh, I suppose for the younger audiences.",Other,,,,,Decision,summlink,2026-11-04
+ES2005d.D.dialog-act.dharshi.121,ES2005d,D (UI),814.05,814.73,we forgot to mention,Other,,,,,Decision,summlink,2026-11-04
+ES2005d.A.dialog-act.dharshi.86,ES2005d,A (ID),843.51,844.37,It's fun to touch.,Other,,,,,Other,default,2026-11-04
+ES2005d.B.dialog-act.dharshi.169,ES2005d,B (ME),1344.56,1349.96,"because it is one point eight uh two, so we will do two.",Other,,,,,Other,default,2026-11-04
+ES2006a.C.dialog-act.s9553330.127,ES2006a,C (PM),884.07,892.95,"and make sure that you all work together in a productive way, so that by the end of the day we come up with a great product.",Other,,,,,Task,rule,2026-11-04
+ES2006a.C.dialog-act.s9553330.139,ES2006a,C (PM),936.47,938.27,that means we've got five minutes.,Other,,,,,Other,default,2026-11-04
+ES2006a.C.dialog-act.s9553330.142,ES2006a,C (PM),952.07,955.89,"And that's selling them on the international market, not just in the U_K_.",Decision,,,,Brief: international market.,Decision,summlink,2026-11-04
+ES2006a.C.dialog-act.s9553330.193,ES2006a,C (PM),1253.52,1257.64,"but im basically you're looking at the working design,",Task,you,,,Role work assigned: working design.,Task,summlink,2026-11-04
+ES2006a.C.dialog-act.s9553330.194,ES2006a,C (PM),1259.65,1261.84,"you're looking at the technical functions design,",Task,you,,,Role work assigned: technical functions design.,Task,summlink,2026-11-04
+ES2006b.C.dialog-act.s9553330.17,ES2006b,C (PM),69.27,70.89,I'll do that next time.,Task,I,next time,,Commits to do it next time.,Task,rule,2026-11-04
+ES2006b.C.dialog-act.s9553330.116,ES2006b,C (PM),1101.61,1106.17,Uh we need to do the function key thing so that it comes up on here.,Decision,,,,Agreed feature: function key display.,Task,rule,2026-11-04
+ES2006b.B.dialog-act.s9553330.41,ES2006b,B (ME),1222.52,1224.64,"Okay, well, I can send it to all of you.",Task,I,,,Commits to send it to everyone.,Task,rule,2026-11-04
+ES2006b.C.dialog-act.s9553330.213,ES2006b,C (PM),1806.21,1811.38,"Um, so if we go for the the fifteen to thirty five age group",Other,,,,,Decision,rule,2026-11-04
+ES2006b.C.dialog-act.s9553330.252,ES2006b,C (PM),2051.88,2056.48,"What we have to do now is to go back to our little places,",Task,we,,,Group goes back to individual work and questionnaire.,Task,summlink,2026-11-04
+ES2006b.C.dialog-act.s9553330.256,ES2006b,C (PM),2061.84,2065.74,"Send me your presentations so that I can use them to make the minutes,",Task,,,,Team asked to send presentations for the minutes.,Task,summlink,2026-11-04
+ES2006b.C.dialog-act.s9553330.264,ES2006b,C (PM),2087.10,2089.93,So I'll put it I'll put them there as soon as I've written them.,Task,I,,,Commits to put the minutes there once written.,Task,rule,2026-11-04
+ES2006b.C.dialog-act.s9553330.276,ES2006b,C (PM),2119.35,2126.99,"as to where we're going from here, you're going to look at the components concept.",Task,you,,,Assigned: components concept.,Task,summlink,2026-11-04
+ES2006c.C.dialog-act.s9553330.133,ES2006c,C (PM),1304.89,1306.36,"and it'd help if you drop it,",Other,,,,,Other,default,2026-11-04
+ES2006c.D.dialog-act.s9553330.129,ES2006c,D (UI),1576.85,1580.62,"I think for for the channel numb uh channel numbers you still need them, wouldn't you?",Other,,,,,Decision,summlink,2026-11-04
+ES2006c.D.dialog-act.s9553330.150,ES2006c,D (UI),1692.81,1699.05,"Yeah but n I I'm not completely um completely clear uh I yeah, about the spinning wheel.",Other,,,,,Other,default,2026-11-04
+ES2006c.D.dialog-act.s9553330.160,ES2006c,D (UI),1745.48,1747.54,"the case would be rubber and the the buttons,",Other,,,,,Decision,summlink,2026-11-04
+ES2006c.C.dialog-act.s9553330.221,ES2006c,C (PM),1928.44,1934.36,"I think if we can if we can include them at not too much extra cost, then I'd put them in,",Other,,,,,Decision,summlink,2026-11-04
+ES2006c.A.dialog-act.s9553330.326,ES2006c,A (ID),2004.74,2011.43,"Uh um we we're definitely going in for voice recognition as well as L_C_D_s, mm.",Decision,,,,Agreed: voice recognition and LCDs.,Decision,summlink,2026-11-04
+ES2006c.C.dialog-act.s9553330.246,ES2006c,C (PM),2067.29,2069.71,and be in bright vegetable colours.,Decision,,,,Agreed look: bright vegetable colours.,Decision,summlink,2026-11-04
+ES2006c.C.dialog-act.s9553330.255,ES2006c,C (PM),2117.11,2123.63,"In the meantime, the Industrial Designer over here is gonna work on the look and feel design,",Task,the Industrial Designer,,,Assigned: look and feel design.,Task,summlink,2026-11-04
+ES2006c.C.dialog-act.s9553330.257,ES2006c,C (PM),2126.33,2131.60,Um the User Interface Designer will work on the user interface design,Task,the User Interface Designer,,,Assigned: user interface design.,Task,summlink,2026-11-04
+ES2006c.C.dialog-act.s9553330.258,ES2006c,C (PM),2131.60,2137.41,and the Marketing Expert is going to work on product evaluation.,Task,the Marketing Expert,,,Assigned: product evaluation.,Task,summlink,2026-11-04
+ES2006c.C.dialog-act.s9553330.259,ES2006c,C (PM),2137.41,2147.41,"And as well as that, the two designers are going to work together on our prototype following those instructions that we've just come up with using modelling clay",Task,the two designers,,,Assigned: build the prototype together.,Task,summlink,2026-11-04
+ES2006d.C.dialog-act.s9553330.5,ES2006d,C (PM),15.79,22.11,"what we have to get through in this meeting is firstly the prototype presentation from you two,",Other,,,,,Task,rule,2026-11-04
+ES2006d.C.dialog-act.s9553330.10,ES2006d,C (PM),41.70,47.90,'cause we have to check that it's within the finance criteria.,Other,,,,,Task,rule,2026-11-04
+ES2006d.A.dialog-act.s9553330.19,ES2006d,A (ID),157.70,162.53,"And it flips open on the side, so it opens like that.",Other,,,,,Decision,summlink,2026-11-04
+ES2006d.C.dialog-act.s9553330.36,ES2006d,C (PM),177.00,179.98,"And it's the whole thing's made of rubber, is that",Other,,,,,Decision,summlink,2026-11-04
+ES2006d.C.dialog-act.s9553330.68,ES2006d,C (PM),387.86,391.05,"I suspect we're gonna have a couple of minor finance issues,",Risk,,,,Concern: minor finance issues expected.,Decision,rule,2026-11-04
+ES2006d.A.dialog-act.s9553330.57,ES2006d,A (ID),581.57,584.22,I can I can take note uh uh,Other,,,,,Task,rule,2026-11-04
+ES2006d.C.dialog-act.s9553330.89,ES2006d,C (PM),582.51,584.32,"then yeah, I'll take a note, it's fine.",Other,,,,,Task,rule,2026-11-04
+ES2006d.B.dialog-act.s9553330.127,ES2006d,B (ME),805.27,806.52,I'm glad you're accepting this.,Other,,,,,Other,default,2026-11-04
+ES2006d.D.dialog-act.s9553330.167,ES2006d,D (UI),1310.68,1314.83,but we could just have some some very very easy device that just beeps.,Other,,,,,Decision,summlink,2026-11-04
+ES2006d.B.dialog-act.s9553330.246,ES2006d,B (ME),1512.39,1516.07,I think you should make it more vegetable-like.,Other,,,,,Task,rule,2026-11-04
+ES2007a.A.dialog-act.dharshi.80,ES2007a,A (PM),581.82,585.72,"selling price twenty five Euros,",Decision,,,,Brief: selling price 25 Euros.,Decision,summlink,2026-11-04
+ES2007a.A.dialog-act.dharshi.81,ES2007a,A (PM),585.72,589.43,profit aim fifty million Euros.,Decision,,,,Brief: profit aim 50 million Euros.,Decision,summlink,2026-11-04
+ES2007a.C.dialog-act.dharshi.69,ES2007a,C (UI),901.29,905.31,I guess by the end of this meeting we should have at least a a rough conception,Other,,,,,Task,rule,2026-11-04
+ES2007a.C.dialog-act.dharshi.73,ES2007a,C (UI),916.47,920.26,"but the the functions that we're sure that we want are that it can control the T_V_,",Decision,,,,Agreed function: controls the TV.,Decision,summlink,2026-11-04
+ES2007a.A.dialog-act.dharshi.135,ES2007a,A (PM),934.53,937.82,'cause I I I just think that it might be expensive to make something that,Risk,,,,Concern: controlling everything might be expensive.,Decision,summlink,2026-11-04
+ES2007a.A.dialog-act.dharshi.162,ES2007a,A (PM),1060.91,1064.72,"like a lock f like a lock functs function on it like you have on your telephones,",Other,,,,,Decision,summlink,2026-11-04
+ES2007b.A.dialog-act.dharshi.158,ES2007b,A (PM),1385.86,1391.62,"we've decided that it's gonna be, you know uh, we're going for a basic television remote.",Decision,,,,Decided: basic television remote.,Decision,rule,2026-11-04
+ES2007b.C.dialog-act.dharshi.139,ES2007b,C (UI),1578.57,1581.41,"Not one colour, but the pattern needs to be recognisable.",Decision,,,,"Requirement settled: recognisable pattern, not one colour.",Decision,summlink,2026-11-04
+ES2007b.B.dialog-act.dharshi.109,ES2007b,B (ID),1610.25,1615.54,like just around the lock button could be the R_R_ logo or colours and,Other,,,,,Other,default,2026-11-04
+ES2007c.A.dialog-act.dharshi.46,ES2007c,A (PM),472.31,475.41,"Rubber, we're all we're all going we're all liking that idea?",Other,,,,,Decision,summlink,2026-11-04
+ES2007c.B.dialog-act.dharshi.51,ES2007c,B (ID),488.96,494.32,"so you can have basic push-buttons or a scroll-wheels, like you have on a mouse,",Other,,,,,Other,default,2026-11-04
+ES2007c.A.dialog-act.dharshi.53,ES2007c,A (PM),559.42,561.65,"I'll have a Big Mac, please.",Other,,,,,Task,rule,2026-11-04
+ES2007c.B.dialog-act.dharshi.67,ES2007c,B (ID),569.85,575.22,but then we've decided that we going for rubber for the case material.,Decision,,,,Decided: rubber case material.,Decision,rule,2026-11-04
+ES2007c.B.dialog-act.dharshi.130,ES2007c,B (ID),1525.67,1529.64,"No, but if you get Bluetooth on the remote, you'd be able to",Other,,,,,Other,default,2026-11-04
+ES2007c.A.dialog-act.dharshi.194,ES2007c,A (PM),1690.54,1697.29,"right, we're gonna go go back to um going with the kinetic thing,",Decision,,,,Back to the kinetic power option; agreed.,Decision,summlink,2026-11-04
+ES2007c.A.dialog-act.dharshi.232,ES2007c,A (PM),2010.95,2017.88,"Um Gabriel, you're gonna be working on, you know come up with the the user interface design.",Task,Gabriel,,,Assigned: user interface design.,Task,summlink,2026-11-04
+ES2007c.A.dialog-act.dharshi.235,ES2007c,A (PM),2025.09,2029.60,Um and I think you are gonna get a chance to play with some clay.,Other,,,,,Task,summlink,2026-11-04
+ES2007c.A.dialog-act.dharshi.237,ES2007c,A (PM),2033.48,2041.31,"come up ki you know, be ab for the next meeting be able to come in and show us some some i some physical ideas.",Task,,for the next meeting,,Designers to bring physical ideas to the next meeting.,Task,summlink,2026-11-04
+ES2007c.C.dialog-act.dharshi.189,ES2007c,C (UI),2212.45,2213.10,I'll stay in here.,Other,,,,,Other,default,2026-11-04
+ES2007d.D.dialog-act.dharshi.58,ES2007d,D (ME),533.30,534.24,We're gonna do it all together,Other,,,,,Decision,rule,2026-11-04
+ES2007d.C.dialog-act.dharshi.80,ES2007d,C (UI),670.13,674.48,"If we're gonna have one left-handed and one right-handed then I would give it a one, but otherwise otherwise a two.",Other,,,,,Decision,rule,2026-11-04
+ES2008a.A.dialog-act.vkaraisk.9,ES2008a,A (PM),46.13,48.56,Um our agenda today is we are gonna do a little opening,Other,,,,,Decision,rule,2026-11-04
+ES2008a.B.dialog-act.vkaraisk.11,ES2008a,B (ID),142.57,146.80,Um I'm from the state of Maine in the US.,Other,,,,,Other,default,2026-11-04
+ES2008a.B.dialog-act.vkaraisk.83,ES2008a,B (ID),752.48,760.24,and if um if you'd save the more complicated functions maybe for separate remotes that you wouldn't need to use every day.,Other,,,,,Decision,summlink,2026-11-04
+ES2008a.A.dialog-act.vkaraisk.101,ES2008a,A (PM),761.49,768.66,"so maybe have like one remote that has the main functions on, off, channel changing, volume, and another rote remote with all the special things.",Other,,,,,Decision,summlink,2026-11-04
+ES2008a.A.dialog-act.vkaraisk.123,ES2008a,A (PM),903.23,908.75,"Um the industrial design, Alima will be doing um the working design.",Task,Alima,,,Assigned: working design.,Task,summlink,2026-11-04
+ES2008b.C.dialog-act.vkaraisk.91,ES2008b,C (UI),833.51,837.19,I don't wanna walk across the room just to adjust my television.,Other,,,,,Other,default,2026-11-04
+ES2008b.A.dialog-act.vkaraisk.115,ES2008b,A (PM),1278.78,1281.27,"We didn't bring it up yet, or at all in the meetings so far,",Other,,,,,Decision,summlink,2026-11-04
+ES2008b.A.dialog-act.vkaraisk.131,ES2008b,A (PM),1365.34,1372.54,"like your question earlier um whether this is going to be t for television, video, or etcetera. Just for television. That's what we're focused on.",Decision,,,,Scope settled: television only.,Decision,summlink,2026-11-04
+ES2008b.A.dialog-act.vkaraisk.150,ES2008b,A (PM),1431.53,1433.23,We need to decide who our target group is.,Other,,,,,Task,rule,2026-11-04
+ES2008b.D.dialog-act.vkaraisk.138,ES2008b,D (ME),1640.19,1643.10,"like if it was just a simple, either this way or this way,",Other,,,,,Decision,summlink,2026-11-04
+ES2008b.D.dialog-act.vkaraisk.140,ES2008b,D (ME),1643.10,1644.15,that had like the main buttons,Other,,,,,Decision,summlink,2026-11-04
+ES2008b.D.dialog-act.vkaraisk.141,ES2008b,D (ME),1644.15,1645.44,"and then you could like pull something out,",Other,,,,,Decision,summlink,2026-11-04
+ES2008b.A.dialog-act.vkaraisk.249,ES2008b,A (PM),1972.47,1981.95,We want a possibility to um to get um a possibility to get the extra functions.,Decision,,,,Agreed requirement: access to extra functions.,Decision,summlink,2026-11-04
+ES2008b.C.dialog-act.vkaraisk.178,ES2008b,C (UI),1985.90,1988.36,Which are kind of hidden away in some way,Other,,,,,Decision,summlink,2026-11-04
+ES2008b.A.dialog-act.vkaraisk.290,ES2008b,A (PM),2125.13,2128.01,"User Interface, the user interface concept,",Task,User Interface,,,Individual action: user interface concept.,Task,summlink,2026-11-04
+ES2008c.A.dialog-act.vkaraisk.14,ES2008c,A (PM),80.22,81.03,"we're gonna do an opening,",Other,,,,,Decision,rule,2026-11-04
+ES2008c.A.dialog-act.vkaraisk.22,ES2008c,A (PM),96.46,99.54,"We decided our target group is the focus on who can afford it,",Decision,,,,Recap: target group decided.,Decision,summlink,2026-11-04
+ES2008c.A.dialog-act.vkaraisk.31,ES2008c,A (PM),128.59,140.08,"I'd like to do it in this order, first do the conceptual specification of components, properties and materials um and then the conceptual specification of user interface and finally trend watching.",Other,,,,,Other,default,2026-11-04
+ES2008c.C.dialog-act.vkaraisk.128,ES2008c,C (UI),1400.67,1402.13,and you press the buttons with your thumb.,Other,,,,,Other,default,2026-11-04
+ES2008c.A.dialog-act.vkaraisk.140,ES2008c,A (PM),1528.39,1531.58,"but in that slide is when we need to make decisions about this these kinds of things,",Other,,,,,Task,rule,2026-11-04
+ES2008c.B.dialog-act.vkaraisk.243,ES2008c,B (ID),1614.21,1617.09,what do people think about this kinetic battery idea?,Other,,,,,Decision,summlink,2026-11-04
+ES2008c.B.dialog-act.vkaraisk.327,ES2008c,B (ID),1970.18,1976.71,I think it might be better to put our money into the stuff like the kinetic battery and the cool case,Other,,,,,Decision,summlink,2026-11-04
+ES2008c.D.dialog-act.vkaraisk.133,ES2008c,D (ME),1985.90,1992.45,"but if it's gonna be in a latex type thing and that's gonna look cool, then that's probably gonna have a bigger impact than the scroll wheel.",Other,,,,,Decision,summlink,2026-11-04
+ES2008c.A.dialog-act.vkaraisk.221,ES2008c,A (PM),1994.62,1998.99,"we're gonna go with um type pushbuttons,",Decision,,,,Decided: push buttons.,Decision,summlink,2026-11-04
+ES2008c.A.dialog-act.vkaraisk.225,ES2008c,A (PM),2013.72,2016.04,"So we're gonna have like a menu button,",Decision,,,,Decided: a menu button.,Decision,summlink,2026-11-04
+ES2008c.A.dialog-act.vkaraisk.244,ES2008c,A (PM),2078.16,2079.47,Um did we decide on a chip?,Other,,,,,Decision,summlink,2026-11-04
+ES2008c.A.dialog-act.vkaraisk.245,ES2008c,A (PM),2079.47,2081.49,Let's go with a simple chip?,Decision,,,,Agreed: simple chip.,Decision,summlink,2026-11-04
+ES2008d.A.dialog-act.vkaraisk.8,ES2008d,A (PM),54.87,56.40,we're gonna do an opening,Other,,,,,Decision,rule,2026-11-04
+ES2008d.A.dialog-act.vkaraisk.10,ES2008d,A (PM),62.84,64.39,then we'll have the prototype presentation,Other,,,,,Decision,rule,2026-11-04
+ES2008d.C.dialog-act.vkaraisk.15,ES2008d,C (UI),213.51,218.61,Um I've gone here just for just for four buttons on this one. Um,Other,,,,,Other,default,2026-11-04
+ES2008d.A.dialog-act.vkaraisk.63,ES2008d,A (PM),479.65,482.61,Um we so we do we've decided not to worry about that for now.,Decision,,,,Decided not to worry about it for now.,Decision,summlink,2026-11-04
+ES2008d.A.dialog-act.vkaraisk.66,ES2008d,A (PM),485.50,487.45,"so you're right, they're gonna stick out,",Other,,,,,Decision,summlink,2026-11-04
+ES2008d.B.dialog-act.vkaraisk.90,ES2008d,B (ID),610.08,612.93,"is that where people are leaning then, the potato?",Other,,,,,Decision,summlink,2026-11-04
+ES2008d.A.dialog-act.vkaraisk.94,ES2008d,A (PM),613.52,614.87,I think I'm leaning towards the potato.,Other,,,,,Decision,summlink,2026-11-04
+ES2008d.B.dialog-act.vkaraisk.93,ES2008d,B (ID),614.86,618.33,"that's really gotten the simplicity of the buttons down, that one.",Other,,,,,Decision,summlink,2026-11-04
+ES2008d.A.dialog-act.vkaraisk.130,ES2008d,A (PM),877.71,878.94,Think I'm gonna go with the four as well.,Other,,,,,Decision,rule,2026-11-04
+ES2008d.A.dialog-act.vkaraisk.142,ES2008d,A (PM),948.83,953.80,"but if we had all the buttons in black, and a design in and the outside in yellow, that'd be our corporate one",Other,,,,,Decision,summlink,2026-11-04
+ES2008d.A.dialog-act.vkaraisk.144,ES2008d,A (PM),962.34,965.77,Um and can we have like an R_R_ inscribed on the bottom or something?,Other,,,,,Decision,summlink,2026-11-04
+ES2008d.A.dialog-act.vkaraisk.156,ES2008d,A (PM),1037.95,1039.49,I like how it fits in the hand though,Other,,,,,Other,default,2026-11-04
+ES2008d.D.dialog-act.vkaraisk.200,ES2008d,D (ME),1270.70,1271.59,"And so we're gonna do that,",Decision,,,,Agreed: all versions carry the RR logo.,Decision,rule,2026-11-04
+ES2008d.A.dialog-act.vkaraisk.230,ES2008d,A (PM),1399.81,1400.96,And how many buttons do we have?,Other,,,,,Other,default,2026-11-04
+ES2008d.B.dialog-act.vkaraisk.251,ES2008d,B (ID),1499.53,1503.00,It's single curved.,Other,,,,,Decision,summlink,2026-11-04
+ES2008d.A.dialog-act.vkaraisk.272,ES2008d,A (PM),1512.22,1513.62,case material is rubber,Decision,,,,Chosen design: rubber case.,Decision,summlink,2026-11-04
+ES2009a.A.dialog-act.vkaraisk.166,ES2009a,A (PM),465.37,467.81,um you can't go wrong with Radiohead.,Other,,,,,Other,default,2026-11-04
+ES2009a.A.dialog-act.vkaraisk.313,ES2009a,A (PM),855.87,860.82,I need you to tell us what um we what the user's gonna want.,Task,you,,,Marketing asked to find out what users want.,Task,summlink,2026-11-04
+ES2009a.D.dialog-act.vkaraisk.173,ES2009a,D (ME),1157.96,1159.38,so we're gonna have to be careful with what like,Other,,,,,Decision,rule,2026-11-04
+ES2009a.C.dialog-act.vkaraisk.96,ES2009a,C (UI),1220.38,1226.28,If you're not doing that then we can have something that just kind of rings from either,Other,,,,,Other,default,2026-11-04
+ES2009b.B.dialog-act.vkaraisk.33,ES2009b,B (ID),194.98,198.46,"Um, components. Just some ideas that I had,",Other,,,,,Other,default,2026-11-04
+ES2009b.A.dialog-act.vkaraisk.98,ES2009b,A (PM),704.07,706.20,um think we're constrained to plastics,Other,,,,,Decision,summlink,2026-11-04
+ES2009b.B.dialog-act.vkaraisk.74,ES2009b,B (ID),754.45,756.88,With a simple command like locate.,Other,,,,,Decision,summlink,2026-11-04
+ES2009b.A.dialog-act.vkaraisk.116,ES2009b,A (PM),778.65,780.05,a voice from far away,Other,,,,,Other,default,2026-11-04
+ES2009b.C.dialog-act.vkaraisk.44,ES2009b,C (UI),789.32,792.40,A little sticky pad to stick on top of your uh television.,Other,,,,,Decision,summlink,2026-11-04
+ES2009b.D.dialog-act.vkaraisk.85,ES2009b,D (ME),835.43,841.67,"if we're gonna do this touch pad screen thing, it would be still, do we know if that's an option technically right now to that?",Risk,,,,Uncertain whether the touch pad screen is technically possible.,Decision,rule,2026-11-04
+ES2009b.A.dialog-act.vkaraisk.178,ES2009b,A (PM),1089.17,1090.34,Yeah I think that would be best.,Other,,,,,Decision,summlink,2026-11-04
+ES2009b.A.dialog-act.vkaraisk.180,ES2009b,A (PM),1091.35,1099.94,based on what sh on what you guys have all said to me let's go for a plastic built or uh b plastic cased,Decision,,,,Decided: plastic case.,Decision,summlink,2026-11-04
+ES2009b.A.dialog-act.vkaraisk.208,ES2009b,A (PM),1170.68,1173.88,let's go with a um touch screen,Decision,,,,Decided: touch screen.,Decision,rule,2026-11-04
+ES2009b.A.dialog-act.vkaraisk.229,ES2009b,A (PM),1242.04,1244.19,to emit some kind of paging. Just a beep.,Decision,,,,Agreed locator: a simple beep.,Decision,summlink,2026-11-04
+ES2009b.A.dialog-act.vkaraisk.279,ES2009b,A (PM),1412.60,1415.33,I'm gonna save th a copy of this in case you guys need any reminders.,Task,I,,,PM commits to save a copy for reminders.,Task,summlink,2026-11-04
+ES2009c.A.dialog-act.vkaraisk.18,ES2009c,A (PM),67.64,71.31,"basically all we're gonna do is have some presentations again much like last time,",Other,,,,,Decision,rule,2026-11-04
+ES2009c.D.dialog-act.vkaraisk.56,ES2009c,D (ME),517.57,524.62,"not like a skin, but like a holder almost if you could do like um, leather options or wood options or something",Other,,,,,Other,default,2026-11-04
+ES2009c.C.dialog-act.vkaraisk.17,ES2009c,C (UI),590.60,592.48,It could go with the granola crowd.,Other,,,,,Decision,rule,2026-11-04
+ES2009c.C.dialog-act.vkaraisk.67,ES2009c,C (UI),821.51,826.42,"Um, and of course our voice command system which I've talked a little bit about already",Other,,,,,Other,default,2026-11-04
+ES2009c.B.dialog-act.vkaraisk.143,ES2009c,B (ID),1337.30,1340.49,"but I think just to keep people from getting annoyed,",Other,,,,,Decision,summlink,2026-11-04
+ES2009c.A.dialog-act.vkaraisk.230,ES2009c,A (PM),1519.93,1527.99,"And the uh the material like the plastics and so forth, we were discussing that being uh using like a rubber kind of softer feel,",Other,,,,,Decision,summlink,2026-11-04
+ES2009c.B.dialog-act.vkaraisk.170,ES2009c,B (ID),1543.70,1545.18,Just kind of the squishy feel.,Other,,,,,Decision,summlink,2026-11-04
+ES2009c.A.dialog-act.vkaraisk.256,ES2009c,A (PM),1657.29,1661.43,"if we're gonna have a non-remote-looking remote, how do we yeah.",Other,,,,,Decision,rule,2026-11-04
+ES2009c.A.dialog-act.vkaraisk.302,ES2009c,A (PM),1858.95,1864.05,let's work on uh multiple case colours.,Decision,,,,Agreed: multiple case colours.,Decision,summlink,2026-11-04
+ES2009c.A.dialog-act.vkaraisk.307,ES2009c,A (PM),1878.54,1882.43,"we'll have the next meeting about half an hour, um.",Other,,,,,Decision,rule,2026-11-04
+ES2009c.A.dialog-act.vkaraisk.311,ES2009c,A (PM),1896.37,1902.78,"Um, what are our broad constraints before we deve design a prototype.",Task,,,,Part of the assignment: work out the broad constraints before the prototype.,Task,summlink,2026-11-04
+ES2009c.A.dialog-act.vkaraisk.316,ES2009c,A (PM),1929.67,1940.49,"Um I need you guys to work together on making a prototype, um using um prototype building materials um.",Task,you guys,,,Designers assigned to build the prototype.,Task,summlink,2026-11-04
+ES2009d.B.dialog-act.vkaraisk.58,ES2009d,B (ID),449.19,452.29,but we just went for a classic rubber button,Decision,,,,Decided: classic rubber buttons.,Decision,summlink,2026-11-04
+ES2009d.D.dialog-act.vkaraisk.73,ES2009d,D (ME),844.63,849.03,but honestly if we cut that one piece out we're actually coming in under budget,Other,,,,,Decision,summlink,2026-11-04
+ES2009d.A.dialog-act.vkaraisk.230,ES2009d,A (PM),1457.10,1460.56,"Maybe in in Legos you know? Be fun with Legos too,",Other,,,,,Other,default,2026-11-04
+ES2009d.A.dialog-act.vkaraisk.370,ES2009d,A (PM),1948.70,1953.71,"so I'll put all that into the final report as well, or as much as seems like",Task,I,,,PM commits to put it in the final report.,Task,summlink,2026-11-04
+ES2010a.A.dialog-act.dharshi.19,ES2010a,A (PM),98.88,102.11,And we're going to do individual work on that and then meet.,Other,,,,,Decision,rule,2026-11-04
+ES2010b.B.dialog-act.dharshi.13,ES2010b,B (ID),724.69,729.82,"We need a power source, we're gonna need a smart chip if we're gonna make it multi-functional.",Other,,,,,Decision,summlink,2026-11-04
+ES2010b.D.dialog-act.dharshi.85,ES2010b,D (ME),929.85,933.47,I think we should do something like maybe bigger and round like bubbles.,Other,,,,,Decision,summlink,2026-11-04
+ES2010b.A.dialog-act.dharshi.182,ES2010b,A (PM),1094.15,1100.54,"Because I think even if something has large buttons, as long as they are not childishly large, like even technically",Other,,,,,Decision,summlink,2026-11-04
+ES2010b.A.dialog-act.dharshi.209,ES2010b,A (PM),1222.92,1225.67,I'll make a note here that we wanna keep the number of buttons down.,Decision,,,,Agreed: keep the number of buttons down.,Task,rule,2026-11-04
+ES2010b.D.dialog-act.dharshi.104,ES2010b,D (ME),1255.70,1257.66,we we need a like homing device.,Other,,,,,Decision,summlink,2026-11-04
+ES2010b.A.dialog-act.dharshi.242,ES2010b,A (PM),1398.20,1402.89,"and the speech recognition could be part of the lost and found device, too.",Other,,,,,Decision,summlink,2026-11-04
+ES2010b.A.dialog-act.dharshi.264,ES2010b,A (PM),1498.42,1503.97,And don't forget we need to include the colour of our company and the logo.,Decision,,,,Requirement: include company colour and logo.,Decision,summlink,2026-11-04
+ES2010b.A.dialog-act.dharshi.271,ES2010b,A (PM),1543.01,1544.36,or no menu buttons.,Other,,,,,Decision,summlink,2026-11-04
+ES2010b.A.dialog-act.dharshi.272,ES2010b,A (PM),1544.36,1551.52,"So we've pretty much pared it down to on-off, volume, mute, channel up and down, um the numbers",Decision,,,,Agreed button set pared down.,Decision,summlink,2026-11-04
+ES2010b.C.dialog-act.dharshi.158,ES2010b,C (UI),1651.95,1657.14,"So we just have it like add a menu button then for the various things needed,",Decision,,,,Agreed: add a menu button.,Decision,summlink,2026-11-04
+ES2010b.A.dialog-act.dharshi.310,ES2010b,A (PM),1712.58,1713.94,And then we're gonna have lunch break.,Other,,,,,Decision,rule,2026-11-04
+ES2010b.A.dialog-act.dharshi.317,ES2010b,A (PM),1728.76,1732.99,"The I_D_ is going to work on the components concept,",Task,The I_D_,,,Assigned: components concept.,Task,summlink,2026-11-04
+ES2010c.C.dialog-act.dharshi.21,ES2010c,C (UI),345.47,351.49,"looking at the interface concept, it's gonna be mostly examples of possibilities of where we can go with this.",Other,,,,,Decision,rule,2026-11-04
+ES2010c.A.dialog-act.dharshi.77,ES2010c,A (PM),833.89,835.68,Now we have to make some decisions.,Other,,,,,Task,rule,2026-11-04
+ES2010c.B.dialog-act.dharshi.114,ES2010c,B (ID),1190.45,1194.36,um we could do f a cherry cover for this year,Other,,,,,Decision,summlink,2026-11-04
+ES2010c.A.dialog-act.dharshi.201,ES2010c,A (PM),1564.29,1565.63,"But those are plastic, right?",Other,,,,,Other,default,2026-11-04
+ES2010c.D.dialog-act.dharshi.182,ES2010c,D (ME),1721.61,1728.05,"Um and then if v we do have them illuminate upon contact, they could illuminate yellow.",Other,,,,,Decision,summlink,2026-11-04
+ES2010d.A.dialog-act.dharshi.4,ES2010d,A (PM),23.89,29.06,"Um after the opening we're going to have a prototype presentation,",Other,,,,,Decision,rule,2026-11-04
+ES2010d.A.dialog-act.dharshi.118,ES2010d,A (PM),529.87,533.26,"this is where we need to make a final call on if it's a lithium or do we wanna go triple A_s,",Other,,,,,Decision,summlink,2026-11-04
+ES2010d.A.dialog-act.dharshi.120,ES2010d,A (PM),536.13,537.20,"Oh, let's just go for a lithium.",Decision,,,,Decided: lithium battery.,Decision,summlink,2026-11-04
+ES2010d.B.dialog-act.dharshi.65,ES2010d,B (ID),653.83,655.42,So we can go to production.,Decision,,,,Within budget: go to production.,Decision,summlink,2026-11-04
+ES2010d.A.dialog-act.dharshi.238,ES2010d,A (PM),948.12,951.84,"and now we're gonna complete the final questionnaire and meeting summary,",Task,we,,,Complete the final questionnaire and summary.,Task,summlink,2026-11-04
+ES2011a.A.dialog-act.dharshi.17,ES2011a,A (PM),102.23,111.99,"Um we're gonna do some tool training, project plan and discuss then close.",Other,,,,,Decision,rule,2026-11-04
+ES2011a.A.dialog-act.dharshi.76,ES2011a,A (PM),555.49,563.14,Um selling price is twenty five Euro. Profit aim fifty million Euro.,Decision,,,,"Brief: price 25 Euro, profit 50 million.",Other,default,2026-11-04
+ES2011a.C.dialog-act.dharshi.48,ES2011a,C (UI),667.22,668.10,"I've always wanted that,",Other,,,,,Other,default,2026-11-04
+ES2011a.A.dialog-act.dharshi.148,ES2011a,A (PM),1023.53,1026.76,um is going to be looking more into the working design.,Task,,,,Assigned: working design.,Task,summlink,2026-11-04
+ES2011a.C.dialog-act.dharshi.110,ES2011a,C (UI),1055.07,1057.20,So technical function.,Other,,,,,Task,summlink,2026-11-04
+ES2011a.A.dialog-act.dharshi.163,ES2011a,A (PM),1096.93,1100.39,"So we'll be working on the user requirements, um",Task,we,,,Marketing to work on user requirements.,Task,summlink,2026-11-04
+ES2011b.A.dialog-act.dharshi.9,ES2011b,A (PM),67.24,70.84,"Um I I'll get the ones up for next time,",Task,I,for next time,,PM commits to put the minutes up.,Task,rule,2026-11-04
+ES2011b.C.dialog-act.dharshi.56,ES2011b,C (UI),894.27,898.60,"So then our target age group would be the nineteen to thirty five range,",Decision,,,,Agreed target group 19 to 35.,Decision,summlink,2026-11-04
+ES2011b.A.dialog-act.dharshi.68,ES2011b,A (PM),925.40,933.81,"if you consider our budget, to h have speech recognition programmed in every single remote might be a little pricey.",Risk,,,,Concern: speech recognition in every remote is pricey.,Decision,summlink,2026-11-04
+ES2011b.C.dialog-act.dharshi.64,ES2011b,C (UI),939.16,944.01,Okay so are we gonna have just some kind of a like we'll have the buzzer on the som like on the T_V_ itself.,Other,,,,,Decision,rule,2026-11-04
+ES2011b.B.dialog-act.dharshi.115,ES2011b,B (ID),1520.37,1524.22,channel isn't applicable to D_V_D_ really 'cause you don't wanna,Other,,,,,Other,default,2026-11-04
+ES2011c.C.dialog-act.dharshi.28,ES2011c,C (UI),548.98,558.70,'Cause if we're gonna have to ha if we have this it just seems like in order to have someone going around and using the um the wheel,Other,,,,,Decision,rule,2026-11-04
+ES2011c.A.dialog-act.dharshi.198,ES2011c,A (PM),1443.17,1444.96,I mean we're gonna use batteries right?,Other,,,,,Decision,rule,2026-11-04
+ES2011d.C.dialog-act.dharshi.68,ES2011d,C (UI),1164.98,1166.35,I think the broccoli would be out.,Other,,,,,Other,default,2026-11-04
+ES2011d.A.dialog-act.dharshi.205,ES2011d,A (PM),1497.38,1501.65,I mean fruit and squishiness. How c more creative can you get?,Other,,,,,Task,rule,2026-11-04
+ES2012a.A.dialog-act.vkaraisk.70,ES2012a,A (PM),388.08,398.44,"so we'll um uh we'll do a virtual drawing on the on on the whiteboard of of your your own uh uh favourite animal,",Other,,,,,Decision,rule,2026-11-04
+ES2012a.A.dialog-act.vkaraisk.91,ES2012a,A (PM),459.16,467.95,"and uh w we need to keep in mind here that the uh we want to sell this for for twenty five Euro um,",Decision,,,,Brief: sell for 25 Euro.,Decision,summlink,2026-11-04
+ES2012b.C.dialog-act.vkaraisk.6,ES2012b,C (UI),782.94,788.18,uh I was just gonna say uh maybe like the flip phones that they use?,Other,,,,,Other,default,2026-11-04
+ES2012b.A.dialog-act.vkaraisk.180,ES2012b,A (PM),1149.03,1157.55,S s we could we could make it dual function voice recognition and still have buttons on it um,Other,,,,,Decision,summlink,2026-11-04
+ES2012b.A.dialog-act.vkaraisk.213,ES2012b,A (PM),1465.90,1470.43,"uh uh uh l uh l such as I mean um something you hold up like that,",Other,,,,,Decision,summlink,2026-11-04
+ES2012b.A.dialog-act.vkaraisk.227,ES2012b,A (PM),1538.16,1548.83,"if minimum number of buttons is our priority, then we should, as I say, r know, really bite the bullets and and reduce the buttons to absolute minimum,",Other,,,,,Decision,summlink,2026-11-04
+ES2012b.B.dialog-act.vkaraisk.92,ES2012b,B (ID),1746.81,1748.79,uh perhaps some sort of rechargeable battery,Other,,,,,Other,default,2026-11-04
+ES2012b.B.dialog-act.vkaraisk.99,ES2012b,B (ID),1768.61,1772.17,"um and I think we've all sort of mentioned adding a a locating device on it,",Other,,,,,Other,default,2026-11-04
+ES2012b.A.dialog-act.vkaraisk.324,ES2012b,A (PM),2088.85,2090.45,We're looking at extreme simplicity.,Decision,,,,Summary: extreme simplicity.,Decision,summlink,2026-11-04
+ES2012b.A.dialog-act.vkaraisk.325,ES2012b,A (PM),2092.23,2095.43,We're looking at a radically different shape.,Decision,,,,Summary: radically different shape.,Decision,summlink,2026-11-04
+ES2012c.A.dialog-act.vkaraisk.33,ES2012c,A (PM),191.77,195.65,um d d do we go for a custom designed chip?,Other,,,,,Decision,rule,2026-11-04
+ES2012c.B.dialog-act.vkaraisk.48,ES2012c,B (ID),467.67,472.40,and enable us to incorporate the voice function that we all uh seem to have agreed upon.,Decision,,,,Voice function agreed upon.,Decision,rule,2026-11-04
+ES2012c.C.dialog-act.vkaraisk.32,ES2012c,C (UI),851.35,855.90,"I kinda think if we're gonna have the voice recognition for part of it, then maybe we should have it for the whole thing.",Other,,,,,Decision,rule,2026-11-04
+ES2012c.C.dialog-act.vkaraisk.130,ES2012c,C (UI),1681.63,1688.42,I was sort of mm kinda picturing like maybe um a shape that's almost like a mouse.,Other,,,,,Decision,summlink,2026-11-04
+ES2012c.B.dialog-act.vkaraisk.201,ES2012c,B (ID),1714.76,1716.27,you'd want it narrower than a mouse though,Other,,,,,Decision,summlink,2026-11-04
+ES2012c.B.dialog-act.vkaraisk.208,ES2012c,B (ID),1726.13,1727.16,and fiddle around with it,Other,,,,,Other,default,2026-11-04
+ES2012c.A.dialog-act.vkaraisk.311,ES2012c,A (PM),1877.62,1882.74,"We actually use the television, okay. Okay, okay, okay.",Decision,,,,Accepted: the television is the display.,Decision,summlink,2026-11-04
+ES2012c.A.dialog-act.vkaraisk.331,ES2012c,A (PM),1975.00,1984.45,"for simplicity of, you know, manufacturing and uh maintenance that we will go for a a long term battery source um,",Decision,,,,Decided: long-term battery source.,Decision,rule,2026-11-04
+ES2012d.B.dialog-act.vkaraisk.8,ES2012d,B (ID),74.59,78.56,"Um on the left we've got the scroll for the volume,",Other,,,,,Decision,summlink,2026-11-04
+ES2012d.C.dialog-act.vkaraisk.4,ES2012d,C (UI),124.17,126.81,just kind of a light non-descript grey,Other,,,,,Decision,summlink,2026-11-04
+ES2012d.C.dialog-act.vkaraisk.6,ES2012d,C (UI),128.23,132.43,"and then the covers will be that sort of rubbery material like they make iPod covers,",Other,,,,,Decision,summlink,2026-11-04
+ES2012d.C.dialog-act.vkaraisk.60,ES2012d,C (UI),770.47,773.38,and not having you know a million buttons.,Other,,,,,Other,default,2026-11-04
+ES2013a.A.dialog-act.vkaraisk.60,ES2013a,A (PM),330.70,333.77,And your favourite characteristics of that animal.,Other,,,,,Other,default,2026-11-04
+ES2013a.A.dialog-act.vkaraisk.88,ES2013a,A (PM),495.48,501.13,Um the production is to only cost twelve and a half Euros per item.,Decision,,,,Brief: production cost 12.50 Euros.,Decision,summlink,2026-11-04
+ES2013a.A.dialog-act.vkaraisk.93,ES2013a,A (PM),516.12,517.15,can you do the maths,Other,,,,,Task,rule,2026-11-04
+ES2013b.C.dialog-act.vkaraisk.102,ES2013b,C (UI),1701.65,1703.91,"We're not gonna get any resolutions by the end of the day,",Other,,,,,Task,rule,2026-11-04
+ES2013b.A.dialog-act.vkaraisk.200,ES2013b,A (PM),1923.11,1930.05,Um so are we agreed then of those things?,Other,,,,,Decision,rule,2026-11-04
+ES2013b.A.dialog-act.vkaraisk.223,ES2013b,A (PM),2040.96,2044.15,and for you the trend-watching.,Task,you,,,Assigned: trend watching.,Task,summlink,2026-11-04
+ES2013c.A.dialog-act.vkaraisk.41,ES2013c,A (PM),220.53,232.68,"Um and that the function we agreed was volume, power, numbers, enter, channels, a way to move between channels, easy to use and hand-held.",Decision,,,,Recap of agreed functions.,Decision,rule,2026-11-04
+ES2013c.A.dialog-act.vkaraisk.42,ES2013c,A (PM),234.55,242.70,"Um at that point we agreed that Sarah would look at the current cost of competition, what what do the current ones sell for.",Task,Sarah,,,Agreed assignment: look at competitor costs.,Decision,rule,2026-11-04
+ES2013c.B.dialog-act.vkaraisk.12,ES2013c,B (ID),682.58,687.59,I I think we're gonna have some trouble when we get down to the component design on this.,Risk,,,,Concern: trouble expected in component design.,Decision,rule,2026-11-04
+ES2013c.C.dialog-act.vkaraisk.21,ES2013c,C (UI),691.10,704.13,"And as for as for um well budgeting as well, if we're gonna have lots of different interchangeable components.",Risk,,,,Concern: budget with many interchangeable components.,Decision,rule,2026-11-04
+ES2013c.B.dialog-act.vkaraisk.65,ES2013c,B (ID),964.63,973.67,but i it maybe is doesn't quite go with the um the fruit and veg.,Other,,,,,Decision,rule,2026-11-04
+ES2013c.B.dialog-act.vkaraisk.74,ES2013c,B (ID),992.91,995.19,but I thing that we agreed that that's not so good in the dark.,Decision,,,,Agreed: solar power rejected (dark).,Decision,rule,2026-11-04
+ES2013c.B.dialog-act.vkaraisk.173,ES2013c,B (ID),1994.79,1997.81,unfortunately I don't have costing information.,Other,,,,,Other,default,2026-11-04
+ES2013c.C.dialog-act.vkaraisk.200,ES2013c,C (UI),2227.90,2233.87,"like four buttons, up, down, left and right with enter in the middle, that will correspond to a menu on the screen.",Other,,,,,Decision,summlink,2026-11-04
+ES2013c.A.dialog-act.vkaraisk.217,ES2013c,A (PM),2321.73,2324.32,"uh Steph gets the user interface design,",Task,Steph,,,Assigned: user interface design.,Task,summlink,2026-11-04
+ES2013c.A.dialog-act.vkaraisk.219,ES2013c,A (PM),2327.96,2334.96,Um the two of you get to play with a Pla modelling clay um to do a prototype.,Task,the two of you,,,Assigned: build the prototype in clay.,Task,summlink,2026-11-04
+ES2013d.D.dialog-act.vkaraisk.66,ES2013d,D (ME),1006.58,1010.75,"although the the the people, the word on the street is is",Other,,,,,Other,default,2026-11-04
+ES2013d.D.dialog-act.vkaraisk.75,ES2013d,D (ME),1036.54,1037.86,Should we go with the yellow,Other,,,,,Decision,rule,2026-11-04
+ES2013d.D.dialog-act.vkaraisk.156,ES2013d,D (ME),1328.67,1330.49,If not I'll average those.,Other,,,,,Other,default,2026-11-04
+ES2013d.A.dialog-act.vkaraisk.154,ES2013d,A (PM),1443.94,1448.79,"Electronic simple chip on print, and we'll need one of those.",Decision,,,,Chosen component: simple chip.,Decision,summlink,2026-11-04
+ES2013d.A.dialog-act.vkaraisk.170,ES2013d,A (PM),1513.90,1515.42,We had the special colour.,Decision,,,,Recap: special colour.,Decision,summlink,2026-11-04
+ES2013d.A.dialog-act.vkaraisk.182,ES2013d,A (PM),1556.33,1560.65,"Button supplements, they'll be in a special colour of black.",Decision,,,,Button supplements in black.,Decision,summlink,2026-11-04
+ES2013d.B.dialog-act.vkaraisk.114,ES2013d,B (ID),1600.92,1602.26,"Yeah. They could be plastic,",Other,,,,,Decision,summlink,2026-11-04
+ES2013d.B.dialog-act.vkaraisk.115,ES2013d,B (ID),1602.26,1605.29,"we don't have to have rubber buttons,",Other,,,,,Decision,summlink,2026-11-04
+ES2014a.A.dialog-act.s9553330.106,ES2014a,A (PM),815.23,816.51,basically I'll get back to you on that.,Task,I,,,PM will get back with an answer.,Task,rule,2026-11-04
+ES2014a.C.dialog-act.s9553330.49,ES2014a,C (UI),1100.20,1103.43,I'm not exactly clear on what we're designing the rem remote for.,Other,,,,,Decision,summlink,2026-11-04
+ES2014a.B.dialog-act.s9553330.72,ES2014a,B (ID),1111.39,1114.37,so maybe we should just stick to that unless we get told otherwise.,Decision,,,,Agreed: stick to a television remote.,Decision,summlink,2026-11-04
+ES2014b.B.dialog-act.s9553330.14,ES2014b,B (ID),256.50,257.49,Alt function F_ eight.,Other,,,,,Other,default,2026-11-04
+ES2014b.C.dialog-act.s9553330.46,ES2014b,C (UI),748.40,749.82,Do we get to see that?,Other,,,,,Other,default,2026-11-04
+ES2014b.C.dialog-act.s9553330.49,ES2014b,C (UI),801.83,803.11,What do you mean by the circular section?,Other,,,,,Other,default,2026-11-04
+ES2014b.A.dialog-act.s9553330.177,ES2014b,A (PM),1678.38,1681.65,"But if you get it well before the next meeting, let everybody else know",Task,you,well before the next meeting,,Share the information with everyone.,Task,rule,2026-11-04
+ES2014b.A.dialog-act.s9553330.226,ES2014b,A (PM),2020.21,2031.57,So so keep um keep detailed functions um hidden at the back.,Decision,,,,Agreed: detailed functions hidden at the back.,Decision,summlink,2026-11-04
+ES2014b.B.dialog-act.s9553330.209,ES2014b,B (ID),2049.63,2052.67,"So we're gonna have like two separate two separate lists, I guess.",Decision,,,,Agreed: two separate button lists.,Decision,rule,2026-11-04
+ES2014b.D.dialog-act.s9553330.162,ES2014b,D (ME),2058.63,2062.84,"The detailed ones would be sort of brightness,",Other,,,,,Decision,summlink,2026-11-04
+ES2014b.B.dialog-act.s9553330.211,ES2014b,B (ID),2070.95,2072.66,"Should we decide in the next couple of minutes, and then",Other,,,,,Other,default,2026-11-04
+ES2014b.B.dialog-act.s9553330.213,ES2014b,B (ID),2078.73,2080.37,about the number.,Other,,,,,Decision,summlink,2026-11-04
+ES2014b.B.dialog-act.s9553330.223,ES2014b,B (ID),2139.08,2141.85,Um are we gonna have the channel up and down as well as the number buttons?,Other,,,,,Decision,summlink,2026-11-04
+ES2014b.D.dialog-act.s9553330.181,ES2014b,D (ME),2173.10,2173.95,"And a mute, yeah.",Decision,,,,Agreed: include mute.,Decision,summlink,2026-11-04
+ES2014b.D.dialog-act.s9553330.184,ES2014b,D (ME),2192.92,2197.01,You've got brightness and contrast.,Other,,,,,Decision,summlink,2026-11-04
+ES2014b.D.dialog-act.s9553330.188,ES2014b,D (ME),2228.79,2238.23,"And then maybe sort of an enter button for sort of s you know, saying that you want that particular thing tuned in.",Other,,,,,Decision,summlink,2026-11-04
+ES2014b.A.dialog-act.s9553330.268,ES2014b,A (PM),2300.42,2304.60,Right so I'll do the minutes of uh this meeting.,Task,I,,,PM commits to do the minutes.,Task,rule,2026-11-04
+ES2014c.A.dialog-act.s9553330.13,ES2014c,A (PM),196.27,199.46,"We're gonna have uh effectively two pages,",Decision,,,,Recap: two pages of features.,Decision,rule,2026-11-04
+ES2014c.B.dialog-act.s9553330.67,ES2014c,B (ID),544.07,545.75,so that is something I'll have to look into.,Task,I,,,Speaker will look into it.,Task,rule,2026-11-04
+ES2014c.A.dialog-act.s9553330.45,ES2014c,A (PM),591.06,593.34,and then that would be the end of that issue.,Other,,,,,Other,default,2026-11-04
+ES2014c.B.dialog-act.s9553330.110,ES2014c,B (ID),798.70,800.28,so we'd stick with the simple circuit board,Decision,,,,Agreed: simple circuit board.,Decision,summlink,2026-11-04
+ES2014c.A.dialog-act.s9553330.128,ES2014c,A (PM),1134.51,1139.07,the finder function rather than as a speech function to find your remote.,Decision,,,,Agreed: finder function rather than speech.,Decision,summlink,2026-11-04
+ES2014c.C.dialog-act.s9553330.88,ES2014c,C (UI),1182.98,1187.44,I think um I think we've decided that it's gonna increase the cost,Decision,,,,Decided against the scroll buttons (cost).,Decision,rule,2026-11-04
+ES2014c.A.dialog-act.s9553330.137,ES2014c,A (PM),1192.37,1194.81,"Alright, so we're just gonna have the the rubber buttons,",Decision,,,,Agreed: rubber buttons.,Decision,summlink,2026-11-04
+ES2014c.C.dialog-act.s9553330.129,ES2014c,C (UI),1621.68,1625.05,"It seems like you're gonna have rubber cases, as well as buttons.",Other,,,,,Decision,summlink,2026-11-04
+ES2014c.B.dialog-act.s9553330.228,ES2014c,B (ID),1953.28,1956.90,"it seems to make sense that we we'd just maybe stick with the standard rubber case,",Other,,,,,Decision,rule,2026-11-04
+ES2014c.C.dialog-act.s9553330.182,ES2014c,C (UI),2084.21,2086.75,"And the rubber push buttons, rubber case.",Decision,,,,Confirmed: rubber push buttons and rubber case.,Decision,summlink,2026-11-04
+ES2014c.C.dialog-act.s9553330.199,ES2014c,C (UI),2181.78,2185.66,"Yeah 'cause we wanna incorporate a bit of colour if we can,",Other,,,,,Decision,summlink,2026-11-04
+ES2014c.B.dialog-act.s9553330.266,ES2014c,B (ID),2192.95,2194.72,Just working out what we're gonna do for the next time.,Other,,,,,Decision,rule,2026-11-04
+ES2014d.C.dialog-act.s9553330.4,ES2014d,C (UI),83.36,85.28,"Y no, it's a slightly curved around the sides.",Other,,,,,Decision,summlink,2026-11-04
+ES2014d.B.dialog-act.s9553330.12,ES2014d,B (ID),214.76,216.21,"Yes, we'll have the slide-away.",Decision,,,,Agreed: slide-away design.,Decision,rule,2026-11-04
+ES2014d.A.dialog-act.s9553330.45,ES2014d,A (PM),380.74,404.69,"Okay, so, by the fact that we've got uh the simple chip and the uh kinetic energy source, we've got a single curved case. We've got a rubber uh case materials supplements.",Decision,,,,Recap of chosen components.,Decision,summlink,2026-11-04
+ES2014d.C.dialog-act.s9553330.39,ES2014d,C (UI),681.03,684.57,wouldn't you have to keep the simple chip there as well?,Other,,,,,Other,default,2026-11-04
+ES2014d.A.dialog-act.s9553330.143,ES2014d,A (PM),1108.02,1116.61,"so it seems to me that if you're going for the sample sensors speaker, you're basically then having to go for the cheaper options on everything else.",Other,,,,,Other,default,2026-11-04
+ES2014d.B.dialog-act.s9553330.98,ES2014d,B (ID),1294.49,1295.91,"Um, I think we're gonna have to lose some of these,",Decision,,,,Agreed to drop some features to meet budget.,Decision,rule,2026-11-04
+ES2014d.B.dialog-act.s9553330.181,ES2014d,B (ID),1829.65,1830.84,I think we've cut just about the same.,Other,,,,,Other,default,2026-11-04
+ES2014d.C.dialog-act.s9553330.117,ES2014d,C (UI),1998.29,2002.07,"I think if they were just all small round blue buttons, it'd be fine.",Other,,,,,Decision,summlink,2026-11-04
+ES2014d.A.dialog-act.s9553330.327,ES2014d,A (PM),2364.15,2364.91,which I will do.,Task,I,,,PM commits to write the notes.,Task,rule,2026-11-04
+ES2015a.A.dialog-act.dharshi.120,ES2015a,A (PM),847.79,854.49,"um, wanna make this um selling price of twenty five Euros.",Decision,,,,Brief: selling price 25 Euros.,Decision,summlink,2026-11-04
+ES2015a.A.dialog-act.dharshi.125,ES2015a,A (PM),876.18,880.41,"Um, and make it for an international market.",Decision,,,,Brief: international market.,Decision,summlink,2026-11-04
+ES2015a.A.dialog-act.dharshi.166,ES2015a,A (PM),1107.36,1108.22,Industrial Designer.,Other,,,,,Task,summlink,2026-11-04
+ES2015a.A.dialog-act.dharshi.171,ES2015a,A (PM),1123.02,1129.06,"and, um, we need the user requirements from the manag",Task,we,,,User requirements needed from marketing.,Task,summlink,2026-11-04
+ES2015a.A.dialog-act.dharshi.176,ES2015a,A (PM),1129.06,1131.17,Marketing Expert.,Other,,,,,Task,summlink,2026-11-04
+ES2015a.A.dialog-act.dharshi.172,ES2015a,A (PM),1131.17,1136.51,"Um, you will get specific instructions, um, of what to do in the next half an hour.",Other,,,,,Task,summlink,2026-11-04
+ES2015b.B.dialog-act.dharshi.14,ES2015b,B (ID),122.80,125.50,I will take this time just to apologise.,Other,,,,,Task,rule,2026-11-04
+ES2015b.B.dialog-act.dharshi.29,ES2015b,B (ID),169.16,179.03,"Uh, on a functional side of things, we found out that wh from our previous meeting, we decided that there're certain points that will make our product unique.",Decision,,,,Recap: decided unique selling points.,Decision,rule,2026-11-04
+ES2015b.C.dialog-act.dharshi.50,ES2015b,C (UI),792.19,798.21,And with this we'll have more room in the budget probably to make a more original design.,Other,,,,,Decision,summlink,2026-11-04
+ES2015b.D.dialog-act.dharshi.44,ES2015b,D (ME),892.33,895.81,So we believe in providing international market with fashionable products.,Other,,,,,Other,default,2026-11-04
+ES2015b.D.dialog-act.dharshi.121,ES2015b,D (ME),1166.76,1168.59,"So it should be very user-friendly, you know.",Other,,,,,Other,default,2026-11-04
+ES2015b.A.dialog-act.dharshi.114,ES2015b,A (PM),1350.22,1351.93,"Um, I don't know what an L_C_D_ screen is.",Other,,,,,Other,default,2026-11-04
+ES2015b.A.dialog-act.dharshi.135,ES2015b,A (PM),1550.98,1561.78,"Another thing that might um affect other decisions is that um the management feels that teletext is outdated, because more people are using the internet now.",Other,,,,,Decision,summlink,2026-11-04
+ES2015b.A.dialog-act.dharshi.165,ES2015b,A (PM),1701.50,1705.81,"Um, we have to decide on a target group and the functions of the remote control.",Other,,,,,Task,rule,2026-11-04
+ES2015b.A.dialog-act.dharshi.257,ES2015b,A (PM),2137.15,2140.23,So we've decided on lighting up things.,Decision,,,,Decided: lighting up.,Decision,summlink,2026-11-04
+ES2015b.D.dialog-act.dharshi.296,ES2015b,D (ME),2220.02,2223.72,"You could start out with three, and if, if we hit it big then we can add some on.",Other,,,,,Decision,summlink,2026-11-04
+ES2015c.A.dialog-act.dharshi.9,ES2015c,A (PM),85.86,92.14,And um we will once again have Poppy as our first presenter.,Other,,,,,Other,default,2026-11-04
+ES2015c.D.dialog-act.dharshi.12,ES2015c,D (ME),590.06,593.39,So the actual remote would be hard plastic and the casings rubber.,Decision,,,,"Agreed: hard plastic remote, rubber casings.",Decision,summlink,2026-11-04
+ES2015c.C.dialog-act.dharshi.76,ES2015c,C (UI),929.71,932.54,"I think we're gonna go with the command interface anyway,",Decision,,,,Going with the command interface.,Decision,summlink,2026-11-04
+ES2015c.D.dialog-act.dharshi.45,ES2015c,D (ME),1070.55,1074.79,"I think if we go with the um design plate thing, we'll have to.",Other,,,,,Decision,rule,2026-11-04
+ES2015c.C.dialog-act.dharshi.122,ES2015c,C (UI),1160.13,1162.73,"I mean, we don't have to decide on one colour.",Other,,,,,Other,default,2026-11-04
+ES2015c.D.dialog-act.dharshi.69,ES2015c,D (ME),1253.21,1255.80,"Um, it took a while to get this, uh",Other,,,,,Other,default,2026-11-04
+ES2015c.A.dialog-act.dharshi.198,ES2015c,A (PM),1619.68,1623.49,"Energy, we've decided on kinetic, right?",Decision,,,,Confirmed: kinetic energy.,Decision,summlink,2026-11-04
+ES2015c.B.dialog-act.dharshi.285,ES2015c,B (ID),1725.50,1727.64,because of the lighting that we've decided to put in as well.,Decision,,,,Lighting decided.,Decision,rule,2026-11-04
+ES2015c.B.dialog-act.dharshi.317,ES2015c,B (ID),1928.84,1934.78,"So we're just going for power, channels, volume,",Decision,,,,"Agreed functions: power, channels, volume.",Decision,summlink,2026-11-04
+ES2015c.A.dialog-act.dharshi.294,ES2015c,A (PM),2011.58,2017.20,"Um, you'll be working, Poppy will be working on the look-and-feel design.",Task,Poppy,,,Assigned: look-and-feel design.,Task,summlink,2026-11-04
+ES2015c.A.dialog-act.dharshi.301,ES2015c,A (PM),2030.22,2034.46,"Poppy and Tara will have to work together, using modelling clay.",Task,Poppy and Tara,,,Assigned: prototype in modelling clay.,Task,summlink,2026-11-04
+ES2015c.A.dialog-act.dharshi.302,ES2015c,A (PM),2035.04,2040.53,"And, um, your personal coach will give you the rest of the information of what needs to happen.",Other,,,,,Task,summlink,2026-11-04
+ES2015d.B.dialog-act.dharshi.58,ES2015d,B (ID),399.40,405.75,"Okay, as for the colours, we were presented with um a limited range of colours for this prototype.",Other,,,,,Decision,summlink,2026-11-04
+ES2015d.B.dialog-act.dharshi.63,ES2015d,B (ID),418.92,428.16,"Um and we're thinking to carry-on with the fruit and vegetable theme, the colour um combination just could just be named after different fruit,",Other,,,,,Decision,summlink,2026-11-04
+ES2015d.D.dialog-act.dharshi.52,ES2015d,D (ME),578.56,579.40,Should I press it again?,Other,,,,,Other,default,2026-11-04
+ES2015d.D.dialog-act.dharshi.73,ES2015d,D (ME),646.05,646.91,"um, I'll do it on the whiteboard.",Other,,,,,Task,rule,2026-11-04
+ES2015d.D.dialog-act.dharshi.105,ES2015d,D (ME),764.59,767.60,So I know we have the kinetic energy which is very innovative.,Other,,,,,Other,default,2026-11-04
+ES2015d.D.dialog-act.dharshi.127,ES2015d,D (ME),816.75,820.85,"I mean, there'll be s we have to work out the uh number the plus system.",Other,,,,,Task,rule,2026-11-04
+ES2015d.A.dialog-act.dharshi.145,ES2015d,A (PM),909.33,913.87,"I think, it was another colour and it was like I think it'd look okay.",Other,,,,,Other,default,2026-11-04
+ES2015d.D.dialog-act.dharshi.227,ES2015d,D (ME),1161.42,1164.03,we'll say yes it's uh one?,Other,,,,,Other,default,2026-11-04
+ES2016a.C.dialog-act.vkaraisk.11,ES2016a,C (UI),169.04,169.93,how we're gonna make it special.,Other,,,,,Decision,rule,2026-11-04
+ES2016a.A.dialog-act.vkaraisk.77,ES2016a,A (PM),572.50,577.45,It's something that we're supposed to sell for about twenty five Euros,Decision,,,,Brief: sell for about 25 Euros.,Decision,summlink,2026-11-04
+ES2016a.C.dialog-act.vkaraisk.78,ES2016a,C (UI),737.48,742.86,if it had like if some kind of like light or something or lights around it.,Other,,,,,Other,default,2026-11-04
+ES2016a.A.dialog-act.vkaraisk.141,ES2016a,A (PM),1082.68,1084.12,say the cover flips over,Other,,,,,Other,default,2026-11-04
+ES2016a.A.dialog-act.vkaraisk.192,ES2016a,A (PM),1360.86,1364.88,And then marketing will look and see what uh what people want.,Task,marketing,,,Marketing to find out what people want.,Task,summlink,2026-11-04
+ES2016b.A.dialog-act.vkaraisk.135,ES2016b,A (PM),1415.73,1417.58,We want something that looks good.,Decision,,,,Summary of agreed aims: looks good.,Decision,summlink,2026-11-04
+ES2016b.A.dialog-act.vkaraisk.137,ES2016b,A (PM),1420.26,1424.75,We want something that you can find easily. Um,Decision,,,,Summary of agreed aims: easy to find.,Decision,summlink,2026-11-04
+ES2016b.A.dialog-act.vkaraisk.169,ES2016b,A (PM),1568.87,1572.81,Um I'll do the minutes.,Task,I,,,PM commits to do the minutes.,Task,rule,2026-11-04
+ES2016b.A.dialog-act.vkaraisk.195,ES2016b,A (PM),1751.52,1753.46,"yellow it's nice and bright,",Other,,,,,Decision,summlink,2026-11-04
+ES2016b.A.dialog-act.vkaraisk.213,ES2016b,A (PM),1838.71,1842.75,Except for me now. Uh,Other,,,,,Other,default,2026-11-04
+ES2016b.A.dialog-act.vkaraisk.228,ES2016b,A (PM),1908.78,1917.36,I guess you've got you know one through nine. For typing in your channels.,Other,,,,,Decision,summlink,2026-11-04
+ES2016b.A.dialog-act.vkaraisk.230,ES2016b,A (PM),1923.11,1924.46,Channel up and down.,Other,,,,,Decision,summlink,2026-11-04
+ES2016b.B.dialog-act.vkaraisk.107,ES2016b,B (ID),1978.29,1981.85,Talking of which maybe a scrolling function is not not too bad.,Other,,,,,Decision,summlink,2026-11-04
+ES2016b.A.dialog-act.vkaraisk.289,ES2016b,A (PM),2353.82,2358.40,let's explore uh the the uh possibility of having the two-piece.,Task,,,,Group to explore the two-piece option.,Task,summlink,2026-11-04
+ES2016c.A.dialog-act.dharshi.33,ES2016c,A (PM),204.47,212.21,"Um uh I think we decided that um the expense was not necessarily worth it,",Decision,,,,Decided: speech recognition not worth the expense.,Decision,rule,2026-11-04
+ES2016c.C.dialog-act.dharshi.63,ES2016c,C (UI),902.39,904.00,Where are we? Uh.,Other,,,,,Other,default,2026-11-04
+ES2016c.B.dialog-act.dharshi.125,ES2016c,B (ID),1480.10,1489.29,"But obviously that's not our problem um since we have decided or against solar cells, I assume",Decision,,,,Decided against solar cells.,Decision,rule,2026-11-04
+ES2016c.B.dialog-act.dharshi.176,ES2016c,B (ID),1769.51,1772.91,"Well we we're supposed to stick to the company colours though,",Decision,,,,Requirement: company colours.,Decision,rule,2026-11-04
+ES2016c.A.dialog-act.dharshi.117,ES2016c,A (PM),1893.06,1899.75,Like I said we have to make a decision on a couple of these items here.,Other,,,,,Task,rule,2026-11-04
+ES2016c.A.dialog-act.dharshi.134,ES2016c,A (PM),2050.17,2060.28,"If we go with the plasticky case, or the the plastic case, um then the chip-on-print is still kind of, we could have either or.",Other,,,,,Decision,rule,2026-11-04
+ES2016c.A.dialog-act.dharshi.143,ES2016c,A (PM),2094.07,2103.63,with Perhaps that's not even enough rubber to qualify as being part of it.,Other,,,,,Decision,summlink,2026-11-04
+ES2016c.C.dialog-act.dharshi.143,ES2016c,C (UI),2129.21,2130.08,Yeah I think so.,Other,,,,,Decision,summlink,2026-11-04
+ES2016c.A.dialog-act.dharshi.145,ES2016c,A (PM),2136.98,2141.08,Which will require a more expensive chip-on-print right?,Other,,,,,Decision,summlink,2026-11-04
+ES2016c.A.dialog-act.dharshi.163,ES2016c,A (PM),2268.51,2276.08,"basically just be working on the prototype, uh we'll accomplish your other two actions.",Task,,,,Designers to work on the prototype.,Task,summlink,2026-11-04
+ES2016d.A.dialog-act.dharshi.6,ES2016d,A (PM),38.77,46.13,"Uh and then we'll have a, the prototype presentation.",Other,,,,,Decision,rule,2026-11-04
+ES2016d.A.dialog-act.dharshi.62,ES2016d,A (PM),509.70,511.73,a a modern colour to go with the modern form.,Other,,,,,Decision,rule,2026-11-04
+ES2016d.A.dialog-act.dharshi.82,ES2016d,A (PM),668.91,675.40,"With the speech recognition, which of course may be changed depending on budget.",Other,,,,,Other,default,2026-11-04
+ES2016d.B.dialog-act.dharshi.132,ES2016d,B (ID),1124.62,1127.37,"It's a specially ugly colour, but it's not special.",Other,,,,,Decision,summlink,2026-11-04
+ES2016d.B.dialog-act.dharshi.151,ES2016d,B (ID),1259.22,1261.18,Right. We may not need it.,Other,,,,,Decision,summlink,2026-11-04
+IS1000a.B.dialog-act.vkaraisk.172,IS1000a,B (PM),1068.31,1072.91,want to get the feeling this is a twenty five Euro project uh pr um,Other,,,,,Other,default,2026-11-04
+IS1000a.B.dialog-act.vkaraisk.176,IS1000a,B (PM),1079.09,1086.04,"more interesting for our company of course, p uh profit aim, about fifty million Euro.",Decision,,,,Brief: profit aim 50 million Euro.,Decision,summlink,2026-11-04
+IS1000a.C.dialog-act.vkaraisk.87,IS1000a,C (UI),1212.33,1214.95,We are targ targeting the television set.,Decision,,,,Scope: television set.,Decision,summlink,2026-11-04
+IS1000a.C.dialog-act.vkaraisk.90,IS1000a,C (UI),1219.45,1226.73,"You need to browse the browse the channels in upward downward way,",Other,,,,,Decision,summlink,2026-11-04
+IS1000a.C.dialog-act.vkaraisk.110,IS1000a,C (UI),1293.16,1301.91,"And uh, you'd need the usual ones, like the changing the volume, changing the the channel",Other,,,,,Decision,summlink,2026-11-04
+IS1000a.B.dialog-act.vkaraisk.246,IS1000a,B (PM),1471.46,1478.02,"Um you will be working on on technical function design, so",Task,you,,,Assigned: technical function design.,Task,summlink,2026-11-04
+IS1000b.B.dialog-act.vkaraisk.38,IS1000b,B (PM),353.24,356.47,uh Anna can you c do you have a presentations?,Other,,,,,Other,default,2026-11-04
+IS1000b.B.dialog-act.vkaraisk.112,IS1000b,B (PM),1125.68,1129.48,and we are not uh able to change it.,Other,,,,,Other,default,2026-11-04
+IS1000b.C.dialog-act.vkaraisk.64,IS1000b,C (UI),1225.83,1229.32,I can take I think mine now there.,Other,,,,,Task,rule,2026-11-04
+IS1000b.B.dialog-act.vkaraisk.140,IS1000b,B (PM),1575.36,1580.75,W w w w we need to decide on on on on in how far we go to in this.,Other,,,,,Task,rule,2026-11-04
+IS1000b.B.dialog-act.vkaraisk.150,IS1000b,B (PM),1662.68,1667.21,first thing is uh teletext is a well known feature of televisions,Other,,,,,Decision,summlink,2026-11-04
+IS1000b.B.dialog-act.vkaraisk.220,IS1000b,B (PM),2125.43,2138.61,People yes. Who just have or already have a job and have the money but may not want to spend that much money on a on a universal universal control.,Other,,,,,Other,default,2026-11-04
+IS1000b.B.dialog-act.vkaraisk.238,IS1000b,B (PM),2258.27,2263.13,and uh maybe you can look on on what trends are in this uh in this type of market.,Task,you,,,Asked to look at market trends.,Task,summlink,2026-11-04
+IS1000c.B.dialog-act.vkaraisk.10,IS1000c,B (PM),129.65,134.26,Uh I will take some minutes uh again.,Other,,,,,Task,rule,2026-11-04
+IS1000c.A.dialog-act.vkaraisk.24,IS1000c,A (ME),271.88,277.09,we have to work out a way what we can do with our product to make it stand out and make it so people wanna buy it.,Other,,,,,Task,rule,2026-11-04
+IS1000c.D.dialog-act.vkaraisk.151,IS1000c,D (ID),1563.06,1570.20,"it's kind of um simple pro progra programmable device, and we have to insert.",Other,,,,,Other,default,2026-11-04
+IS1000c.B.dialog-act.vkaraisk.132,IS1000c,B (PM),1818.72,1824.14,Uh furthermore we go for the for the uh basic plastic case,Decision,,,,Decided: basic plastic case.,Decision,rule,2026-11-04
+IS1000c.B.dialog-act.vkaraisk.161,IS1000c,B (PM),2029.44,2033.42,maybe you can start evaluating uh their work somehow.,Task,you,,,Asked to start evaluating the designers' work.,Task,summlink,2026-11-04
+IS1000d.A.dialog-act.vkaraisk.178,IS1000d,A (ME),1194.00,1197.41,"'Cause if people are left handed they want to use the other hand,",Other,,,,,Other,default,2026-11-04
+IS1000d.A.dialog-act.vkaraisk.247,IS1000d,A (ME),1493.25,1495.43,we're d we're still thinking twenty to forty year olds?,Other,,,,,Other,default,2026-11-04
+IS1000d.B.dialog-act.vkaraisk.268,IS1000d,B (PM),1760.49,1762.17,"but we have to decide it,",Other,,,,,Task,rule,2026-11-04
+IS1000d.C.dialog-act.vkaraisk.277,IS1000d,C (ID),2208.10,2209.99,"No we cannot, yeah.",Other,,,,,Other,default,2026-11-04
+IS1000d.A.dialog-act.vkaraisk.415,IS1000d,A (ME),2441.24,2443.10,"we have to make a decision now, that's it.",Other,,,,,Task,rule,2026-11-04
+IS1000d.A.dialog-act.vkaraisk.438,IS1000d,A (ME),2553.84,2556.12,w we can go back and l talk to the suppliers maybe,Other,,,,,Decision,summlink,2026-11-04
+IS1000d.A.dialog-act.vkaraisk.439,IS1000d,A (ME),2556.12,2558.71,and see if we can drive the prices down to add a few more things in,Other,,,,,Decision,summlink,2026-11-04
+IS1001a.A.dialog-act.s9553330.76,IS1001a,A (PM),509.22,515.01,"Okay, so if it selled uh by its own i it it would rather be for multiple device.",Other,,,,,Decision,summlink,2026-11-04
+IS1001a.A.dialog-act.s9553330.125,IS1001a,A (PM),776.35,787.74,So so I will ask the Industrial Designer to find out more about this industrial design so any working any working function we have discussed.,Task,the Industrial Designer,,,Industrial Designer to find out more about the working design.,Task,summlink,2026-11-04
+IS1001b.D.dialog-act.dharshi.15,IS1001b,D (ME),418.27,419.69,"Yeah, I can do that.",Other,,,,,Task,rule,2026-11-04
+IS1001b.D.dialog-act.dharshi.29,IS1001b,D (ME),515.39,522.93,"so we have to find something to make them more more nice, more kind.",Other,,,,,Task,rule,2026-11-04
+IS1001b.A.dialog-act.dharshi.105,IS1001b,A (PM),685.47,688.70,so you we have to make it uh more ergonomic yeah.,Other,,,,,Task,rule,2026-11-04
+IS1001b.C.dialog-act.dharshi.82,IS1001b,C (ID),1109.34,1113.98,in that case that mean that we are going to use more for simple,Other,,,,,Decision,rule,2026-11-04
+IS1001b.A.dialog-act.dharshi.243,IS1001b,A (PM),1635.22,1637.95,so I think we have to do something very simple,Decision,,,,Agreed: something very simple.,Task,rule,2026-11-04
+IS1001b.A.dialog-act.dharshi.287,IS1001b,A (PM),1868.08,1874.71,"So have a wheel for incremental, have the digits uh on the lower side that can be closed",Decision,,,,Agreed design: wheel and covered digits.,Decision,summlink,2026-11-04
+IS1001b.A.dialog-act.dharshi.308,IS1001b,A (PM),1960.94,1962.30,Yeah. That would be cool.,Other,,,,,Decision,summlink,2026-11-04
+IS1001b.A.dialog-act.dharshi.321,IS1001b,A (PM),2007.83,2014.88,and I I will make a summary of that meeting that I will put in the shared folder you can't see,Task,I,,,PM commits to put a summary in the shared folder.,Task,rule,2026-11-04
+IS1001c.A.dialog-act.dharshi.102,IS1001c,A (PM),855.43,861.66,I think it's innovative to use the mm the wheel because I think no one else has.,Other,,,,,Decision,summlink,2026-11-04
+IS1001c.A.dialog-act.dharshi.110,IS1001c,A (PM),880.20,885.61,We have to make it l look like a fruit or vegetable.,Decision,,,,Requirement: look like a fruit or vegetable.,Task,rule,2026-11-04
+IS1001c.A.dialog-act.dharshi.130,IS1001c,A (PM),955.14,956.61,I think we can keep the wheel,Decision,,,,Agreed: keep the wheel.,Decision,summlink,2026-11-04
+IS1001c.B.dialog-act.dharshi.85,IS1001c,B (ID),1110.02,1111.50,Uh what do you mean by case?,Other,,,,,Other,default,2026-11-04
+IS1001c.A.dialog-act.dharshi.155,IS1001c,A (PM),1112.30,1116.80,"I think it's the box that should be spongy, banana's shape.",Decision,,,,"Agreed case: spongy, banana shape.",Decision,summlink,2026-11-04
+IS1001d.A.dialog-act.vkaraisk.33,IS1001d,A (PM),148.69,152.74,And the cost ended to be ten point seven Euros.,Other,,,,,Decision,summlink,2026-11-04
+IS1001d.A.dialog-act.vkaraisk.157,IS1001d,A (PM),658.66,662.51,We we have the cost below uh our threshold,Other,,,,,Decision,summlink,2026-11-04
+IS1001d.A.dialog-act.vkaraisk.160,IS1001d,A (PM),668.73,675.08,The the evaluation give satisfying result as well.,Other,,,,,Decision,summlink,2026-11-04
+IS1002b.D.dialog-act.s9553330.18,IS1002b,D (ME),254.15,260.09,That's what I'm that's what I'm talking about is is that we have to find something that is gonna be very attractive about this product,Other,,,,,Task,rule,2026-11-04
+IS1002b.B.dialog-act.s9553330.17,IS1002b,B (UI),382.97,387.79,"Um we have to decide on our our user interface, which is his department,",Other,,,,,Task,rule,2026-11-04
+IS1002b.C.dialog-act.s9553330.26,IS1002b,C (ID),623.78,626.04,so we ma we have to make it look good.,Other,,,,,Task,rule,2026-11-04
+IS1002b.D.dialog-act.s9553330.53,IS1002b,D (ME),873.47,875.71,"I I don't see the logic in elimination of teletext,",Other,,,,,Decision,summlink,2026-11-04
+IS1002b.D.dialog-act.s9553330.65,IS1002b,D (ME),922.55,925.02,because all of a sudden we are gonna have cost overruns.,Risk,,,,Concern: cost overruns.,Decision,rule,2026-11-04
+IS1002b.A.dialog-act.s9553330.114,IS1002b,A (PM),997.03,997.99,Yeah we probably should.,Other,,,,,Other,default,2026-11-04
+IS1002b.D.dialog-act.s9553330.134,IS1002b,D (ME),1351.80,1354.93,"Uh cutting edge technology, I don't think we're gonna have that,",Risk,,,,Concern: no cutting edge technology to market.,Decision,rule,2026-11-04
+IS1002b.D.dialog-act.s9553330.158,IS1002b,D (ME),1502.31,1504.67,but we're talking about in cost is gonna probably double.,Risk,,,,Concern: cost would probably double.,Decision,summlink,2026-11-04
+IS1002b.A.dialog-act.s9553330.185,IS1002b,A (PM),1825.36,1831.28,And and we're gonna make it we're gonna win mind-share by uh either being a fantastic product,Other,,,,,Decision,rule,2026-11-04
+IS1002b.A.dialog-act.s9553330.205,IS1002b,A (PM),1965.23,1968.15,"and I'll take it to different chairs, I'll take it to different",Other,,,,,Task,rule,2026-11-04
+IS1002b.A.dialog-act.s9553330.211,IS1002b,A (PM),1986.08,1988.71,But it it takes away the ease of use of the remote to a certain extent.,Risk,,,,Drawback: cradle reduces ease of use.,Decision,summlink,2026-11-04
+IS1002c.B.dialog-act.s9553330.49,IS1002c,B (UI),281.60,286.11,If we go with titanium we're gonna be uh limited in the amount of shapes we can do,Other,,,,,Decision,rule,2026-11-04
+IS1002c.C.dialog-act.s9553330.55,IS1002c,C (ID),641.43,647.20,But um yeah I think we we need to compromise between those two and somehow we'll do that. Somehow.,Other,,,,,Decision,rule,2026-11-04
+IS1002c.A.dialog-act.s9553330.93,IS1002c,A (PM),843.46,848.50,"I'd I'd say though that we if we did make the decision to go with the cradle though, the then we have that as well,",Other,,,,,Decision,rule,2026-11-04
+IS1002c.A.dialog-act.s9553330.124,IS1002c,A (PM),1106.66,1110.10,"and we have to decide on well n not exactly the details,",Other,,,,,Task,rule,2026-11-04
+IS1002c.A.dialog-act.s9553330.203,IS1002c,A (PM),1746.61,1747.57,Yeah yeah the mode switch.,Other,,,,,Other,default,2026-11-04
+IS1002c.D.dialog-act.s9553330.202,IS1002c,D (ME),1870.36,1871.40,We have to find cost.,Other,,,,,Task,rule,2026-11-04
+IS1002c.A.dialog-act.s9553330.242,IS1002c,A (PM),1923.26,1926.11,Thirty five to fifty Euros is our sales bracket okay.,Decision,,,,Agreed sales bracket 35 to 50 Euros.,Decision,summlink,2026-11-04
+IS1002d.A.dialog-act.dharshi.70,IS1002d,A (PM),373.51,377.08,"But it's definitely got options for like different types of models and things as well based on that,",Other,,,,,Other,default,2026-11-04
+IS1002d.A.dialog-act.dharshi.112,IS1002d,A (PM),814.99,822.84,which I think is probably fair considering that we have in-house manufacturing of power adaptors already.,Other,,,,,Other,default,2026-11-04
+IS1002d.A.dialog-act.dharshi.209,IS1002d,A (PM),1212.56,1214.48,"We're still under twenty Euros to build, so we're good.",Other,,,,,Other,default,2026-11-04
+IS1002d.A.dialog-act.dharshi.211,IS1002d,A (PM),1219.36,1222.41,"Not the original budget, but they are now.",Other,,,,,Decision,summlink,2026-11-04
+IS1003a.A.dialog-act.vkaraisk.27,IS1003a,A (PM),188.27,193.69,the selling price of the product will be twenty five Euros.,Decision,,,,Brief: selling price 25 Euros.,Decision,summlink,2026-11-04
+IS1003a.A.dialog-act.vkaraisk.31,IS1003a,A (PM),204.48,210.40,"it will uh be a an international remote control,",Decision,,,,Brief: international remote control.,Decision,summlink,2026-11-04
+IS1003a.A.dialog-act.vkaraisk.37,IS1003a,A (PM),239.83,242.19,try to create something new,Other,,,,,Decision,summlink,2026-11-04
+IS1003a.A.dialog-act.vkaraisk.73,IS1003a,A (PM),438.00,442.46,so really the remote control to be international.,Other,,,,,Decision,summlink,2026-11-04
+IS1003a.A.dialog-act.vkaraisk.78,IS1003a,A (PM),460.32,471.02,And to be sure that really people will be interested in buying a new remote control with maybe new functionalities that don't exist in the mm existing remote controls now.,Other,,,,,Decision,summlink,2026-11-04
+IS1003b.A.dialog-act.vkaraisk.81,IS1003b,A (ME),878.25,880.64,because it's too many buttons and so on.,Other,,,,,Other,default,2026-11-04
+IS1003b.C.dialog-act.vkaraisk.136,IS1003b,C (PM),1168.85,1171.06,"we want something fancy,",Other,,,,,Other,default,2026-11-04
+IS1003b.C.dialog-act.vkaraisk.158,IS1003b,C (PM),1244.15,1251.59,"the first one is that um for the designing of the remote control we don't really want to use the teletext anymore,",Decision,,,,Directive: no teletext.,Decision,summlink,2026-11-04
+IS1003b.C.dialog-act.vkaraisk.163,IS1003b,C (PM),1259.07,1262.83,"because now everybody has internet at home,",Other,,,,,Decision,summlink,2026-11-04
+IS1003b.C.dialog-act.vkaraisk.170,IS1003b,C (PM),1285.53,1296.82,you won't had um buttons to just to manipulate yeah to control the recorder or maybe the garage door or things like that.,Decision,,,,Directive: no controls for other devices.,Decision,summlink,2026-11-04
+IS1003b.C.dialog-act.vkaraisk.180,IS1003b,C (PM),1328.09,1339.44,"And also we want the image of the uh um real reaction be recognisable in the product, such as the colour and s the slogan.",Decision,,,,Requirement: corporate colour and slogan recognisable.,Decision,summlink,2026-11-04
+IS1003b.C.dialog-act.vkaraisk.187,IS1003b,C (PM),1374.40,1380.05,"so it has to be a fashion remote control. Fancy, fashion, powerful, easy to use.",Decision,,,,"Requirement: fashionable, easy to use.",Decision,summlink,2026-11-04
+IS1003b.C.dialog-act.vkaraisk.222,IS1003b,C (PM),1569.57,1574.26,and the User Interface Designer to work on the user interface concept.,Task,the User Interface Designer,,,Assigned: user interface concept.,Task,summlink,2026-11-04
+IS1003c.A.dialog-act.vkaraisk.44,IS1003c,A (PM),340.07,343.75,"and they want to watch their favourite uh T_V_ programme,",Other,,,,,Other,default,2026-11-04
+IS1003c.C.dialog-act.vkaraisk.105,IS1003c,C (UI),499.76,502.47,tha that's why we have to do language adaptation.,Other,,,,,Task,rule,2026-11-04
+IS1003c.C.dialog-act.vkaraisk.142,IS1003c,C (UI),701.19,707.77,stick to the first two parts. So what's the difference between our controller with other products in the market?,Other,,,,,Decision,rule,2026-11-04
+IS1003c.A.dialog-act.vkaraisk.197,IS1003c,A (PM),1485.97,1494.39,"maybe using solar energy and with battery would be something interesting,",Other,,,,,Decision,summlink,2026-11-04
+IS1003c.A.dialog-act.vkaraisk.244,IS1003c,A (PM),1807.23,1813.21,So you will have Baba and David Jordan you will have to work together on the prototype,Task,Baba and David Jordan,,,Assigned: prototype together.,Task,summlink,2026-11-04
+IS1003c.A.dialog-act.vkaraisk.250,IS1003c,A (PM),1831.72,1832.91,we can close the session.,Other,,,,,Other,default,2026-11-04
+IS1003d.A.dialog-act.dharshi.7,IS1003d,A (PM),68.24,71.46,let's go for our detailed design meeting.,Other,,,,,Decision,rule,2026-11-04
+IS1003d.C.dialog-act.dharshi.29,IS1003d,C (UI),183.81,186.41,So this is a introduction of our product.,Other,,,,,Other,default,2026-11-04
+IS1003d.A.dialog-act.dharshi.66,IS1003d,A (PM),513.22,515.73,It looks more like a pineapple.,Other,,,,,Decision,summlink,2026-11-04
+IS1003d.D.dialog-act.dharshi.114,IS1003d,D (ME),896.97,900.36,those are sort of agreed but this one would be more five to me.,Other,,,,,Decision,rule,2026-11-04
+IS1003d.D.dialog-act.dharshi.136,IS1003d,D (ME),1035.33,1037.71,Uh it's even easier to maybe.,Other,,,,,Other,default,2026-11-04
+IS1003d.B.dialog-act.dharshi.321,IS1003d,B (ID),1887.54,1890.81,Uh f like y we can we can put some uh double R_,Other,,,,,Decision,summlink,2026-11-04
+IS1004a.A.dialog-act.dharshi.62,IS1004a,A (PM),632.47,638.75,"which which would generate a profit of of um fifty million Euros, okay.",Decision,,,,Brief: profit 50 million Euros.,Decision,summlink,2026-11-04
+IS1004a.A.dialog-act.dharshi.79,IS1004a,A (PM),736.49,738.34,Uh we'll have a new meeting soon,Other,,,,,Decision,rule,2026-11-04
+IS1004a.A.dialog-act.dharshi.81,IS1004a,A (PM),743.79,749.52,"So um you have to work on the on the working design,",Task,you,,,Assigned: working design.,Task,summlink,2026-11-04
+IS1004b.A.dialog-act.dharshi.3,IS1004b,A (PM),45.26,48.38,"So, today we are going to have a f second meeting.",Other,,,,,Decision,rule,2026-11-04
+IS1004b.A.dialog-act.dharshi.14,IS1004b,A (PM),96.32,102.53,And uh basically we decided to um to uh go to individual actions for each of you,Other,,,,,Decision,rule,2026-11-04
+IS1004b.D.dialog-act.dharshi.27,IS1004b,D (ME),332.20,343.41,and we have to find the weaknesses and and the the improvements we could do to the current remote controls.,Other,,,,,Task,rule,2026-11-04
+IS1004b.A.dialog-act.dharshi.85,IS1004b,A (PM),681.48,692.36,"and uh finally, it should be clear that the corporate image, that means colours and logos of the co our company should be clearly inde identified in the product.",Decision,,,,Requirement: corporate image clearly identified.,Decision,summlink,2026-11-04
+IS1004b.A.dialog-act.dharshi.226,IS1004b,A (PM),2114.32,2120.47,Um so you have to work on the component uh concept.,Task,you,,,Assigned: component concept.,Task,summlink,2026-11-04
+IS1004b.A.dialog-act.dharshi.227,IS1004b,A (PM),2120.47,2123.27,"Uh you have to work on user interface,",Task,you,,,Assigned: user interface.,Task,summlink,2026-11-04
+IS1004c.A.dialog-act.dharshi.83,IS1004c,A (PM),853.03,856.58,So this is out of discussion.,Decision,,,,Option ruled out.,Decision,summlink,2026-11-04
+IS1004c.B.dialog-act.dharshi.107,IS1004c,B (UI),878.48,888.50,"I think it doesn't really add much to the functional design and it's it's it's not mature enough to use as a speech recognition engine, so",Other,,,,,Decision,summlink,2026-11-04
+IS1004c.B.dialog-act.dharshi.113,IS1004c,B (UI),914.06,920.46,"Yeah, well, this is actu this could be a genetically engineered fruit that's designed to be you know square so that it packs tighter in the boxes.",Other,,,,,Other,default,2026-11-04
+IS1004c.B.dialog-act.dharshi.116,IS1004c,B (UI),930.14,934.43,"I think everyone has has agreed that it's that it could be quite a useful um thing, so.",Decision,,,,Agreed: scroll wheel is useful.,Decision,rule,2026-11-04
+IS1004c.C.dialog-act.dharshi.152,IS1004c,C (ID),1730.06,1733.05,"L_C_D_ has already been ruled out, A_S_R_ has been ruled out.",Decision,,,,LCD and speech recognition ruled out.,Decision,summlink,2026-11-04
+IS1004c.A.dialog-act.dharshi.228,IS1004c,A (PM),2050.14,2051.36,And and you have two wheels.,Other,,,,,Decision,summlink,2026-11-04
+IS1004d.A.dialog-act.dharshi.9,IS1004d,A (PM),57.34,63.16,And we'll have um presentation of evaluation crit criteria by ou our Marketing Experts.,Other,,,,,Other,default,2026-11-04
+IS1004d.C.dialog-act.dharshi.6,IS1004d,C (ID),143.23,144.82,So final design. Final design.,Other,,,,,Other,default,2026-11-04
+IS1004d.B.dialog-act.dharshi.14,IS1004d,B (UI),166.92,177.73,well first first of all we made a an attractive base station uh with a banana leaf uh look and feel um and uh,Other,,,,,Decision,summlink,2026-11-04
+IS1004d.B.dialog-act.dharshi.24,IS1004d,B (UI),251.33,253.27,This is a teletext button.,Other,,,,,Decision,summlink,2026-11-04
+IS1004d.B.dialog-act.dharshi.38,IS1004d,B (UI),314.19,321.22,in the uh in the base station we have the the button at the front for uh for calling the uh the banana.,Other,,,,,Decision,summlink,2026-11-04
+IS1004d.C.dialog-act.dharshi.32,IS1004d,C (ID),376.44,382.23,And we have put these different colours so that people don't mistake them mistake it as a banana.,Other,,,,,Decision,summlink,2026-11-04
+IS1004d.C.dialog-act.dharshi.54,IS1004d,C (ID),457.48,460.18,No eight or eight or ten hours of working.,Other,,,,,Decision,summlink,2026-11-04
+IS1004d.C.dialog-act.dharshi.48,IS1004d,C (ID),460.18,462.43,If you are just leaving like that it'll be much longer.,Other,,,,,Decision,summlink,2026-11-04
+IS1004d.C.dialog-act.dharshi.51,IS1004d,C (ID),475.99,480.60,Pricing is was a factor so that's why we have gone for a regular chip only not the advanced chip.,Decision,,,,Decided: regular chip for cost reasons.,Decision,summlink,2026-11-04
+IS1004d.C.dialog-act.dharshi.114,IS1004d,C (ID),888.07,893.29,We don't have L_C_D_ for it but that we decided we don't want to have.,Decision,,,,Decided: no LCD.,Decision,rule,2026-11-04
+IS1004d.C.dialog-act.dharshi.165,IS1004d,C (ID),1375.43,1378.75,"So we have the regular chip on the print, which is one.",Decision,,,,Chosen component: regular chip on print.,Decision,summlink,2026-11-04
+IS1005a.A.dialog-act.dharshi.34,IS1005a,A (PM),237.71,248.20,Um so now we are going to to get used t to to the tools we are going to use all during all this project.,Other,,,,,Decision,rule,2026-11-04
+IS1005a.A.dialog-act.dharshi.62,IS1005a,A (PM),635.41,641.60,And uh we are trying to to have a market all around the world.,Decision,,,,Brief: worldwide market.,Decision,summlink,2026-11-04
+IS1005a.A.dialog-act.dharshi.108,IS1005a,A (PM),959.72,969.74,"Um, you will receive by email uh the specific instructions and uh by your personal coach.",Other,,,,,Other,default,2026-11-04
+IS1005b.D.dialog-act.dharshi.56,IS1005b,D (ME),429.34,430.86,That's my dic that's my presentation.,Other,,,,,Other,default,2026-11-04
+IS1005b.A.dialog-act.dharshi.103,IS1005b,A (PM),1418.63,1425.31,"and maybe put somewhere the s the slogan of the company, which is uh, we put fashion of in electronics.",Decision,,,,Requirement: company colours and slogan.,Decision,summlink,2026-11-04
+IS1005c.A.dialog-act.dharshi.79,IS1005c,A (PM),1036.44,1044.13,so I think we have to do some work to finalise our idea and take decisions.,Other,,,,,Task,rule,2026-11-04
+IS1005c.A.dialog-act.dharshi.115,IS1005c,A (PM),1346.68,1348.72,So let's go for a small L_C_D_.,Decision,,,,Decided: small LCD.,Decision,summlink,2026-11-04
+IS1005c.A.dialog-act.dharshi.152,IS1005c,A (PM),1552.02,1554.80,I don't know what we are going to do with that.,Other,,,,,Decision,rule,2026-11-04
+IS1005c.B.dialog-act.dharshi.177,IS1005c,B (ID),1562.32,1565.46,"should should discover the other buttons, which are hidden.",Other,,,,,Decision,summlink,2026-11-04
+IS1005c.A.dialog-act.dharshi.201,IS1005c,A (PM),1938.61,1950.35,"Um, so uh the the Industrial Manager uh will uh will work on the look and feel design.",Task,the Industrial Manager,,,Assigned: look and feel design.,Task,summlink,2026-11-04
+IS1005c.A.dialog-act.dharshi.206,IS1005c,A (PM),1976.68,1985.83,"uh I think you should work together, s you uh Hamed and Peter, to work uh in a in a first prototype,",Task,you,,,Assigned: first prototype together.,Task,summlink,2026-11-04
+IS1006a.D.dialog-act.dharshi.38,IS1006a,D (ME),287.85,292.60,So. Twenty five Euro for a remote control.,Decision,,,,Brief: 25 Euro price.,Decision,summlink,2026-11-04
+IS1006a.D.dialog-act.dharshi.58,IS1006a,D (ME),397.04,398.19,"colourful, maybe",Other,,,,,Decision,summlink,2026-11-04
+IS1006a.C.dialog-act.dharshi.47,IS1006a,C (ID),418.10,419.61,"Yeah even we can change colours, no?",Other,,,,,Decision,summlink,2026-11-04
+IS1006a.C.dialog-act.dharshi.62,IS1006a,C (ID),504.15,509.57,Uh maybe we can change the colours that at least the frame.,Other,,,,,Decision,summlink,2026-11-04
+IS1006a.C.dialog-act.dharshi.81,IS1006a,C (ID),598.18,603.78,Maybe I think even we can keep two switches and then we can uh only make one working.,Other,,,,,Decision,summlink,2026-11-04
+IS1006a.D.dialog-act.dharshi.103,IS1006a,D (ME),617.84,619.01,Three buttons you mean?,Other,,,,,Other,default,2026-11-04
+IS1006a.B.dialog-act.dharshi.68,IS1006a,B (UI),707.57,709.47,Go back button is good.,Other,,,,,Decision,summlink,2026-11-04
+IS1006b.A.dialog-act.vkaraisk.18,IS1006b,A (PM),92.22,94.10,"let's go for the three presentations,",Other,,,,,Decision,rule,2026-11-04
+IS1006b.B.dialog-act.vkaraisk.74,IS1006b,B (UI),916.01,919.12,W we'll have a screen with a back light,Other,,,,,Decision,rule,2026-11-04
+IS1006b.A.dialog-act.vkaraisk.85,IS1006b,A (PM),1129.81,1139.21,Since we were targeting a really soon uh uh date for the the the um i issuing of this uh remote control,Decision,,,,Decided: TV only for now (time to market).,Decision,summlink,2026-11-04
+IS1006b.D.dialog-act.vkaraisk.235,IS1006b,D (ME),1286.16,1289.46,I'll check in my department if there's someone specialist in that.,Task,I,,,Commits to check for a specialist.,Task,rule,2026-11-04
+IS1006b.C.dialog-act.vkaraisk.126,IS1006b,C (ID),1503.12,1505.65,So we need to check their specifications,Task,we,,,Check the brands' specifications.,Task,rule,2026-11-04
+IS1006b.A.dialog-act.vkaraisk.162,IS1006b,A (PM),1960.49,1967.63,uh of course the U_I_D_ Mark will be uh focused on the user interface concept,Task,Mark,,,Assigned: user interface concept.,Task,summlink,2026-11-04
+IS1006c.B.dialog-act.vkaraisk.66,IS1006c,B (UI),700.90,704.23,we will not use this. We will not use this.,Other,,,,,Other,default,2026-11-04
+IS1006c.D.dialog-act.vkaraisk.75,IS1006c,D (ME),780.65,782.15,"but again, uh I might",Other,,,,,Other,default,2026-11-04
+IS1006c.A.dialog-act.vkaraisk.154,IS1006c,A (PM),1605.19,1609.49,"um Mark the user interface design,",Task,Mark,,,Assigned: user interface design.,Task,summlink,2026-11-04
+IS1006c.C.dialog-act.vkaraisk.250,IS1006c,C (ID),1648.59,1651.29,and we want some kind of buttons,Decision,,,,Agreed: some buttons.,Decision,summlink,2026-11-04
+IS1006c.C.dialog-act.vkaraisk.251,IS1006c,C (ID),1651.29,1656.43,"and we want some themes like fruits or vegetables,",Decision,,,,Agreed: fruit or vegetable themes.,Decision,summlink,2026-11-04
+IS1006c.A.dialog-act.vkaraisk.173,IS1006c,A (PM),1736.50,1739.59,Now we have to decide on what kind of fanciness.,Other,,,,,Task,rule,2026-11-04
+IS1006c.B.dialog-act.vkaraisk.152,IS1006c,B (UI),1751.03,1757.21,Could we make a titanium shape? I mean fruit-shaped.,Other,,,,,Other,default,2026-11-04
+IS1006c.A.dialog-act.vkaraisk.201,IS1006c,A (PM),1854.91,1860.51,"Mm I think it's what we say, that we have an uh an L_C_D_ with uh information.",Decision,,,,Agreed: LCD with information.,Decision,summlink,2026-11-04
+IS1006d.C.dialog-act.s9553330.29,IS1006d,C (ID),324.12,326.83,"You can just say, where is my remote control.",Other,,,,,Other,default,2026-11-04
+IS1006d.D.dialog-act.s9553330.185,IS1006d,D (ME),951.00,954.20,"Whether it's fancy or not now, it we have to decide.",Other,,,,,Task,rule,2026-11-04
+IS1006d.C.dialog-act.s9553330.198,IS1006d,C (ID),1200.81,1203.46,"Yeah, I think we will go for a single curve,",Other,,,,,Decision,rule,2026-11-04
+IS1006d.C.dialog-act.s9553330.206,IS1006d,C (ID),1247.17,1247.94,"No, only one, no?",Other,,,,,Other,default,2026-11-04
+IS1006d.B.dialog-act.s9553330.137,IS1006d,B (UI),1470.94,1476.76,"So, put minus one there, please.",Other,,,,,Decision,summlink,2026-11-04
+IS1006d.D.dialog-act.s9553330.325,IS1006d,D (ME),1474.70,1476.02,I'm not sure if this is legal.,Other,,,,,Decision,summlink,2026-11-04
+IS1006d.B.dialog-act.s9553330.149,IS1006d,B (UI),1522.03,1524.09,"And a battery and a battery, yeah.",Other,,,,,Other,default,2026-11-04
+IS1007a.C.dialog-act.s9553330.47,IS1007a,C (ID),592.04,594.07,"Yeah, yeah it's it's a good idea it's a good idea",Other,,,,,Decision,summlink,2026-11-04
+IS1007a.C.dialog-act.s9553330.50,IS1007a,C (ID),655.28,672.61,"Well I I I I think that j just by using navigation buttons and the user interface on the screen we are able to uh navigate uh through the Well channel programme or contents or in an easy way, so",Other,,,,,Other,default,2026-11-04
+IS1007a.B.dialog-act.s9553330.147,IS1007a,B (UI),796.37,820.28,"Uh, uh first one is to uh buttons i or it could be anything with buttons. Uh to choose uh content s or channels.",Other,,,,,Decision,summlink,2026-11-04
+IS1007a.B.dialog-act.s9553330.159,IS1007a,B (UI),868.68,870.15,so these we have to work it out.,Other,,,,,Task,rule,2026-11-04
+IS1007a.C.dialog-act.s9553330.71,IS1007a,C (ID),874.06,876.21,I think that's the the things to do,Other,,,,,Task,summlink,2026-11-04
+IS1007b.A.dialog-act.s9553330.8,IS1007b,A (PM),86.67,91.90,"and I think we don't need lighting adaptive,",Other,,,,,Decision,summlink,2026-11-04
+IS1007b.B.dialog-act.s9553330.40,IS1007b,B (UI),408.50,411.91,Mm. You can put it on the charger when uh you when you don't need to use it.,Other,,,,,Decision,summlink,2026-11-04
+IS1007b.D.dialog-act.s9553330.24,IS1007b,D (ME),423.18,425.41,We just make a small charger,Other,,,,,Decision,summlink,2026-11-04
+IS1007b.A.dialog-act.s9553330.39,IS1007b,A (PM),549.67,553.06,This are usual functionality.,Other,,,,,Other,default,2026-11-04
+IS1007b.B.dialog-act.s9553330.74,IS1007b,B (UI),567.07,570.83,This is the most competing prototypes I've found.,Other,,,,,Other,default,2026-11-04
+IS1007c.C.dialog-act.s9553330.45,IS1007c,C (ID),384.52,386.93,so can you go to the next slide please.,Other,,,,,Other,default,2026-11-04
+IS1007c.B.dialog-act.s9553330.200,IS1007c,B (UI),1317.51,1319.17,Ask our R_ and D_ department.,Task,,,,Action: ask the R&D department.,Task,summlink,2026-11-04
+IS1007c.B.dialog-act.s9553330.205,IS1007c,B (UI),1326.08,1330.22,"And also the scroller button, how much will it cost.",Task,,,,Action: find the scroll button cost.,Task,summlink,2026-11-04
+IS1007c.B.dialog-act.s9553330.296,IS1007c,B (UI),1860.79,1866.95,Check with the v R_ and D_ department the capability of recogniser.,Task,,,,Action: check recogniser capability with R&D.,Task,summlink,2026-11-04
+IS1007d.B.dialog-act.s9553330.19,IS1007d,B (UI),118.75,123.65,"and we we are both agreed on some two versions of the prototypes,",Decision,,,,Agreed: two prototype versions.,Decision,rule,2026-11-04
+IS1007d.B.dialog-act.s9553330.42,IS1007d,B (UI),294.86,296.46,A_A_ rechargeable batteries.,Other,,,,,Decision,summlink,2026-11-04
+IS1007d.B.dialog-act.s9553330.98,IS1007d,B (UI),546.48,548.84,so you want more function you pay more.,Other,,,,,Decision,summlink,2026-11-04
+IS1007d.C.dialog-act.s9553330.84,IS1007d,C (ID),587.72,592.27,You also have the the the two other modules for the parental control,Other,,,,,Decision,summlink,2026-11-04
+IS1007d.C.dialog-act.s9553330.87,IS1007d,C (ID),610.85,614.10,H here is just the the the module for the kids,Other,,,,,Decision,summlink,2026-11-04
+IS1007d.C.dialog-act.s9553330.135,IS1007d,C (ID),1276.63,1278.27,"six, let's go for six.",Other,,,,,Decision,rule,2026-11-04
+IS1007d.A.dialog-act.s9553330.118,IS1007d,A (PM),1898.93,1901.69,Uh the teamwork was very very good.,Other,,,,,Decision,summlink,2026-11-04
+IS1008a.D.dialog-act.s9553330.24,IS1008a,D (ME),244.26,249.44,"I had a first part of mine was to make a remote control for a new f remote control for television,",Other,,,,,Other,default,2026-11-04
+IS1008a.C.dialog-act.s9553330.31,IS1008a,C (ID),451.65,455.39,and so I'll have to wait and see how those uh how those go.,Other,,,,,Task,rule,2026-11-04
+IS1008a.A.dialog-act.s9553330.100,IS1008a,A (PM),696.53,713.43,"Okay, so I think it's uh maybe if we can uh give me some kind of your uh the sales plan, okay, including the technical what uh she's going to talk to you within the team, okay, then it will help me to discuss with the management for further, okay, and put it in the the proper project plan.",Task,,,,PM asks for the sales plan.,Task,summlink,2026-11-04
+IS1008a.A.dialog-act.s9553330.124,IS1008a,A (PM),843.81,848.91,"To come up with the functional design and uh to discuss with Ed, okay, and how it's going to be work,",Task,,,,Come up with the functional design and discuss it.,Task,summlink,2026-11-04
+IS1008b.A.dialog-act.vkaraisk.20,IS1008b,A (PM),89.10,92.84,"and uh, of course, I'm doing the project management and secretary both,",Other,,,,,Other,default,2026-11-04
+IS1008b.B.dialog-act.vkaraisk.5,IS1008b,B (ID),206.23,207.03,I'll do the notes.,Other,,,,,Task,rule,2026-11-04
+IS1008b.D.dialog-act.vkaraisk.54,IS1008b,D (ME),876.54,886.47,"if it's got simple remote speech remote uh control, like I said, louder, softer, change channel, on, off, remote, it goes beep beep,",Other,,,,,Decision,summlink,2026-11-04
+IS1008b.A.dialog-act.vkaraisk.157,IS1008b,A (PM),1187.82,1189.51,so I will come back,Other,,,,,Other,default,2026-11-04
+IS1008b.C.dialog-act.vkaraisk.65,IS1008b,C (UI),1332.31,1339.18,the method that we usually use in the user interface design is that we need to look at what people like and what people don't like about existing products.,Other,,,,,Task,rule,2026-11-04
+IS1008b.B.dialog-act.vkaraisk.163,IS1008b,B (ID),1647.05,1648.95,and you're supposed to keep watching the trends.,Task,you,,,Assigned: trend watching.,Task,summlink,2026-11-04
+IS1008c.C.dialog-act.s9553330.13,IS1008c,C (ID),136.49,137.54,I'll take the mouse.,Other,,,,,Task,rule,2026-11-04
+IS1008c.C.dialog-act.s9553330.65,IS1008c,C (ID),367.01,374.49,"you know uh, well you guys come from tropical countries so you can kinda think of some trees and some nice woods.",Other,,,,,Decision,summlink,2026-11-04
+IS1008c.C.dialog-act.s9553330.69,IS1008c,C (ID),384.26,388.46,"and then they could submit their orders, kinda like you submit a custom car order, you know,",Other,,,,,Decision,summlink,2026-11-04
+IS1008c.C.dialog-act.s9553330.155,IS1008c,C (ID),1203.79,1209.45,but you don't wanna exploit uh labour in um third world countries.,Other,,,,,Decision,summlink,2026-11-04
+IS1008c.C.dialog-act.s9553330.173,IS1008c,C (ID),1359.04,1361.04,Do you wanna take an action item to go find out?,Task,you,,,Action item: find out the display cost.,Task,summlink,2026-11-04
+IS1008c.D.dialog-act.s9553330.121,IS1008c,D (ME),1374.14,1376.11,Once we get a price on it then we can market it.,Other,,,,,Task,summlink,2026-11-04
+IS1008c.C.dialog-act.s9553330.182,IS1008c,C (ID),1391.57,1399.09,and um I think we've kinda come to some agreement regarding um this concept of a wooden case.,Decision,,,,Agreement: wooden case concept.,Decision,summlink,2026-11-04
+IS1008c.C.dialog-act.s9553330.183,IS1008c,C (ID),1401.19,1402.65,A customisable and,Other,,,,,Decision,summlink,2026-11-04
+IS1008d.C.dialog-act.s9553330.57,IS1008d,C (UI),351.32,352.93,it can be on the side somewhere.,Other,,,,,Decision,summlink,2026-11-04
+IS1008d.A.dialog-act.s9553330.33,IS1008d,A (PM),352.87,354.25,"Yeah, the sides maybe is good.",Other,,,,,Decision,summlink,2026-11-04
+IS1008d.A.dialog-act.s9553330.119,IS1008d,A (PM),993.19,997.80,"okay then, l uh let's wait for the production, okay, then uh you can evaluate the product,",Task,you,,,Evaluate the product after production.,Task,summlink,2026-11-04
+IS1008d.A.dialog-act.s9553330.133,IS1008d,A (PM),1046.44,1052.05,"Yeah, because we we are not going to do it in uh our factory, okay, so we can give it a product evalua",Other,,,,,Decision,rule,2026-11-04
+IS1008d.A.dialog-act.s9553330.136,IS1008d,A (PM),1056.73,1058.88,and I don't think it's take more than four weeks time.,Other,,,,,Other,default,2026-11-04
+IS1008d.A.dialog-act.s9553330.147,IS1008d,A (PM),1123.32,1127.02,So we will introduce m this model and uh let's introduce in the market,Decision,,,,Decided: introduce this model to the market.,Decision,summlink,2026-11-04
+IS1008d.D.dialog-act.s9553330.106,IS1008d,D (ME),1140.52,1141.37,"Well, then it may not be.",Other,,,,,Other,default,2026-11-04
+IS1008d.C.dialog-act.s9553330.133,IS1008d,C (UI),1206.88,1213.39,"well you have no redesign not you personally, but in the project we have no redesign time and",Risk,,,,Concern: no redesign time in the project.,Decision,summlink,2026-11-04
+IS1008d.C.dialog-act.s9553330.139,IS1008d,C (UI),1284.30,1286.17,That's actually good place to advertise it too.,Other,,,,,Decision,summlink,2026-11-04
+IS1008d.B.dialog-act.s9553330.105,IS1008d,B (ID),1288.24,1298.87,"There might be some motion pictures that are coming out um that are coming out on D_V_D_ that uh they need to have a m special remote control to work with it,",Other,,,,,Decision,summlink,2026-11-04
+IS1008d.A.dialog-act.s9553330.184,IS1008d,A (PM),1414.78,1420.14,and uh let's leave it to the Ed for later for once production is over,Task,Ed,,,Evaluation left to Ed once production is over.,Task,summlink,2026-11-04
+IS1009a.D.dialog-act.dharshi.20,IS1009a,D (ME),276.23,278.52,"Okay, I'll see what I can do.",Task,I,,,Accepts to prepare something for the next meeting.,Task,rule,2026-11-04
+IS1009a.B.dialog-act.dharshi.21,IS1009a,B (UI),469.79,472.76,And um and it should have multi-purpose.,Other,,,,,Decision,summlink,2026-11-04
+IS1009a.A.dialog-act.dharshi.98,IS1009a,A (PM),566.14,573.18,"Well or yeah or if it's really, if it's really in a dark spot that it gives out a a sound or a signal.",Other,,,,,Decision,summlink,2026-11-04
+IS1009a.A.dialog-act.dharshi.133,IS1009a,A (PM),730.42,734.30,"like friendliness, and what we just discussed in general.",Task,,,,Marketing to specify user requirements such as friendliness.,Task,summlink,2026-11-04
+IS1009b.D.dialog-act.dharshi.48,IS1009b,D (ME),299.51,306.25,and it looks to me that within the budget that we're looking at the uh the whole house idea really isn't gonna be possible.,Risk,,,,Whole-house idea not possible within budget.,Decision,summlink,2026-11-04
+IS1009b.C.dialog-act.dharshi.51,IS1009b,C (ID),670.27,676.81,If you want to design it for multiple devices then you should make all the devices compatible with the frequency,Other,,,,,Task,rule,2026-11-04
+IS1009b.A.dialog-act.dharshi.87,IS1009b,A (PM),1200.40,1201.61,You are number two?,Other,,,,,Other,default,2026-11-04
+IS1009b.A.dialog-act.dharshi.160,IS1009b,A (PM),1837.12,1843.53,but uh the target group as a whole is is basically everybody with a T_V_.,Decision,,,,Agreed target group: everybody with a TV.,Decision,summlink,2026-11-04
+IS1009b.A.dialog-act.dharshi.175,IS1009b,A (PM),1916.94,1923.02,then they can go to the store and for a few uh Francs or Euros whatever they can buy,Other,,,,,Other,default,2026-11-04
+IS1009c.C.dialog-act.dharshi.50,IS1009c,C (ID),960.94,967.48,"so in that way we can cut cut the cost, but w uh uh that we have to make the battery as rechargeable one.",Other,,,,,Task,rule,2026-11-04
+IS1009c.D.dialog-act.dharshi.96,IS1009c,D (ME),1630.36,1631.93,"I think I think battery,",Other,,,,,Decision,summlink,2026-11-04
+IS1009c.D.dialog-act.dharshi.97,IS1009c,D (ME),1631.93,1633.63,and I think we all agreed on that.,Decision,,,,Agreed: battery.,Decision,summlink,2026-11-04
+IS1009c.D.dialog-act.dharshi.98,IS1009c,D (ME),1633.63,1636.59,That that's that's gonna be most cost-effective and the best thing.,Other,,,,,Decision,summlink,2026-11-04
+IS1009c.A.dialog-act.dharshi.164,IS1009c,A (PM),1743.01,1752.88,"In this phase, the two of you, Jana and Francine, have to work together on a prototype using modelling clay, it says here.",Task,Jana and Francine,,,Assigned: prototype in modelling clay.,Task,summlink,2026-11-04
+IS1009d.A.dialog-act.dharshi.28,IS1009d,A (PM),222.16,226.96,She would like uh this whole thing should be push buttons with a simple chip,Other,,,,,Other,default,2026-11-04
+IS1009d.C.dialog-act.dharshi.7,IS1009d,C (ID),363.76,369.85,Uh this is us in a snail shape so uh it it is attractive,Other,,,,,Decision,summlink,2026-11-04
+IS1009d.B.dialog-act.dharshi.16,IS1009d,B (UI),483.63,487.67,Then we have included one to nine buttons,Other,,,,,Decision,summlink,2026-11-04
+IS1009d.B.dialog-act.dharshi.66,IS1009d,B (UI),767.30,768.08,A shell shape.,Other,,,,,Decision,summlink,2026-11-04
+IS1009d.A.dialog-act.dharshi.170,IS1009d,A (PM),1341.16,1346.16,I mean maximum we have another four point three euros I mean four thirty.,Other,,,,,Decision,summlink,2026-11-04
+IS1009d.C.dialog-act.dharshi.118,IS1009d,C (ID),1511.75,1513.64,"Yeah, even I think it is one.",Other,,,,,Other,default,2026-11-04
+TS3003b.A.dialog-act.vkaraisk.25,TS3003b,A (PM),137.47,139.11,Uh this time I will take the minutes.,Other,,,,,Task,rule,2026-11-04
+TS3003b.A.dialog-act.vkaraisk.104,TS3003b,A (PM),1136.82,1140.08,So we have to find a market which is above forty plus,Decision,,,,New directive: target market over forty.,Task,rule,2026-11-04
+TS3003b.A.dialog-act.vkaraisk.151,TS3003b,A (PM),1441.97,1451.34,"um can be a function as well. But only if uh if it won't higher the the cost,",Other,,,,,Decision,summlink,2026-11-04
+TS3003b.D.dialog-act.vkaraisk.204,TS3003b,D (ME),1886.62,1889.28,which would explain a button if you press it.,Other,,,,,Decision,summlink,2026-11-04
+TS3003b.D.dialog-act.vkaraisk.218,TS3003b,D (ME),2026.05,2031.98,"If we should do something like that it would be a, I think it would be really good for uh for the image of the company.",Other,,,,,Other,default,2026-11-04
+TS3003b.A.dialog-act.vkaraisk.274,TS3003b,A (PM),2082.09,2083.60,"In different languages, you know.",Other,,,,,Decision,summlink,2026-11-04
+TS3003b.A.dialog-act.vkaraisk.284,TS3003b,A (PM),2112.26,2121.02,"Um what we're going to do for the next meeting is the Industrial Designer will do the components concept,",Task,the Industrial Designer,for the next meeting,,Assigned: components concept.,Task,summlink,2026-11-04
+TS3003b.A.dialog-act.vkaraisk.286,TS3003b,A (PM),2123.31,2124.32,and the trend-watching.,Task,,,,Assigned: trend watching.,Task,summlink,2026-11-04
+TS3003c.A.dialog-act.vkaraisk.27,TS3003c,A (PM),121.77,127.58,Uh these are the points um we agreed on. The requirements and the target market.,Decision,,,,Recap of agreed requirements and target market.,Decision,rule,2026-11-04
+TS3003c.D.dialog-act.vkaraisk.29,TS3003c,D (ME),347.97,349.27,Just keep it simple,Other,,,,,Other,default,2026-11-04
+TS3003c.A.dialog-act.vkaraisk.110,TS3003c,A (PM),1308.08,1313.53,let me just choose for the battery.,Decision,,,,PM chooses the battery.,Decision,summlink,2026-11-04
+TS3003c.B.dialog-act.vkaraisk.109,TS3003c,B (UI),1400.79,1404.97,Uh is it possible uh to make um changeable uh case.,Other,,,,,Decision,summlink,2026-11-04
+TS3003c.A.dialog-act.vkaraisk.135,TS3003c,A (PM),1435.44,1437.94,I think that's a very good option.,Other,,,,,Decision,summlink,2026-11-04
+TS3003c.D.dialog-act.vkaraisk.122,TS3003c,D (ME),1581.25,1582.29,We'll go for that.,Decision,,,,Agreed: go for the changeable case.,Decision,rule,2026-11-04
+TS3003c.B.dialog-act.vkaraisk.128,TS3003c,B (UI),1618.42,1621.39,but it's um not quite uh fancy.,Other,,,,,Other,default,2026-11-04
+TS3003c.A.dialog-act.vkaraisk.260,TS3003c,A (PM),2195.27,2201.99,So the Industrial Designer and User Interface Designer are going to work together on this one.,Task,the Industrial Designer and User Interface Designer,,,Designers to work together on the prototype.,Task,summlink,2026-11-04
+TS3003d.A.dialog-act.vkaraisk.22,TS3003d,A (PM),101.36,104.31,We'll have the prototype presentation first.,Other,,,,,Decision,rule,2026-11-04
+TS3003d.B.dialog-act.vkaraisk.17,TS3003d,B (UI),334.76,339.68,"Uh, or you can build in uh when you press uh one button uh uh",Other,,,,,Other,default,2026-11-04
+TS3003d.D.dialog-act.vkaraisk.23,TS3003d,D (ME),586.04,587.37,No. That wouldn't be an option.,Other,,,,,Other,default,2026-11-04
+TS3003d.A.dialog-act.vkaraisk.165,TS3003d,A (PM),918.95,921.55,Because then we save ten buttons.,Other,,,,,Other,default,2026-11-04
+TS3003d.A.dialog-act.vkaraisk.203,TS3003d,A (PM),1122.75,1124.45,"And we can keep our L_C_D_ screen,",Other,,,,,Decision,summlink,2026-11-04
+TS3003d.D.dialog-act.vkaraisk.76,TS3003d,D (ME),1365.70,1368.03,I still think we should go for the single curve design.,Other,,,,,Decision,summlink,2026-11-04
+TS3003d.C.dialog-act.vkaraisk.134,TS3003d,C (ID),2326.34,2330.23,Considering we are not going to make a docking station.,Decision,,,,Decided: no docking station.,Decision,rule,2026-11-04
+TS3003d.A.dialog-act.vkaraisk.442,TS3003d,A (PM),2432.00,2437.27,I think we still have to fit in one more questionnaire. I think.,Other,,,,,Task,summlink,2026-11-04
+TS3003d.A.dialog-act.vkaraisk.467,TS3003d,A (PM),2546.81,2550.73,I think I'm going to make our final presentation now.,Other,,,,,Task,summlink,2026-11-04
+TS3003d.D.dialog-act.vkaraisk.236,TS3003d,D (ME),2564.21,2566.88,Are we supposed to go into our own rooms again?,Other,,,,,Task,summlink,2026-11-04
+TS3004a.D.dialog-act.vkaraisk.15,TS3004a,D (ME),109.83,111.61,We're gonna make a remote control.,Other,,,,,Decision,rule,2026-11-04
+TS3004a.A.dialog-act.vkaraisk.199,TS3004a,A (PM),767.51,774.98,"we're gonna have a little discussion about um what experience are with a remote control the and everything,",Other,,,,,Decision,rule,2026-11-04
+TS3004a.A.dialog-act.vkaraisk.212,TS3004a,A (PM),816.40,819.57,we we just say we just say that's universal remote control.,Decision,,,,Agreed: universal remote control.,Decision,summlink,2026-11-04
+TS3004a.C.dialog-act.vkaraisk.39,TS3004a,C (ID),821.38,826.28,And uh also for the V_C_R_ and uh D_V_D_ player,Other,,,,,Decision,summlink,2026-11-04
+TS3004a.D.dialog-act.vkaraisk.150,TS3004a,D (ME),1242.56,1249.85,"Um for m for me uh the Marketing Expert, the user requirements uh specification, do I need to think as a user,",Other,,,,,Task,summlink,2026-11-04
+TS3004b.A.dialog-act.vkaraisk.43,TS3004b,A (PM),130.68,135.57,"and we have to make uh sure that we going t that we are sure, that we are,",Other,,,,,Task,rule,2026-11-04
+TS3004b.A.dialog-act.vkaraisk.67,TS3004b,A (PM),196.04,199.16,All these points uh we have to look at.,Other,,,,,Task,rule,2026-11-04
+TS3004b.A.dialog-act.vkaraisk.72,TS3004b,A (PM),213.91,216.52,So we have to look at that as well.,Other,,,,,Task,rule,2026-11-04
+TS3004b.D.dialog-act.vkaraisk.43,TS3004b,D (ME),364.23,367.78,I think uh we we have to make uh good zap buttons.,Other,,,,,Task,rule,2026-11-04
+TS3004b.D.dialog-act.vkaraisk.107,TS3004b,D (ME),596.25,599.73,We we have to make a a new product.,Other,,,,,Task,rule,2026-11-04
+TS3004b.B.dialog-act.vkaraisk.32,TS3004b,B (UI),633.22,636.46,"But we have to make sure that we're better usability,",Other,,,,,Task,rule,2026-11-04
+TS3004b.C.dialog-act.vkaraisk.38,TS3004b,C (ID),891.40,897.50,But uh um there's also a button to uh go to the channel you've been before.,Other,,,,,Other,default,2026-11-04
+TS3004b.B.dialog-act.vkaraisk.125,TS3004b,B (UI),928.34,929.85,"Yeah, the ten plus button.",Other,,,,,Other,default,2026-11-04
+TS3004b.B.dialog-act.vkaraisk.137,TS3004b,B (UI),1000.45,1002.91,Uh I just thought of another one.,Other,,,,,Other,default,2026-11-04
+TS3004b.B.dialog-act.vkaraisk.150,TS3004b,B (UI),1052.25,1056.49,Now I have to figure out what's uh what to put on. What we're gonna use.,Other,,,,,Decision,rule,2026-11-04
+TS3004b.C.dialog-act.vkaraisk.77,TS3004b,C (ID),1223.25,1226.26,And uh transmit that uh to the T_V_.,Other,,,,,Other,default,2026-11-04
+TS3004b.D.dialog-act.vkaraisk.166,TS3004b,D (ME),1541.47,1544.88,"Uh if you if you use the buttons, uh both of them works.",Other,,,,,Decision,summlink,2026-11-04
+TS3004b.A.dialog-act.vkaraisk.284,TS3004b,A (PM),1779.29,1782.03,We definitely should use it. Um,Decision,,,,Agreed to use it.,Decision,summlink,2026-11-04
+TS3004b.B.dialog-act.vkaraisk.294,TS3004b,B (UI),2014.13,2015.07,"Yeah, I think so.",Other,,,,,Decision,summlink,2026-11-04
+TS3004b.D.dialog-act.vkaraisk.258,TS3004b,D (ME),2123.55,2125.62,"I use te teletext every day, I think.",Other,,,,,Decision,summlink,2026-11-04
+TS3004b.A.dialog-act.vkaraisk.372,TS3004b,A (PM),2149.51,2154.59,We're going to have a lunch lunch break. Um,Other,,,,,Decision,rule,2026-11-04
+TS3004b.D.dialog-act.vkaraisk.261,TS3004b,D (ME),2165.32,2166.40,Trendwatching.,Other,,,,,Task,summlink,2026-11-04
+TS3004c.B.dialog-act.vkaraisk.61,TS3004c,B (UI),578.21,579.22,We have to decide on that.,Other,,,,,Task,rule,2026-11-04
+TS3004c.A.dialog-act.vkaraisk.77,TS3004c,A (PM),783.19,785.80,"for volume. For volume, or a channel.",Other,,,,,Decision,summlink,2026-11-04
+TS3004c.B.dialog-act.vkaraisk.169,TS3004c,B (UI),955.76,956.88,What we're gonna do.,Other,,,,,Decision,rule,2026-11-04
+TS3004c.C.dialog-act.vkaraisk.84,TS3004c,C (ID),992.34,1005.19,"If you aim at a young public, you should use materials that are soft with primary colours like green, blue, red. So flashy kinda colours.",Other,,,,,Other,default,2026-11-04
+TS3004c.C.dialog-act.vkaraisk.126,TS3004c,C (ID),1162.02,1163.51,With the hard hard buttons.,Other,,,,,Decision,summlink,2026-11-04
+TS3004c.C.dialog-act.vkaraisk.148,TS3004c,C (ID),1235.18,1241.80,The normal infrared L_E_D_ I think s sufficient.,Other,,,,,Other,default,2026-11-04
+TS3004c.A.dialog-act.vkaraisk.152,TS3004c,A (PM),1358.43,1360.04,"We still want to have a recharger, don't we?",Other,,,,,Decision,summlink,2026-11-04
+TS3004c.B.dialog-act.vkaraisk.245,TS3004c,B (UI),1367.61,1369.00,Re recharger. Base station.,Other,,,,,Decision,summlink,2026-11-04
+TS3004c.C.dialog-act.vkaraisk.196,TS3004c,C (ID),1368.41,1370.76,"uh just just batteries, rechargeable batteries.",Decision,,,,Agreed: rechargeable batteries.,Decision,summlink,2026-11-04
+TS3004c.A.dialog-act.vkaraisk.167,TS3004c,A (PM),1444.48,1445.73,we just make it plastic.,Decision,,,,Agreed: plastic.,Decision,summlink,2026-11-04
+TS3004c.D.dialog-act.vkaraisk.140,TS3004c,D (ME),1498.83,1502.85,Uh but we have to do something about the trend.,Other,,,,,Task,rule,2026-11-04
+TS3004c.C.dialog-act.vkaraisk.252,TS3004c,C (ID),1543.52,1545.69,"But just in two D_, not in depth.",Other,,,,,Decision,summlink,2026-11-04
+TS3004c.B.dialog-act.vkaraisk.279,TS3004c,B (UI),1617.07,1622.08,Uh I_D_ and U_I_D_ work together on prototype drawing on smart board.,Task,I_D_ and U_I_D_,,,Designers to draw the prototype together.,Task,summlink,2026-11-04
+TS3004c.C.dialog-act.vkaraisk.294,TS3004c,C (ID),1869.30,1871.70,but i i it should be round in in shape.,Other,,,,,Decision,summlink,2026-11-04
+TS3004c.B.dialog-act.vkaraisk.322,TS3004c,B (UI),1875.52,1877.17,You have to look at that image of the iPod.,Other,,,,,Decision,summlink,2026-11-04
+TS3004c.C.dialog-act.vkaraisk.307,TS3004c,C (ID),1955.64,1961.53,But we have to make contacts on the on the remote control and the recharger as well.,Other,,,,,Task,rule,2026-11-04
+TS3004c.A.dialog-act.vkaraisk.309,TS3004c,A (PM),2120.92,2121.94,"we have to make a decision,",Other,,,,,Task,rule,2026-11-04
+TS3004c.A.dialog-act.vkaraisk.330,TS3004c,A (PM),2239.04,2248.25,Uh maybe maybe make the the mm the wha what's it called uh scroll wheel. Make it in in yellow or something. Just like the colours of Real Reaction.,Other,,,,,Decision,summlink,2026-11-04
+TS3004c.A.dialog-act.vkaraisk.355,TS3004c,A (PM),2353.59,2355.78,"Can we just put it speech recognition in it as well,",Other,,,,,Decision,summlink,2026-11-04
+TS3004c.A.dialog-act.vkaraisk.361,TS3004c,A (PM),2363.54,2365.80,Probably we need a uh advanced chip then.,Decision,,,,Agreed: advanced chip needed.,Decision,summlink,2026-11-04
+TS3004c.A.dialog-act.vkaraisk.379,TS3004c,A (PM),2450.79,2451.59,We have to stop it now.,Other,,,,,Other,default,2026-11-04
+TS3004d.C.dialog-act.dharshi.24,TS3004d,C (ID),199.88,203.52,"Uh colour changeable, and also transparent.",Other,,,,,Decision,summlink,2026-11-04
+TS3004d.B.dialog-act.dharshi.42,TS3004d,B (UI),332.92,337.89,"It's basically the be standard place for scrollwheel, as far as I know.",Other,,,,,Decision,summlink,2026-11-04
+TS3004d.B.dialog-act.dharshi.62,TS3004d,B (UI),415.82,422.12,"We have decided uh in the the channel buttons, there's a little uh colour around it.",Decision,,,,Decided: coloured ring around channel buttons.,Decision,rule,2026-11-04
+TS3004d.B.dialog-act.dharshi.276,TS3004d,B (UI),2035.35,2036.97,"Oh, what do we have to do now.",Other,,,,,Task,rule,2026-11-04
+TS3004d.B.dialog-act.dharshi.362,TS3004d,B (UI),2651.36,2653.13,"Guys, I think we have to finish the meeting.",Other,,,,,Task,rule,2026-11-04
+TS3005a.A.dialog-act.vkaraisk.22,TS3005a,A (PM),112.06,115.33,We'll do a little tool training with these two things.,Other,,,,,Decision,rule,2026-11-04
+TS3005a.A.dialog-act.vkaraisk.151,TS3005a,A (PM),584.25,586.50,"Could you write the words, uh underneath it?",Other,,,,,Task,rule,2026-11-04
+TS3005a.A.dialog-act.vkaraisk.177,TS3005a,A (PM),789.62,792.81,And the production cost will be twelve Euro fifty max.,Decision,,,,Brief: production cost max 12.50 Euro.,Decision,summlink,2026-11-04
+TS3005b.A.dialog-act.vkaraisk.12,TS3005b,A (PM),113.85,116.22,which means I will make uh minutes,Task,I,,,PM will make the minutes.,Task,rule,2026-11-04
+TS3005b.A.dialog-act.vkaraisk.59,TS3005b,A (PM),927.61,930.38,"Uh the remote control should only be used for the television,",Decision,,,,Directive: television only.,Decision,summlink,2026-11-04
+TS3005b.A.dialog-act.vkaraisk.66,TS3005b,A (PM),947.03,952.76,"And uh a last point, but also very important, our corporate image should stay recognisable in our products,",Decision,,,,Directive: corporate image recognisable.,Decision,summlink,2026-11-04
+TS3005b.D.dialog-act.vkaraisk.150,TS3005b,D (ME),1208.56,1210.26,"I think it's the most easier thing,",Other,,,,,Decision,summlink,2026-11-04
+TS3005b.D.dialog-act.vkaraisk.198,TS3005b,D (ME),1390.84,1392.46,and power s power usage.,Other,,,,,Decision,summlink,2026-11-04
+TS3005b.D.dialog-act.vkaraisk.205,TS3005b,D (ME),1413.11,1418.34,"And other other less important things are screen settings, audio settings, and channel settings,",Other,,,,,Decision,summlink,2026-11-04
+TS3005b.D.dialog-act.vkaraisk.221,TS3005b,D (ME),1473.63,1476.82,I think it's it's not that easy,Other,,,,,Other,default,2026-11-04
+TS3005b.A.dialog-act.vkaraisk.107,TS3005b,A (PM),1496.10,1499.53,And maybe a low battery indicator? On the screen.,Other,,,,,Decision,summlink,2026-11-04
+TS3005b.C.dialog-act.vkaraisk.222,TS3005b,C (ID),1625.71,1632.01,so make it possible to not uh display uh a button at ten points,Other,,,,,Decision,summlink,2026-11-04
+TS3005b.C.dialog-act.vkaraisk.272,TS3005b,C (ID),1809.61,1811.54,"it should be done. If it could be done, should be done.",Other,,,,,Decision,summlink,2026-11-04
+TS3005b.A.dialog-act.vkaraisk.143,TS3005b,A (PM),1856.57,1878.17,"I've written down an an on or off button, volume selection, channel selection, uh the digits from one to zero, huh. Um or from zero to nine. Uh a digits button to switch uh between one and two digits, mute button, a separate menu for teletext, a battery indicator.",Decision,,,,Summary of agreed functions.,Decision,summlink,2026-11-04
+TS3005b.D.dialog-act.vkaraisk.330,TS3005b,D (ME),1913.98,1919.62,"we could also implement a audio settings, screen settings and channel settings, but as sub-menus.",Other,,,,,Decision,summlink,2026-11-04
+TS3005b.A.dialog-act.vkaraisk.148,TS3005b,A (PM),1939.82,1943.28,"so not too much teletext support, but in a separate menu,",Decision,,,,Agreed: teletext in a separate menu.,Decision,summlink,2026-11-04
+TS3005b.C.dialog-act.vkaraisk.337,TS3005b,C (ID),2339.53,2345.74,I think it looks a lot more fancy if you use uh if you don't have any buttons on the s on on remote control.,Other,,,,,Decision,summlink,2026-11-04
+TS3005c.C.dialog-act.vkaraisk.14,TS3005c,C (ID),321.53,327.45,"Uh first of all, the case, the case, the surrounding of the of the the remote control.",Other,,,,,Other,default,2026-11-04
+TS3005c.C.dialog-act.vkaraisk.78,TS3005c,C (ID),507.47,510.17,"Uh the batteries, uh we also thought about that already,",Decision,,,,Decided: chargeable batteries with a station.,Decision,summlink,2026-11-04
+TS3005c.B.dialog-act.vkaraisk.30,TS3005c,B (UI),738.17,741.30,uh you say record into the device into the speaker,Other,,,,,Other,default,2026-11-04
+TS3005c.D.dialog-act.vkaraisk.56,TS3005c,D (ME),1060.04,1063.96,"Because we decided to have two kind of remotes, two designs,",Decision,,,,Decided: two kinds of remotes.,Decision,rule,2026-11-04
+TS3005c.B.dialog-act.vkaraisk.158,TS3005c,B (UI),1406.60,1408.96,I think this uh this is a good size for the screen.,Other,,,,,Other,default,2026-11-04
+TS3005c.C.dialog-act.vkaraisk.234,TS3005c,C (ID),1507.55,1512.74,Chip on print with a with a simple uh a sim not a simple but a,Other,,,,,Decision,summlink,2026-11-04
+TS3005c.C.dialog-act.vkaraisk.235,TS3005c,C (ID),1514.08,1515.44,We also discussed that.,Other,,,,,Other,default,2026-11-04
+TS3005c.C.dialog-act.vkaraisk.260,TS3005c,C (ID),1632.37,1633.52,we wanted to make it from rubber,Decision,,,,Agreed: rubber case.,Decision,summlink,2026-11-04
+TS3005c.D.dialog-act.vkaraisk.193,TS3005c,D (ME),1681.81,1684.41,I thought that was a quite good,Other,,,,,Decision,summlink,2026-11-04
+TS3005c.C.dialog-act.vkaraisk.362,TS3005c,C (ID),2179.32,2193.39,"you get w when you use uh the settings menu for example to look up some uh uh some channels on your uh on your television, you should scroll scroll down uh on a menu which probably does not fit on your screen.",Other,,,,,Decision,summlink,2026-11-04
+TS3005c.C.dialog-act.vkaraisk.363,TS3005c,C (ID),2193.39,2196.97,"So then it's uh very handy to to scroll down,",Other,,,,,Decision,summlink,2026-11-04
+TS3005d.B.dialog-act.vkaraisk.101,TS3005d,B (UI),474.57,476.46,It uh oh it's in the background. Oh.,Other,,,,,Decision,summlink,2026-11-04
+TS3005d.B.dialog-act.vkaraisk.102,TS3005d,B (UI),479.93,482.43,Y you should make uh a sideways uh view.,Other,,,,,Task,rule,2026-11-04
+TS3005d.C.dialog-act.vkaraisk.274,TS3005d,C (ID),1379.34,1381.41,"uh Danny, Danny, I'll do that,",Other,,,,,Task,rule,2026-11-04
+TS3005d.B.dialog-act.vkaraisk.374,TS3005d,B (UI),1404.56,1405.29,"advanced chip,",Other,,,,,Decision,summlink,2026-11-04
+TS3005d.C.dialog-act.vkaraisk.281,TS3005d,C (ID),1420.16,1421.84,Single nee single curved.,Other,,,,,Decision,summlink,2026-11-04
+TS3005d.D.dialog-act.vkaraisk.285,TS3005d,D (ME),1445.24,1446.01,Rubber.,Other,,,,,Decision,summlink,2026-11-04
+TS3005d.D.dialog-act.vkaraisk.316,TS3005d,D (ME),1561.69,1563.27,Scrap sample speaker?,Other,,,,,Decision,summlink,2026-11-04
+TS3005d.A.dialog-act.vkaraisk.283,TS3005d,A (PM),1563.45,1566.14,you should you should drop the speech recognition.,Other,,,,,Decision,summlink,2026-11-04
+TS3005d.C.dialog-act.vkaraisk.355,TS3005d,C (ID),1678.83,1679.84,then it's possible to make.,Other,,,,,Decision,summlink,2026-11-04
+TS3005d.C.dialog-act.vkaraisk.360,TS3005d,C (ID),1692.68,1694.63,"You lose this one, you got eleven point five",Other,,,,,Decision,summlink,2026-11-04
+TS3005d.A.dialog-act.vkaraisk.297,TS3005d,A (PM),1745.31,1748.06,but isn't it per remote that you pay?,Other,,,,,Other,default,2026-11-04
+TS3005d.A.dialog-act.vkaraisk.315,TS3005d,A (PM),1786.58,1789.83,we we dropped the speech recognition together with the speaker.,Decision,,,,Dropped speech recognition and the speaker.,Decision,summlink,2026-11-04
+TS3005d.D.dialog-act.vkaraisk.381,TS3005d,D (ME),1796.26,1800.07,Y yea the scroll wheel is dropped.,Decision,,,,Scroll wheel dropped.,Decision,summlink,2026-11-04
+TS3005d.B.dialog-act.vkaraisk.528,TS3005d,B (UI),1830.82,1833.04,"Perhaps you can save this one,",Other,,,,,Other,default,2026-11-04
+TS3005d.C.dialog-act.vkaraisk.451,TS3005d,C (ID),2222.29,2223.18,it is very easy.,Other,,,,,Other,default,2026-11-04
+TS3006b.D.dialog-act.dharshi.69,TS3006b,D (ME),358.21,367.24,"but we can skip that because I saw the newsflash, and teletext is so outdated that it it's i should not be used uh any more in the future.",Decision,,,,Teletext skipped (outdated).,Decision,summlink,2026-11-04
+TS3006b.A.dialog-act.dharshi.50,TS3006b,A (PM),418.47,423.43,"And the new product should reach new markets, which is the customers below forty.",Decision,,,,Directive: target customers below forty.,Decision,summlink,2026-11-04
+TS3006b.B.dialog-act.dharshi.71,TS3006b,B (UI),659.01,662.00,We have to make it fashionable. Like you uh said uh before.,Other,,,,,Task,rule,2026-11-04
+TS3006b.A.dialog-act.dharshi.135,TS3006b,A (PM),933.20,937.20,"Uh it should be designed for a use g uh group below forty,",Decision,,,,Directive: designed for users below forty.,Decision,summlink,2026-11-04
+TS3006b.A.dialog-act.dharshi.137,TS3006b,A (PM),944.48,950.69,And uh the corporate identity should be clear in the design of the remote control.,Decision,,,,Directive: corporate identity clear in the design.,Decision,summlink,2026-11-04
+TS3006b.A.dialog-act.dharshi.139,TS3006b,A (PM),961.13,963.71,We have to make be clear what that is.,Other,,,,,Task,rule,2026-11-04
+TS3006b.A.dialog-act.dharshi.168,TS3006b,A (PM),1126.38,1128.94,T I s should said right.,Other,,,,,Other,default,2026-11-04
+TS3006b.D.dialog-act.dharshi.262,TS3006b,D (ME),1403.42,1406.17,Yeah okay. So on the on the top is better.,Decision,,,,Agreed: placement on the top.,Decision,summlink,2026-11-04
+TS3006b.D.dialog-act.dharshi.310,TS3006b,D (ME),1612.47,1615.29,Yeah with the chip and then I mean,Other,,,,,Other,default,2026-11-04
+TS3006b.A.dialog-act.dharshi.315,TS3006b,A (PM),1878.07,1885.43,and I think you can concentrate more on the button placement and the placement of the uh screen itself on the,Task,you,,,Designer to concentrate on button and screen placement.,Task,summlink,2026-11-04
+TS3006b.C.dialog-act.dharshi.192,TS3006b,C (ID),2109.51,2123.37,Hey is it interesting for users if we put LED lights under the buttons? So that if you uh press on the menu function that only the buttons that are used for the menu are ligh li light up.,Other,,,,,Decision,summlink,2026-11-04
+TS3006b.A.dialog-act.dharshi.371,TS3006b,A (PM),2200.79,2203.23,Okay that's what we decided earlier on.,Decision,,,,Already decided earlier.,Decision,rule,2026-11-04
+TS3006c.A.dialog-act.dharshi.77,TS3006c,A (PM),895.31,900.30,Okay so what we have to decide is what kind of components do we use?,Other,,,,,Task,rule,2026-11-04
+TS3006c.A.dialog-act.dharshi.274,TS3006c,A (PM),2002.62,2005.41,Next thirty minutes to design something so,Task,,,,Designers to work on the design in the next thirty minutes.,Task,summlink,2026-11-04
+TS3006c.A.dialog-act.dharshi.280,TS3006c,A (PM),2019.14,2020.66,You probably get a mail.,Other,,,,,Task,summlink,2026-11-04
+TS3006c.B.dialog-act.dharshi.196,TS3006c,B (UI),2065.73,2068.53,"But we have to do it at this moment, after th this meeting?",Other,,,,,Task,rule,2026-11-04
+TS3006c.C.dialog-act.dharshi.338,TS3006c,C (ID),2298.26,2300.00,It's fun to work with this pen.,Other,,,,,Other,default,2026-11-04
+TS3006c.C.dialog-act.dharshi.390,TS3006c,C (ID),2560.52,2562.67,We w kind of wanted to stick with the,Other,,,,,Decision,rule,2026-11-04
+TS3006d.D.dialog-act.dharshi.25,TS3006d,D (ME),222.39,224.89,"Integrated scroll-wheel push-button, yeah.",Other,,,,,Decision,summlink,2026-11-04
+TS3006d.D.dialog-act.dharshi.131,TS3006d,D (ME),689.77,692.19,"I mean it's not that important, easy to use, but",Other,,,,,Other,default,2026-11-04
+TS3006d.D.dialog-act.dharshi.154,TS3006d,D (ME),841.45,846.90,"Yeah, but a hand dynamo costs a lot of energy to keep the screen working. So I guess that isn't an option.",Other,,,,,Other,default,2026-11-04
+TS3006d.D.dialog-act.dharshi.159,TS3006d,D (ME),864.83,866.67,Let's let's go for the hand dynamo then.,Decision,,,,Decided: hand dynamo.,Decision,summlink,2026-11-04
+TS3006d.D.dialog-act.dharshi.349,TS3006d,D (ME),1569.13,1571.67,Yeah. Well I I would say a five or a six.,Other,,,,,Other,default,2026-11-04
+TS3006d.C.dialog-act.dharshi.257,TS3006d,C (ID),1942.45,1944.86,But are we gonna stick with the green or are we gonna do blue?,Other,,,,,Decision,rule,2026-11-04
+TS3006d.C.dialog-act.dharshi.324,TS3006d,C (ID),2318.88,2320.11,Do we need to do anything?,Other,,,,,Task,rule,2026-11-04
+TS3007a.A.dialog-act.vkaraisk.32,TS3007a,A (PM),136.54,138.21,and how we're going to do it.,Other,,,,,Decision,rule,2026-11-04
+TS3007a.D.dialog-act.vkaraisk.143,TS3007a,D (ME),1194.62,1197.31,and distinguish from uh from current products.,Other,,,,,Decision,summlink,2026-11-04
+TS3007a.A.dialog-act.vkaraisk.285,TS3007a,A (PM),1251.74,1255.10,"it must be really uh innovative, technical-wise?",Other,,,,,Decision,summlink,2026-11-04
+TS3007a.D.dialog-act.vkaraisk.160,TS3007a,D (ME),1278.32,1280.75,you got some cheap uh remote controls there.,Other,,,,,Decision,summlink,2026-11-04
+TS3007a.D.dialog-act.vkaraisk.164,TS3007a,D (ME),1287.36,1290.92,But when you enter a new market with a remote control and,Other,,,,,Decision,summlink,2026-11-04
+TS3007a.D.dialog-act.vkaraisk.166,TS3007a,D (ME),1296.36,1298.57,"you have to do something special, I think.",Other,,,,,Decision,summlink,2026-11-04
+TS3007a.A.dialog-act.vkaraisk.306,TS3007a,A (PM),1354.76,1359.87,Uh the User Interface Designer has to look at the technical functions.,Task,the User Interface Designer,,,Assigned: technical functions.,Task,summlink,2026-11-04
+TS3007b.C.dialog-act.vkaraisk.147,TS3007b,C (ID),1306.66,1308.73,"or they have a very simple menu structure,",Other,,,,,Other,default,2026-11-04
+TS3007b.B.dialog-act.vkaraisk.149,TS3007b,B (UI),1723.10,1730.75,"as being apparent that the children cannot use this uh change the settings of the T_V_, like colour and then volume",Other,,,,,Other,default,2026-11-04
+TS3007b.A.dialog-act.vkaraisk.115,TS3007b,A (PM),1925.94,1927.38,"we must keep it simple,",Decision,,,,Agreed: keep it simple.,Other,default,2026-11-04
+TS3007c.C.dialog-act.dharshi.113,TS3007c,C (ID),541.50,543.57,"uh, oh, talk about it later.",Other,,,,,Other,default,2026-11-04
+TS3007c.C.dialog-act.dharshi.116,TS3007c,C (ID),548.33,553.87,"Well, we discussed it in a previous meeting, so I figured I'll just leave it at the L_C_D_.",Decision,,,,Settled earlier: LCD.,Decision,summlink,2026-11-04
+TS3007c.C.dialog-act.dharshi.169,TS3007c,C (ID),742.89,745.61,I I I prefer rubber.,Other,,,,,Decision,summlink,2026-11-04
+TS3007c.D.dialog-act.dharshi.114,TS3007c,D (ME),942.74,945.90,"So, uh we decided to take",Decision,,,,Decided target: below forty.,Decision,rule,2026-11-04
+TS3007c.A.dialog-act.dharshi.175,TS3007c,A (PM),1861.31,1864.07,Okay. So the games uh are in it.,Decision,,,,Decided: games included.,Decision,summlink,2026-11-04
+TS3007c.A.dialog-act.dharshi.176,TS3007c,A (PM),1864.07,1865.56,The voice recognition are not.,Decision,,,,Decided: no voice recognition.,Decision,summlink,2026-11-04
+TS3007c.A.dialog-act.dharshi.192,TS3007c,A (PM),2048.33,2058.47,"The case will be double-curved and uh rubber, in a fr flashy fruity colour uh that with cover is removable.",Decision,,,,"Decided case: double-curved rubber, removable cover.",Decision,summlink,2026-11-04
+TS3007c.A.dialog-act.dharshi.193,TS3007c,A (PM),2058.47,2064.39,The buttons will be uh touch-screen. Uh but there may not be too many buttons.,Decision,,,,Decided: touch-screen buttons.,Decision,summlink,2026-11-04
+TS3007c.A.dialog-act.dharshi.256,TS3007c,A (PM),2333.06,2340.48,the the industrial uh development uh centre and uh user interface uh will work together on a prototype.,Task,the the industrial uh development uh centre and uh user interface,,,Assigned: prototype together.,Task,summlink,2026-11-04
+TS3007c.A.dialog-act.dharshi.259,TS3007c,A (PM),2344.92,2354.06,"And um, the marketing expert will uh will uh ke he will be keeping busy with the product uh evaluation.",Task,the marketing expert,,,Assigned: product evaluation.,Task,summlink,2026-11-04
+TS3007d.A.dialog-act.dharshi.22,TS3007d,A (PM),177.27,178.53,"Once again, forty minutes,",Other,,,,,Other,default,2026-11-04
+TS3007d.B.dialog-act.dharshi.14,TS3007d,B (UI),204.87,208.54,We decided to use a single touch-screen.,Decision,,,,Decided: single touch-screen.,Decision,rule,2026-11-04
+TS3007d.A.dialog-act.dharshi.46,TS3007d,A (PM),524.82,533.62,"and for the people who uh really want uh a more sophisticated, more traditional look, they're willing to pay uh that.",Other,,,,,Decision,summlink,2026-11-04
+TS3007d.D.dialog-act.dharshi.54,TS3007d,D (ME),657.69,660.61,"Um, we're going to do that with a seven point scale.",Other,,,,,Decision,rule,2026-11-04
+TS3007d.B.dialog-act.dharshi.139,TS3007d,B (UI),954.79,959.89,"'cause we decided not to make two f uh fresh colours, as it would not.",Decision,,,,Decided: not two fresh colours.,Decision,rule,2026-11-04
+TS3007d.A.dialog-act.dharshi.202,TS3007d,A (PM),1337.51,1339.91,"The kinetic thing, can we just skip it,",Decision,,,,Agreed to skip the kinetic option.,Decision,summlink,2026-11-04
+TS3007d.D.dialog-act.dharshi.236,TS3007d,D (ME),1521.05,1521.94,"Yeah, I think so.",Other,,,,,Other,default,2026-11-04
+TS3007d.B.dialog-act.dharshi.254,TS3007d,B (UI),1544.67,1548.07,You ma can make an an especialised extra gold version.,Other,,,,,Other,default,2026-11-04
+TS3007d.A.dialog-act.dharshi.324,TS3007d,A (PM),1889.21,1890.91,"No, uh that's true. No.",Other,,,,,Other,default,2026-11-04
+TS3007d.A.dialog-act.dharshi.494,TS3007d,A (PM),2626.78,2629.56,that's that's what I'm gonna write b between now.,Other,,,,,Task,summlink,2026-11-04
+TS3007d.D.dialog-act.dharshi.415,TS3007d,D (ME),2649.47,2653.04,Why we decided to use a flat uh L_C_D_.,Decision,,,,Decision recorded: flat LCD.,Decision,rule,2026-11-04
+TS3007d.A.dialog-act.dharshi.507,TS3007d,A (PM),2744.53,2746.28,I'm going to finish my end report.,Task,I,,,PM will finish the end report.,Task,summlink,2026-11-04
+TS3008a.D.dialog-act.dharshi.15,TS3008a,D (ME),151.10,152.27,"Now, wake up, bitch.",Other,,,,,Other,default,2026-11-04
+TS3008a.A.dialog-act.dharshi.147,TS3008a,A (PM),918.25,922.74,The selling price of our remote control is gonna be twenty five Euros.,Decision,,,,Brief: selling price 25 Euros.,Decision,summlink,2026-11-04
+TS3008a.A.dialog-act.dharshi.148,TS3008a,A (PM),922.74,925.71,And our profit aim is fifteen million Euros.,Decision,,,,Brief: profit aim.,Decision,summlink,2026-11-04
+TS3008a.A.dialog-act.dharshi.150,TS3008a,A (PM),928.66,931.65,"The market range is international, so it's gonna be sold world-wide,",Decision,,,,Brief: international market.,Decision,summlink,2026-11-04
+TS3008a.A.dialog-act.dharshi.189,TS3008a,A (PM),1128.90,1131.26,Do uh by just sh shape and the look of it?,Other,,,,,Other,default,2026-11-04
+TS3008a.D.dialog-act.dharshi.121,TS3008a,D (ME),1143.09,1143.97,"Yeah, way too high.",Risk,,,,Concern: production costs way too high.,Other,default,2026-11-04
+TS3008a.A.dialog-act.dharshi.214,TS3008a,A (PM),1220.04,1224.89,"The the Industrial Designer will w or the working design, of course,",Task,The the Industrial Designer,,,Assigned: working design.,Task,summlink,2026-11-04
+TS3008b.A.dialog-act.dharshi.232,TS3008b,A (PM),1488.42,1493.75,Do you uh have you have you think about tha thought about that? How we can what the extra touch can be.,Other,,,,,Decision,summlink,2026-11-04
+TS3008b.A.dialog-act.dharshi.244,TS3008b,A (PM),1540.54,1546.07,"I think it's very impor because we're gonna make such a basic remote control, we have to do something to make it special.",Other,,,,,Task,rule,2026-11-04
+TS3008b.A.dialog-act.dharshi.301,TS3008b,A (PM),1794.52,1801.89,"Yeah, but then it's very easy to make it also a rechargeab I don't think that is gonna cost much to make it also a recharge function in it.",Other,,,,,Other,default,2026-11-04
+TS3008b.A.dialog-act.dharshi.358,TS3008b,A (PM),2008.04,2011.09,"We have lunch break, and then we have thirty minutes of individual work.",Other,,,,,Task,summlink,2026-11-04
+TS3008b.A.dialog-act.dharshi.360,TS3008b,A (PM),2014.94,2019.16,"I had some problems with uh the digitising the the first minutes,",Other,,,,,Task,summlink,2026-11-04
+TS3008b.D.dialog-act.dharshi.216,TS3008b,D (ME),2185.22,2186.95,"and the numbers on top, I guess.",Other,,,,,Other,default,2026-11-04
+TS3008c.A.dialog-act.dharshi.37,TS3008c,A (PM),590.49,594.20,"no, but we decided to use only b basic functions only.",Decision,,,,Decided: basic functions only.,Decision,rule,2026-11-04
+TS3008c.A.dialog-act.dharshi.188,TS3008c,A (PM),1642.19,1646.75,"Okay, we s skip the L_C_D_ display.",Decision,,,,Decided: skip the LCD.,Decision,summlink,2026-11-04
+TS3008c.A.dialog-act.dharshi.296,TS3008c,A (PM),2176.19,2184.04,"Th in that way we have like only the numbers, the power button, skip and volume, and then uh uh ten uh rem",Decision,,,,Agreed button set.,Decision,summlink,2026-11-04
+TS3008c.D.dialog-act.dharshi.286,TS3008c,D (ME),2183.01,2185.71,A mute and a teletext and a menu.,Decision,,,,"Agreed: mute, teletext and menu.",Decision,summlink,2026-11-04
+TS3008c.A.dialog-act.dharshi.308,TS3008c,A (PM),2224.81,2226.57,"Yeah, but we're gonna have to we really have to think",Other,,,,,Decision,rule,2026-11-04
+TS3008c.A.dialog-act.dharshi.329,TS3008c,A (PM),2284.08,2288.78,"Well, you will read the minutes uh in the you can find them in the",Other,,,,,Task,summlink,2026-11-04
+TS3008c.D.dialog-act.dharshi.305,TS3008c,D (ME),2287.82,2288.86,In the shared folder.,Other,,,,,Task,summlink,2026-11-04
+TS3008c.A.dialog-act.dharshi.332,TS3008c,A (PM),2292.48,2294.09,because I'm will now type them out.,Task,I,,,PM will type out the minutes.,Task,summlink,2026-11-04
+TS3008c.C.dialog-act.dharshi.220,TS3008c,C (ID),2308.31,2318.47,I will make one in the next uh twenty minutes.,Task,I,in the next uh twenty minutes,,Designer will make a prototype.,Task,rule,2026-11-04
+TS3008d.A.dialog-act.dharshi.3,TS3008d,A (PM),86.92,90.76,"Oh, we're gonna have a prototype presentation first.",Other,,,,,Decision,rule,2026-11-04
+TS3008d.A.dialog-act.dharshi.99,TS3008d,A (PM),782.58,786.71,Then we're gonna do the buttons in the i are we're gonna have rubber buttons.,Decision,,,,Agreed: rubber buttons.,Decision,rule,2026-11-04
+TS3008d.A.dialog-act.dharshi.220,TS3008d,A (PM),1354.70,1356.61,which is uh quite a great score.,Other,,,,,Other,default,2026-11-04
+TS3008d.A.dialog-act.dharshi.248,TS3008d,A (PM),1464.32,1467.25,I don't know if it's filled in properly.,Other,,,,,Other,default,2026-11-04
+TS3008d.A.dialog-act.dharshi.287,TS3008d,A (PM),1639.66,1640.92,And I count them like this.,Other,,,,,Other,default,2026-11-04
+TS3008d.A.dialog-act.dharshi.338,TS3008d,A (PM),1841.23,1842.40,I think we can agree on this.,Other,,,,,Other,default,2026-11-04
+TS3008d.A.dialog-act.dharshi.482,TS3008d,A (PM),2596.35,2597.41,"No no, it's not possible.",Other,,,,,Decision,summlink,2026-11-04
+TS3008d.D.dialog-act.dharshi.374,TS3008d,D (ME),2708.40,2710.84,"I think we gotta fill out another questionnaire, to be honest.",Other,,,,,Task,summlink,2026-11-04
+TS3009a.A.dialog-act.s9553330.73,TS3009a,A (PM),293.25,295.29,Just uh let them all uh stand here.,Other,,,,,Other,default,2026-11-04
+TS3009a.A.dialog-act.s9553330.251,TS3009a,A (PM),1024.65,1029.31,So the the form will have been uh tested out so,Other,,,,,Other,default,2026-11-04
+TS3009a.A.dialog-act.s9553330.332,TS3009a,A (PM),1474.82,1477.89,I'll have to restore my uh my desktop uh,Other,,,,,Task,rule,2026-11-04
+TS3009b.A.dialog-act.s9553330.7,TS3009b,A (PM),85.84,88.08,"I don't know the shortcut, so",Other,,,,,Other,default,2026-11-04
+TS3009b.A.dialog-act.s9553330.17,TS3009b,A (PM),125.95,130.69,"Y you also have uh received that mail, the new project requirements from our bosses?",Other,,,,,Other,default,2026-11-04
+TS3009b.D.dialog-act.s9553330.84,TS3009b,D (ME),675.96,683.07,"So it's better to uh put our attention to the the design. So you can pick up and use it, than I think.",Other,,,,,Decision,summlink,2026-11-04
+TS3009b.A.dialog-act.s9553330.197,TS3009b,A (PM),1361.51,1367.43,but i th they all have to have something about um the recognition from our company.,Decision,,,,Requirement: company recognition on all designs.,Decision,summlink,2026-11-04
+TS3009b.A.dialog-act.s9553330.228,TS3009b,A (PM),1560.52,1564.66,And if if that's gives you a little bit of sta status information.,Other,,,,,Decision,summlink,2026-11-04
+TS3009b.D.dialog-act.s9553330.221,TS3009b,D (ME),1605.10,1606.36,No not clickable.,Other,,,,,Decision,summlink,2026-11-04
+TS3009b.A.dialog-act.s9553330.246,TS3009b,A (PM),1646.66,1648.78,"Uh well I think so, yes. Um",Other,,,,,Decision,summlink,2026-11-04
+TS3009b.A.dialog-act.s9553330.289,TS3009b,A (PM),1865.95,1867.42,Because we have to decide this.,Other,,,,,Task,rule,2026-11-04
+TS3009b.D.dialog-act.s9553330.281,TS3009b,D (ME),1872.58,1877.63,And moreover I think that you two should be uh come to consensus about the L_C_D_ s.,Other,,,,,Other,default,2026-11-04
+TS3009b.A.dialog-act.s9553330.295,TS3009b,A (PM),1886.69,1890.69,"We have a power button, setting buttons, L_C_D_ window, the number buttons",Decision,,,,Agreed button set.,Decision,summlink,2026-11-04
+TS3009b.C.dialog-act.s9553330.221,TS3009b,C (ID),1894.99,1895.67,Volume control.,Other,,,,,Decision,summlink,2026-11-04
+TS3009b.A.dialog-act.s9553330.298,TS3009b,A (PM),1902.28,1905.22,Uh the mute button.,Other,,,,,Decision,summlink,2026-11-04
+TS3009b.D.dialog-act.s9553330.335,TS3009b,D (ME),2237.20,2239.91,I do think we have to put that underneath a clip.,Other,,,,,Decision,summlink,2026-11-04
+TS3009b.A.dialog-act.s9553330.378,TS3009b,A (PM),2244.24,2245.57,Th that's a bit uh waste.,Other,,,,,Decision,summlink,2026-11-04
+TS3009b.A.dialog-act.s9553330.406,TS3009b,A (PM),2379.60,2383.46,"Oh you always have in the centre an Okay button, for your menu.",Other,,,,,Decision,summlink,2026-11-04
+TS3009b.A.dialog-act.s9553330.407,TS3009b,A (PM),2383.46,2384.27,Menu button.,Other,,,,,Decision,summlink,2026-11-04
+TS3009c.D.dialog-act.s9553330.60,TS3009c,D (ME),327.16,328.71,"Yeah, that's great.",Other,,,,,Decision,summlink,2026-11-04
+TS3009c.D.dialog-act.s9553330.70,TS3009c,D (ME),350.76,355.39,We're gonna have real uh cool shapes and lots of colours.,Decision,,,,Decided: cool shapes and lots of colours.,Decision,rule,2026-11-04
+TS3009c.C.dialog-act.s9553330.35,TS3009c,C (ID),397.91,399.80,so I uh I'll have to change that on the way.,Task,I,,,Designer will change the material choice.,Task,rule,2026-11-04
+TS3009c.C.dialog-act.s9553330.51,TS3009c,C (ID),428.84,429.94,"Uh the buttons of course rubber,",Decision,,,,Agreed: rubber buttons.,Decision,summlink,2026-11-04
+TS3009c.B.dialog-act.s9553330.50,TS3009c,B (UI),892.72,899.77,Um the buttons for screen width and general settings and uh and that kind of stuff,Other,,,,,Decision,summlink,2026-11-04
+TS3009c.C.dialog-act.s9553330.164,TS3009c,C (ID),1026.50,1028.87,Those are the the cha the channel buttons of course?,Other,,,,,Decision,summlink,2026-11-04
+TS3009c.C.dialog-act.s9553330.165,TS3009c,C (ID),1033.27,1035.39,And then below is the L_C_D_ screen?,Other,,,,,Decision,summlink,2026-11-04
+TS3009c.A.dialog-act.s9553330.191,TS3009c,A (PM),1319.31,1322.39,These are a few examples which we have to decide about.,Other,,,,,Task,rule,2026-11-04
+TS3009c.A.dialog-act.s9553330.200,TS3009c,A (PM),1353.22,1356.01,but we have to decide about these now.,Other,,,,,Task,rule,2026-11-04
+TS3009c.C.dialog-act.s9553330.204,TS3009c,C (ID),1382.38,1383.88,Well we have to decide all these things?,Other,,,,,Task,rule,2026-11-04
+TS3009c.C.dialog-act.s9553330.214,TS3009c,C (ID),1425.15,1432.06,"Yeah but the non-removable elements of the of the remote, so not the front, could be titanium,",Other,,,,,Decision,summlink,2026-11-04
+TS3009c.A.dialog-act.s9553330.217,TS3009c,A (PM),1499.75,1501.82,"Titanium back, plastic front.",Decision,,,,"Agreed: titanium back, plastic front.",Decision,summlink,2026-11-04
+TS3009c.A.dialog-act.s9553330.218,TS3009c,A (PM),1501.82,1503.08,Okay.,Other,,,,,Decision,summlink,2026-11-04
+TS3009c.A.dialog-act.s9553330.283,TS3009c,A (PM),1801.74,1804.40,Maybe a a cheap voice recording.,Other,,,,,Decision,summlink,2026-11-04
+TS3009c.D.dialog-act.s9553330.241,TS3009c,D (ME),1891.69,1892.65,Yeah. Round.,Other,,,,,Decision,summlink,2026-11-04
+TS3009c.C.dialog-act.s9553330.312,TS3009c,C (ID),1999.01,2000.06,"But you can put it on the back,",Other,,,,,Decision,summlink,2026-11-04
+TS3009c.B.dialog-act.s9553330.226,TS3009c,B (UI),2003.36,2005.93,Ah the logo should be on the top I think.,Other,,,,,Decision,summlink,2026-11-04
+TS3009c.B.dialog-act.s9553330.228,TS3009c,B (UI),2010.16,2011.53,"Right corner, yes.",Other,,,,,Decision,summlink,2026-11-04
+TS3009d.A.dialog-act.s9553330.36,TS3009d,A (PM),140.39,142.20,This is what we decided.,Decision,,,,Recap of decisions.,Decision,rule,2026-11-04
+TS3009d.C.dialog-act.s9553330.56,TS3009d,C (ID),307.27,310.25,And also here are the two uh buttons we agreed on.,Decision,,,,Two agreed buttons.,Decision,rule,2026-11-04
+TS3009d.C.dialog-act.s9553330.65,TS3009d,C (ID),326.04,328.43,"And of course this low part, this is the L_C_D_ screen.",Other,,,,,Decision,summlink,2026-11-04
+TS3009d.C.dialog-act.s9553330.84,TS3009d,C (ID),389.89,392.44,"Oh and uh before I forget. Yeah the the voice, of course,",Other,,,,,Other,default,2026-11-04
+TS3009d.B.dialog-act.s9553330.61,TS3009d,B (UI),522.10,526.83,"Well f for as far as I can see, three of us agree",Other,,,,,Decision,summlink,2026-11-04
+TS3009d.B.dialog-act.s9553330.64,TS3009d,B (UI),532.94,536.63,you can make the hard decisions.,Other,,,,,Other,default,2026-11-04
+TS3009d.C.dialog-act.s9553330.135,TS3009d,C (ID),557.67,558.26,Yeah but of course,Other,,,,,Other,default,2026-11-04
+TS3009d.A.dialog-act.s9553330.98,TS3009d,A (PM),573.13,576.74,So let it be like this at uh at this moment.,Decision,,,,Settled: keep it like this for now.,Decision,summlink,2026-11-04
+TS3009d.B.dialog-act.s9553330.86,TS3009d,B (UI),842.68,844.61,"Well, I should I think two,",Other,,,,,Other,default,2026-11-04
+TS3009d.A.dialog-act.s9553330.181,TS3009d,A (PM),978.52,979.96,"The sample speaker,",Other,,,,,Decision,summlink,2026-11-04
+TS3009d.D.dialog-act.s9553330.150,TS3009d,D (ME),1292.27,1293.63,Or change the titanium,Other,,,,,Other,default,2026-11-04
+TS3009d.D.dialog-act.s9553330.167,TS3009d,D (ME),1366.23,1367.36,So we have to make it cheaper.,Other,,,,,Task,rule,2026-11-04
+TS3010a.A.dialog-act.s9553330.18,TS3010a,A (PM),93.43,96.80,We have to do that every time we make something.,Other,,,,,Task,rule,2026-11-04
+TS3010a.D.dialog-act.s9553330.45,TS3010a,D (ME),708.11,710.95,And it was uh uh v not easy to use.,Other,,,,,Other,default,2026-11-04
+TS3010b.C.dialog-act.s9553330.85,TS3010b,C (ID),555.47,558.73,"And the bleep signal, y uh you told us.",Other,,,,,Other,default,2026-11-04
+TS3010b.A.dialog-act.s9553330.135,TS3010b,A (PM),1573.10,1573.97,We have to do this.,Other,,,,,Task,rule,2026-11-04
+TS3010b.D.dialog-act.s9553330.124,TS3010b,D (ME),1691.59,1692.85,Do we make a menu?,Other,,,,,Decision,summlink,2026-11-04
+TS3010b.C.dialog-act.s9553330.159,TS3010b,C (ID),1896.81,1902.98,And uh we don't yet have to decide what the remote control would look like? Or,Other,,,,,Task,summlink,2026-11-04
+TS3010b.A.dialog-act.s9553330.195,TS3010b,A (PM),1903.44,1905.34,that's for the next phase.,Other,,,,,Task,summlink,2026-11-04
+TS3010c.C.dialog-act.dharshi.22,TS3010c,C (ID),415.04,417.58,"Like, totally yellow, totally red.",Other,,,,,Other,default,2026-11-04
+TS3010c.C.dialog-act.dharshi.30,TS3010c,C (ID),440.97,450.48,"And then, I'll have to discuss about the costs uh of all the things for the remote control.",Other,,,,,Task,rule,2026-11-04
+TS3010c.A.dialog-act.dharshi.76,TS3010c,A (PM),1000.61,1003.66,"Well, we have to decide on the concept.",Other,,,,,Task,rule,2026-11-04
+TS3010c.C.dialog-act.dharshi.268,TS3010c,C (ID),1940.56,1945.19,"Hard plastic, uh the shape, and around it hard uh around it rubber.",Other,,,,,Decision,summlink,2026-11-04
+TS3010d.D.dialog-act.dharshi.89,TS3010d,D (ME),603.69,605.94,We have to do our uh,Other,,,,,Task,rule,2026-11-04
+TS3010d.D.dialog-act.dharshi.139,TS3010d,D (ME),839.43,840.65,We'll go for a three.,Other,,,,,Decision,rule,2026-11-04
+TS3010d.C.dialog-act.dharshi.87,TS3010d,C (ID),1089.47,1091.84,We're not gonna make it.,Risk,,,,Concern: not going to make the budget.,Decision,rule,2026-11-04
+TS3010d.C.dialog-act.dharshi.107,TS3010d,C (ID),1243.94,1247.00,And if you say it's just a r uh normal colour,Other,,,,,Decision,summlink,2026-11-04
+TS3011a.A.dialog-act.dharshi.49,TS3011a,A (PM),223.39,226.60,"The market, we should have a look at the market.",Other,,,,,Other,default,2026-11-04
+TS3011a.A.dialog-act.dharshi.50,TS3011a,A (PM),226.60,234.14,"Um we are going to use a a pred a project method uh during uh this development,",Other,,,,,Decision,rule,2026-11-04
+TS3011a.A.dialog-act.dharshi.137,TS3011a,A (PM),699.35,707.06,the remote control we are going to develop um will have a selling price of about twenty five Euros.,Decision,,,,Brief: selling price about 25 Euros.,Decision,summlink,2026-11-04
+TS3011a.A.dialog-act.dharshi.141,TS3011a,A (PM),719.02,721.19,"we uh we will focus this internationally,",Decision,,,,Brief: international focus.,Decision,summlink,2026-11-04
+TS3011a.B.dialog-act.dharshi.64,TS3011a,B (UI),1047.10,1047.72,devices?,Other,,,,,Decision,summlink,2026-11-04
+TS3011a.C.dialog-act.dharshi.72,TS3011a,C (ID),1057.03,1059.10,"Yes, I think it should be something like that.",Other,,,,,Decision,summlink,2026-11-04
+TS3011a.A.dialog-act.dharshi.241,TS3011a,A (PM),1468.08,1471.65,so we will go back to our own uh work.,Task,we,,,Back to individual work.,Task,summlink,2026-11-04
+TS3011b.C.dialog-act.vkaraisk.78,TS3011b,C (ID),613.93,623.37,"And um the money we save on using this we can use uh for elaborate fancy lighting uh techniques, blinking LEDs and all that kind of fancy stuff.",Other,,,,,Decision,summlink,2026-11-04
+TS3011b.B.dialog-act.vkaraisk.72,TS3011b,B (UI),667.95,674.08,"I think it's the same as in the cell phone, just light in in the device that that shines on all the buttons,",Other,,,,,Decision,summlink,2026-11-04
+TS3011b.B.dialog-act.vkaraisk.96,TS3011b,B (UI),872.72,875.48,but maybe you'll uh get some new technologies for it.,Other,,,,,Other,default,2026-11-04
+TS3011b.A.dialog-act.vkaraisk.139,TS3011b,A (PM),1010.40,1022.28,"m maybe um w we uh we do agree on on the thing that the remote should have such a function, if it's possible within the costs and all that kind of things.",Decision,,,,Agreed: include the function if within cost.,Decision,summlink,2026-11-04
+TS3011b.A.dialog-act.vkaraisk.140,TS3011b,A (PM),1022.28,1029.50,"Um maybe Sebastian should have uh a detailed look later on and um come up with a solution,",Task,Sebastian,,,Sebastian to look into it and come up with a solution; accepted.,Task,summlink,2026-11-04
+TS3011b.C.dialog-act.vkaraisk.210,TS3011b,C (ID),1273.15,1279.63,"So you know I've just uh pushed the button, or I changed the channel or t uh turned up the volume.",Other,,,,,Other,default,2026-11-04
+TS3011b.B.dialog-act.vkaraisk.138,TS3011b,B (UI),1318.80,1325.17,It's just an easy uh way of of a round button what which can be pushed in four directions. Instead of a stick.,Other,,,,,Decision,summlink,2026-11-04
+TS3011b.B.dialog-act.vkaraisk.141,TS3011b,B (UI),1330.09,1333.30,"just a round uh button should be the trick, I think.",Other,,,,,Decision,summlink,2026-11-04
+TS3011b.C.dialog-act.vkaraisk.292,TS3011b,C (ID),1749.95,1753.53,There's only one disadvantage uh by implementing this.,Risk,,,,Drawback: power saving becomes harder.,Other,default,2026-11-04
+TS3011b.D.dialog-act.vkaraisk.101,TS3011b,D (ME),1787.68,1798.07,"And uh if we if we could inc uh include a c a cradle in which it could recharge, then there wouldn't be uh a big problem.",Other,,,,,Decision,summlink,2026-11-04
+TS3011b.C.dialog-act.vkaraisk.322,TS3011b,C (ID),1910.45,1915.15,we've decided to implement a seemingly uh easy design.,Decision,,,,Decided: seemingly easy design.,Decision,rule,2026-11-04
+TS3011b.C.dialog-act.vkaraisk.327,TS3011b,C (ID),1923.42,1925.53,those are the choices we have to make.,Other,,,,,Task,rule,2026-11-04
+TS3011b.B.dialog-act.vkaraisk.195,TS3011b,B (UI),2012.35,2017.74,then we should just uh take a look at the costs and uh especially for the voice recognition.,Task,we,,,"Look at the costs, especially voice recognition.",Other,default,2026-11-04
+TS3011b.A.dialog-act.vkaraisk.321,TS3011b,A (PM),2071.35,2082.53,"Um the Interface Designer, um I would like to the next meeting I would like to receive the uh components concept.",Task,the Interface Designer,the next meeting,,Components concept due at the next meeting.,Task,summlink,2026-11-04
+TS3011b.A.dialog-act.vkaraisk.336,TS3011b,A (PM),2132.48,2137.22,but um i I was talking about really the design of the,Other,,,,,Other,default,2026-11-04
+TS3011b.A.dialog-act.vkaraisk.341,TS3011b,A (PM),2150.34,2155.71,I'm sure the marketing expert will receive uh t uh you will do some trend watching.,Task,you,,,Assigned: trend watching.,Task,summlink,2026-11-04
+TS3011b.B.dialog-act.vkaraisk.209,TS3011b,B (UI),2176.88,2177.56,I'll take the lunch.,Other,,,,,Task,rule,2026-11-04
+TS3011c.D.dialog-act.vkaraisk.54,TS3011c,D (ME),432.03,436.53,"or uh like cell phones, exch exchangeable covers.",Other,,,,,Decision,summlink,2026-11-04
+TS3011c.A.dialog-act.vkaraisk.59,TS3011c,A (PM),448.10,454.19,"You could make a few v very colourful ones, and uh a very traditional co cover.",Other,,,,,Decision,summlink,2026-11-04
+TS3011c.A.dialog-act.vkaraisk.160,TS3011c,A (PM),1349.14,1351.72,d did we already decide on the display?,Other,,,,,Decision,summlink,2026-11-04
+TS3011c.A.dialog-act.vkaraisk.189,TS3011c,A (PM),1492.75,1495.93,"But but do we want the curved uh uh design,",Other,,,,,Decision,summlink,2026-11-04
+TS3011c.C.dialog-act.vkaraisk.300,TS3011c,C (ID),1608.57,1611.44,And uh skip and skip the L_C_D_ part.,Decision,,,,Agreed: skip the LCD.,Decision,summlink,2026-11-04
+TS3011c.C.dialog-act.vkaraisk.325,TS3011c,C (ID),1728.82,1729.48,I'll check it for you.,Task,I,,,Commits to check it.,Task,rule,2026-11-04
+TS3011c.A.dialog-act.vkaraisk.248,TS3011c,A (PM),1760.56,1763.44,"And for you, the product evaluation.",Task,you,,,Assigned: product evaluation.,Task,summlink,2026-11-04
+TS3011c.A.dialog-act.vkaraisk.250,TS3011c,A (PM),1770.00,1775.93,Um and uh the I_D_ and the U_I_D_ need to work together on the prototype drawing on the SMARTboard.,Task,the I_D_ and the U_I_D_,,,Assigned: prototype drawing together.,Task,summlink,2026-11-04
+TS3011c.A.dialog-act.vkaraisk.259,TS3011c,A (PM),1809.17,1812.30,"The casing is curved, single-curved.",Decision,,,,Decided: single-curved case.,Decision,summlink,2026-11-04
+TS3011c.A.dialog-act.vkaraisk.268,TS3011c,A (PM),1854.12,1855.81,"Yeah, with colourful rubber.",Decision,,,,Decided: colourful rubber.,Decision,summlink,2026-11-04
+TS3011c.A.dialog-act.vkaraisk.289,TS3011c,A (PM),1984.74,1986.09,"The scroll-heel. Yes,",Decision,,,,Decided: scroll wheel.,Decision,summlink,2026-11-04
+TS3011c.A.dialog-act.vkaraisk.328,TS3011c,A (PM),2209.54,2212.23,Um I guess you two have to figure that out.,Task,you two,,,Designers to figure it out.,Task,summlink,2026-11-04
+TS3011c.C.dialog-act.vkaraisk.415,TS3011c,C (ID),2267.24,2269.02,And we've decided not to use L_C_D_.,Decision,,,,Decided: no LCD.,Decision,rule,2026-11-04
+TS3011d.A.dialog-act.vkaraisk.56,TS3011d,A (PM),533.51,538.14,um then I did the following changes.,Other,,,,,Decision,summlink,2026-11-04
+TS3011d.C.dialog-act.vkaraisk.92,TS3011d,C (ID),874.57,876.68,"but we decided not to,",Decision,,,,Decided against the double-curved case.,Decision,rule,2026-11-04
+TS3011d.C.dialog-act.vkaraisk.102,TS3011d,C (ID),920.53,923.29,So I I I think it is. I think it's innovative.,Other,,,,,Other,default,2026-11-04
+TS3011d.A.dialog-act.vkaraisk.201,TS3011d,A (PM),1236.13,1236.94,I'll give it a one.,Other,,,,,Other,default,2026-11-04
+TS3012a.A.dialog-act.vkaraisk.33,TS3012a,A (PM),85.65,87.78,I think well it sums up what we need to do.,Other,,,,,Task,rule,2026-11-04
+TS3012a.A.dialog-act.vkaraisk.81,TS3012a,A (PM),206.05,209.38,We'll use that later. Anyway.,Other,,,,,Decision,rule,2026-11-04
+TS3012a.A.dialog-act.vkaraisk.85,TS3012a,A (PM),215.54,218.37,"I'll put the the minutes of every meeting, I'll put them there too,",Task,I,,,PM will put the minutes of every meeting in the folder.,Task,rule,2026-11-04
+TS3012a.B.dialog-act.vkaraisk.26,TS3012a,B (UI),319.01,320.55,"I'll just finish up real soon,",Other,,,,,Other,default,2026-11-04
+TS3012a.B.dialog-act.vkaraisk.62,TS3012a,B (UI),730.41,738.51,"Do we want people who are disabled in any way to uh, yeah, to be able to use it as well?",Other,,,,,Decision,summlink,2026-11-04
+TS3012b.A.dialog-act.vkaraisk.24,TS3012b,A (PM),60.20,62.82,"I will do so after every meeting,",Task,I,after every meeting,,PM will post the minutes after every meeting.,Task,rule,2026-11-04
+TS3012b.A.dialog-act.vkaraisk.29,TS3012b,A (PM),73.46,76.85,so we're gonna go af go after over this later.,Other,,,,,Decision,rule,2026-11-04
+TS3012b.C.dialog-act.vkaraisk.28,TS3012b,C (ID),641.78,644.44,I have to check out how far I can go with that.,Task,I,,,Designer will check the material limits.,Decision,rule,2026-11-04
+TS3012b.C.dialog-act.vkaraisk.38,TS3012b,C (ID),673.46,678.28,So we have to make something that's not too difficult in design again.,Other,,,,,Task,rule,2026-11-04
+TS3012b.C.dialog-act.vkaraisk.73,TS3012b,C (ID),922.69,924.35,"I have to check that out,",Task,I,,,Designer will check whether it is possible.,Task,summlink,2026-11-04
+TS3012b.A.dialog-act.vkaraisk.207,TS3012b,A (PM),936.97,937.83,we should go for that.,Decision,,,,Agreed: go for it.,Decision,summlink,2026-11-04
+TS3012b.A.dialog-act.vkaraisk.265,TS3012b,A (PM),1098.56,1104.29,"For example, if your buttons are faded, after I mean if you make a durable remote, they are faded, you can just buy a new cover.",Other,,,,,Decision,summlink,2026-11-04
+TS3012b.A.dialog-act.vkaraisk.287,TS3012b,A (PM),1150.17,1156.43,"because even if we're if we're gonna do those covers and everything, what people really want, that's what we need to know in this phase,",Other,,,,,Decision,rule,2026-11-04
+TS3012b.B.dialog-act.vkaraisk.114,TS3012b,B (UI),1255.03,1262.47,"Because if we use a universal remote control, we're going to have to have most buttons on it,",Other,,,,,Decision,rule,2026-11-04
+TS3012b.A.dialog-act.vkaraisk.410,TS3012b,A (PM),1503.69,1506.39,but it shouldn't be stacked away somewhere.,Other,,,,,Other,default,2026-11-04
+TS3012b.A.dialog-act.vkaraisk.489,TS3012b,A (PM),1724.89,1726.41,we have to find out if it's possible.,Task,we,,,Find out whether it is possible.,Task,rule,2026-11-04
+TS3012b.B.dialog-act.vkaraisk.168,TS3012b,B (UI),1820.56,1823.46,"Could you post some other essentials of what people want,",Task,you,,,Asked to post the essential user wishes.,Task,summlink,2026-11-04
+TS3012b.B.dialog-act.vkaraisk.181,TS3012b,B (UI),1873.59,1876.98,Because we decided that it's n not that important.,Decision,,,,Decided teletext is not important.,Decision,rule,2026-11-04
+TS3012b.A.dialog-act.vkaraisk.556,TS3012b,A (PM),1920.04,1923.42,"we don't want we want very little buttons, just the buttons you use a lot.",Decision,,,,Agreed: very few buttons.,Decision,summlink,2026-11-04
+TS3012b.A.dialog-act.vkaraisk.611,TS3012b,A (PM),2084.78,2086.61,"we should do a little thing about design,",Other,,,,,Decision,summlink,2026-11-04
+TS3012b.C.dialog-act.vkaraisk.256,TS3012b,C (ID),2094.63,2095.94,"And the design, it should differ.",Other,,,,,Decision,summlink,2026-11-04
+TS3012b.C.dialog-act.vkaraisk.307,TS3012b,C (ID),2395.10,2402.06,"uh let's give this uh a name, and not like some vague serial number that no one understands, like with cars.",Decision,,,,Agreed: give the product a name.,Task,summlink,2026-11-04
+TS3012c.C.dialog-act.vkaraisk.32,TS3012c,C (ID),226.83,229.72,So we have to decide on that in a minute.,Other,,,,,Task,rule,2026-11-04
+TS3012c.C.dialog-act.vkaraisk.100,TS3012c,C (ID),430.64,432.76,Mm. I think we have to decide on this anyway.,Other,,,,,Task,rule,2026-11-04
+TS3012c.A.dialog-act.vkaraisk.297,TS3012c,A (PM),958.93,960.65,you should send it to the f to the folder first.,Other,,,,,Task,rule,2026-11-04
+TS3012c.A.dialog-act.vkaraisk.378,TS3012c,A (PM),1339.86,1342.21,because so we have more options I suppose.,Other,,,,,Other,default,2026-11-04
+TS3012c.A.dialog-act.vkaraisk.469,TS3012c,A (PM),1619.73,1621.08,I think we'll go with the triangles,Decision,,,,Decided: triangles.,Decision,rule,2026-11-04
+TS3012c.C.dialog-act.vkaraisk.279,TS3012c,C (ID),1991.41,1992.26,and and wire it.,Other,,,,,Other,default,2026-11-04
+TS3012c.A.dialog-act.vkaraisk.669,TS3012c,A (PM),2229.22,2231.00,So I think we should go with that.,Decision,,,,Decided to follow the project board's info.,Decision,rule,2026-11-04
+TS3012d.A.dialog-act.vkaraisk.24,TS3012d,A (PM),79.28,83.53,Um we agreed that the colour should be b uh yellow and black.,Decision,,,,Agreed: yellow and black.,Decision,rule,2026-11-04
+TS3012d.A.dialog-act.vkaraisk.29,TS3012d,A (PM),91.84,95.52,"We agreed that we would implement both the L_C_D_ and speech recognition,",Decision,,,,Agreed: LCD and speech recognition.,Decision,rule,2026-11-04
+TS3012d.A.dialog-act.vkaraisk.30,TS3012d,A (PM),95.52,97.54,but I'll get to that in a moment.,Other,,,,,Task,rule,2026-11-04
+TS3012d.A.dialog-act.vkaraisk.83,TS3012d,A (PM),279.29,282.98,"You have the total of seventeen Euros in production cost,",Other,,,,,Decision,summlink,2026-11-04
+TS3012d.A.dialog-act.vkaraisk.128,TS3012d,A (PM),399.03,401.15,like we agreed before.,Decision,,,,Agreed before: new covers.,Decision,rule,2026-11-04
+TS3012d.D.dialog-act.vkaraisk.24,TS3012d,D (ME),509.39,512.07,"The people want to pay for for it,",Other,,,,,Other,default,2026-11-04
+TS3012d.C.dialog-act.vkaraisk.61,TS3012d,C (ID),614.58,616.46,"No, I'm not uh talking about that cost",Other,,,,,Other,default,2026-11-04
+TS3012d.A.dialog-act.vkaraisk.335,TS3012d,A (PM),1070.58,1073.00,"I mean in the L_C_D_ screen, the small screen. What does it display?",Other,,,,,Other,default,2026-11-04
+TS3012d.A.dialog-act.vkaraisk.345,TS3012d,A (PM),1090.87,1098.20,"But I think in for example like T_V_ guides, I think that's that th that you can transmit through it and everything. Just for extra information on your programmes.",Other,,,,,Other,default,2026-11-04
+TS3012d.A.dialog-act.vkaraisk.409,TS3012d,A (PM),1308.53,1309.99,which ruins your your average.,Other,,,,,Other,default,2026-11-04
+TS3012d.D.dialog-act.vkaraisk.270,TS3012d,D (ME),2109.82,2117.13,I will write that one in a Word uh document.,Other,,,,,Task,rule,2026-11-04
+TS3012d.A.dialog-act.vkaraisk.630,TS3012d,A (PM),2157.32,2160.61,Could you guys draw me a picture of the final design to put on the cover of the report?,Task,you guys,,,Designers asked to draw the final design for the report.,Task,summlink,2026-11-04
+TS3012d.B.dialog-act.vkaraisk.182,TS3012d,B (UI),2160.24,2160.74,"Yeah, sure.",Other,,,,,Task,summlink,2026-11-04
+TS3012d.C.dialog-act.vkaraisk.244,TS3012d,C (ID),2167.98,2169.75,Otherwise we have to do it all over again.,Other,,,,,Task,rule,2026-11-04
