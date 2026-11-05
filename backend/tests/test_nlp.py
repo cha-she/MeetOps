@@ -19,6 +19,7 @@ def test_owner_from_vocative_subject_and_first_person():
 
 def test_past_subject_is_not_an_owner():
     assert nlp.owner("Apple has been taking up to a week lately.", "Dilini") is None
+    assert nlp.owner("Daniel mentioned that the system prototype is ready for review.", None) is None
 
 
 def test_deadline_entities_and_durations():

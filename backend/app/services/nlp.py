@@ -63,8 +63,10 @@ def _commits(verb) -> bool:
     """True when the verb is about work still to be done: a modal/future auxiliary, or need/have/going + to."""
     if any(c.dep_ == "aux" and c.lower_ in MODALS for c in verb.children):
         return True
-    # "needs to ask", "has to send", "is going to fix" (word forms, the lemmatizer is switched off for speed)
-    if verb.lower_ in {"need", "needs", "have", "has", "going", "got", "want", "wants", "plan", "plans"} \
+    # "needs to ask", "has to send", "is going to fix" (word forms, the lemmatizer is switched off for speed);
+    # "agreed to prepare", "offered to send": past tense, but the work itself is still to be done
+    if verb.lower_ in {"need", "needs", "have", "has", "going", "got", "want", "wants", "plan", "plans",
+                       "agreed", "agrees", "offered", "offers", "volunteered", "promised", "promises"} \
             and any(c.dep_ == "xcomp" for c in verb.children):
         return True
     return False

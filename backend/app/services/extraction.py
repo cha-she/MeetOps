@@ -73,6 +73,8 @@ MEDIUM = re.compile(r"\b(problem|problems|issue|expensive|costly|late|slow|not s
                     r"concern\w*|difficult|hard|risk|risky|fragile|break|tight|never tested|untested|gap)\b", re.I)
 
 
+GROUP_WORDS = {"everyone", "everybody", "someone", "somebody", "nobody", "we", "they", "he", "she", "it", "team",
+               "management", "the", "all", "both"}
 SPEAKER_NUMBER = re.compile(r"(?:speaker|participant|guest|attendee|caller)\s+\d{1,2}", re.I)
 
 
@@ -161,6 +163,10 @@ def _rule_owner_name(text: str, speaker: str | None, users: list[models.User],
     vocative = re.match(r"^\W*([A-Z][a-z]+),\s+(can|could|would|will|please)\b", text)
     if vocative:
         return None, vocative.group(1)
+    # "Sophie agreed to prepare …": a commitment, although the verb is in the past tense
+    agreed = re.match(r"^\W*([A-Z][a-z]+)\s+(agreed|offered|volunteered|promised)\s+to\b", text)
+    if agreed and agreed.group(1).lower() not in GROUP_WORDS:
+        return match_user(agreed.group(1), users), agreed.group(1)
     if FIRST_PERSON.search(text) and speaker and speaker != "Unknown":
         return match_user(speaker, users), speaker
     return None, None

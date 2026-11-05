@@ -43,9 +43,14 @@ ACCEPTANCE = re.compile(r"^\W*(yes|yeah|yep|yup|sure|okay|ok|no problem|will do|
 STOP = {"have", "with", "that", "this", "will", "what", "when", "then", "there", "they", "them", "from", "your",
         "about", "into", "also", "just", "some", "same", "should", "could", "would", "please", "need", "want",
         "make", "sure", "okay", "today", "tomorrow", "week", "next", "friday", "monday", "tuesday", "wednesday",
-        "thursday", "saturday", "sunday"}
+        "thursday", "saturday", "sunday", "january", "february", "march", "april", "june", "july", "august",
+        "september", "october", "november", "december", "month", "end"}
 PRONOUN_REQUEST = re.compile(r"\b(take|do|handle|own|pick up|look at) (that|it|this)\b", re.I)
-VAGUE_DECISION = re.compile(r"^\W*(okay|ok|so|right|yeah|yes|alright)?[\s,]*(let'?s (do|go with) (that|it|this)|"
+# A line that points back at the task before it: "He will complete this by 24 November", "It should be done by Friday"
+REFERS_BACK = re.compile(r"^\W*(he|she|they|it|this|that)\b|\b(do|did|complete|finish|deliver|send|submit|have|get|"
+                         r"done|ready|share|update)\s+(it|this|that|them)\b", re.I)
+FIRST_PERSON_ONLY = re.compile(r"^\W*(yes|yeah|sure|okay|ok)?[\s,]*(i'?ll|i will|i can|we'?ll|we will)\b", re.I)
+VAGUE_DECISION =re.compile(r"^\W*(okay|ok|so|right|yeah|yes|alright)?[\s,]*(let'?s (do|go with) (that|it|this)|"
                             r"agreed|deal|sounds good|fine|that works|done)\W*$", re.I)
 
 
@@ -87,14 +92,20 @@ def _content_words(text: str) -> set[str]:
     return {w for w in re.findall(r"[a-z]{4,}", text.lower()) if w not in STOP}
 
 
-def _task_chains(segments: list[models.Segment]) -> list[list[models.Segment]]:
+def _task_chains(segments: list[models.Segment], users: list[models.User] | None = None,
+                 speakers: set[str] | None = None) -> list[list[models.Segment]]:
     """Group the sentences of one task exchange.
 
     A task sentence opens a chain. Up to three lines later the chain takes:
     * a short acceptance by someone else ("Yep, I'll do it", "Confirmed."), whatever its label;
     * a request that refers back with a pronoun ("Kasun, could you take that?");
-    * a follow-up about the same thing that adds a deadline ("Can we have the list by Friday?").
+    * a follow-up about the same thing that adds a deadline ("Can we have the list by Friday?");
+    * a deadline that points back with a pronoun, on the next line or the one after
+      ("Mark will contact the supplier." / "He will complete this by 24 November.").
+    A line that gives the work to a different named person is a new task, not a follow-up
+    ("Emma will review the prototype by 23 November" after "the prototype is ready").
     """
+    users = users or []
     chains: list[list[models.Segment]] = []
     for seg in segments:
         text = seg.text.strip()
@@ -108,18 +119,34 @@ def _task_chains(segments: list[models.Segment]) -> list[list[models.Segment]]:
                 acceptance = short and ACCEPTANCE.search(text) and seg.speaker != last.speaker
                 pronoun = seg.category == "Task" and short and PRONOUN_REQUEST.search(text)
                 _, phrase = extraction.parse_deadline(text, date.today())
+                chain_has_deadline = any(extraction.parse_deadline(s.text, date.today())[1] for s in chain)
                 same_topic = bool(_content_words(text) & _content_words(" ".join(s.text for s in chain)))
-                follow_up = phrase is not None and same_topic and not any(
-                    extraction.parse_deadline(s.text, date.today())[1] for s in chain)
+                own_owner = phrase is not None and _names_new_owner(seg, chain, users, speakers)
+                follow_up = phrase is not None and same_topic and not chain_has_deadline and not own_owner
+                refers_back = (phrase is not None and gap <= 2 and not chain_has_deadline and not own_owner
+                               and len(text.split()) <= 12 and REFERS_BACK.search(text))
                 # a longer acceptance straight after the request ("Yes, I'll have it in the wiki by Wednesday")
                 long_acceptance = (seg.category == "Task" and gap == 1 and seg.speaker != last.speaker
                                    and ACCEPTANCE.search(text))
-                if acceptance or pronoun or follow_up or long_acceptance:
+                if acceptance or pronoun or follow_up or refers_back or long_acceptance:
                     chain.append(seg)
                     joined = True
         if not joined and seg.category == "Task":
             chains.append([seg])
     return chains
+
+
+def _names_new_owner(seg: models.Segment, chain: list[models.Segment], users: list[models.User],
+                     speakers: set[str] | None) -> bool:
+    """True when the line names someone to do the work who is not the chain's owner."""
+    if FIRST_PERSON_ONLY.search(seg.text):   # "I'll send it by Friday": an answer to the request, not a new task
+        return False
+    _, name = extraction.find_owner_name(seg.text, seg.speaker, users, speakers)
+    if not name:
+        return False
+    owners = {extraction.find_owner_name(s.text, s.speaker, users, speakers)[1] for s in chain}
+    first = name.split()[0].lower()
+    return not any(o and o.split()[0].lower() == first for o in owners)
 
 
 def _task_draft(chain: list[models.Segment], meeting_date: date, users: list[models.User],
@@ -196,7 +223,7 @@ def _merge_duplicates(drafts: list[Draft], threshold: float = 0.7) -> list[Draft
 def build_drafts(segments: list[models.Segment], meeting_date: date, users: list[models.User]) -> list[Draft]:
     drafts: list[Draft] = []
     speakers = {s.speaker for s in segments if s.speaker}
-    chains = _task_chains(segments)
+    chains = _task_chains(segments, users, speakers)
     absorbed = {s.id for chain in chains for s in chain[1:]}   # follow-ups merged into a task
     for chain in chains:
         drafts.append(_task_draft(chain, meeting_date, users, speakers))
