@@ -217,3 +217,55 @@ export interface SpeakerInfo {
   suggestion: string | null;
   heardIn: string | null;
 }
+
+// Risks grouped into themes by meaning (backend/app/services/clustering.py).
+export interface RiskTheme {
+  label: string;
+  keywords: string[];
+  riskCount: number;
+  meetingCount: number;
+  openCount: number;
+  highCount: number;
+  firstRaised: string | null;
+  lastRaised: string | null;
+  risks: { id: number; description: string; severity: RiskSeverity; status: RiskStatus; meetingId: number; meetingTitle: string; raisedAt: string | null }[];
+}
+
+export interface RiskThemes {
+  method: string;
+  silhouette: number | null;
+  totalRisks: number;
+  themes: RiskTheme[];
+}
+
+export type FeedbackAction = "confirmed" | "rejected" | "added";
+export type TrainingStatus = "ready" | "in test set" | "already in training" | "replaced";
+
+export interface FeedbackItem {
+  id: number;
+  text: string;
+  predicted: Category;
+  corrected: Category;
+  action: FeedbackAction;
+  by: string | null;
+  at: string | null;
+  meetingId: number | null;
+  meetingTitle: string | null;
+  trainingStatus: TrainingStatus;
+}
+
+export interface ModelVersion {
+  version: string;
+  model: string;
+  trainRows: number | null;
+  trainFiles: string | string[] | null;
+  status: "in use" | "rejected" | "not used";
+  note: string | null;
+}
+
+export interface ModelFeedback {
+  totals: { all: number; confirmed: number; changed: number; ready: number; inTestSet: number; alreadyInTraining: number; replaced: number };
+  readyByLabel: Partial<Record<Category, number>>;
+  items: FeedbackItem[];
+  models: ModelVersion[];
+}

@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { LineChart, Repeat } from "lucide-react";
 import { api } from "../api/endpoints";
+import { TopRiskThemes } from "../components/riskThemes";
 import { useQuery } from "../api/hooks";
 import { Badge, EmptyState, PageHeader, Panel, ProgressBar, QueryView, Skeleton, Stat, pct } from "../components/ui";
 import { LIST_REFRESH_INTERVAL_MS } from "../config";
@@ -141,6 +142,7 @@ export default function Insights() {
                   </ResponsiveContainer>
                 </div>
               </Panel>
+              <TopRiskThemes />
               <Panel title="Recurring risks" icon={<Repeat className="h-4 w-4 text-violet-500" />} actions={<Link to="/risks?recurring=1" className="btn-ghost btn-sm">All</Link>}>
                 {d.recurringRisks.length ? (
                   <div className="divide-y divide-line">
