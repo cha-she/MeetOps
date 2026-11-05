@@ -1,4 +1,5 @@
 /* eslint-disable react-refresh/only-export-components -- shared domain widgets and their style maps */
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowDown,
@@ -254,7 +255,7 @@ export function useUsers() {
 export function UserChip({ user, name, empty = "Unassigned" }: { user: User | null; name?: string | null; empty?: string }) {
   if (!user && name)
     return (
-      <span className="inline-flex min-w-0 max-w-full shrink-0 items-center gap-1.5" title={`${name} was named in the meeting but has no MeetOps account. Assign the item to a member to track it.`}>
+      <span className="inline-flex min-w-0 max-w-full shrink-0 items-center gap-1.5" title={`${name} has no MeetOps account, so no notifications are sent. Assign a member to track it in their work list.`}>
         <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-dashed border-line-strong text-[9px] font-semibold text-muted">
           {name.split(/\s+/).map((p) => p[0]).slice(0, 2).join("").toUpperCase()}
         </span>
@@ -277,7 +278,7 @@ export function UserChip({ user, name, empty = "Unassigned" }: { user: User | nu
   );
 }
 
-export function OwnerMenu({ value, name, onChange, disabled = false, empty = "Unassigned" }: { value: User | null; name?: string | null; onChange: (id: number | null) => void; disabled?: boolean; empty?: string }) {
+export function OwnerMenu({ value, name, onChange, onName, disabled = false, empty = "Unassigned" }: { value: User | null; name?: string | null; onChange: (id: number | null) => void; onName?: (name: string) => void; disabled?: boolean; empty?: string }) {
   const users = useUsers();
   if (disabled) return <UserChip user={value} name={name} empty={empty} />;
   return (
@@ -300,7 +301,25 @@ export function OwnerMenu({ value, name, onChange, disabled = false, empty = "Un
           onSelect: () => onChange(u.id),
         })),
       ]}
+      footer={onName ? (close) => <TypedName current={value ? null : name} onSubmit={(n) => { onName(n); close(); }} /> : undefined}
     />
+  );
+}
+
+// A person without an account: type the name ("Priya from Finance"); a name that matches an account is linked to it.
+function TypedName({ current, onSubmit }: { current?: string | null; onSubmit: (name: string) => void }) {
+  const [text, setText] = useState(current ?? "");
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (text.trim()) onSubmit(text.trim());
+      }}
+      className="flex items-center gap-1"
+    >
+      <input className="field h-7 flex-1 px-2 text-[12px]" placeholder="Or type a name…" value={text} onChange={(e) => setText(e.target.value)} maxLength={120} aria-label="Assign to someone without an account" />
+      <button className="btn-secondary btn-sm h-7" disabled={!text.trim()}>Assign</button>
+    </form>
   );
 }
 

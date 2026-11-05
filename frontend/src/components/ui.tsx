@@ -366,7 +366,7 @@ export interface MenuItem {
   hint?: ReactNode;
 }
 
-export function Menu({ trigger, items, align = "left", width = 200, header, openUp = false }: { trigger: (open: boolean) => ReactNode; items: (MenuItem | "divider")[]; align?: "left" | "right"; width?: number; header?: ReactNode; openUp?: boolean }) {
+export function Menu({ trigger, items, align = "left", width = 200, header, openUp = false, footer }: { trigger: (open: boolean) => ReactNode; items: (MenuItem | "divider")[]; align?: "left" | "right"; width?: number; header?: ReactNode; openUp?: boolean; footer?: (close: () => void) => ReactNode }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -409,6 +409,7 @@ export function Menu({ trigger, items, align = "left", width = 200, header, open
               </button>
             )
           )}
+          {footer && <div className="mt-1 border-t border-line px-1 pb-0.5 pt-1.5">{footer(() => setOpen(false))}</div>}
         </div>
       )}
     </div>

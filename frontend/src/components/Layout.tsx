@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   CalendarDays,
+  BrainCircuit,
   ChevronsUpDown,
   Gavel,
   Home,
@@ -76,6 +77,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
         <div className="space-y-0.5">
           <div className="px-2.5 pb-1 text-2xs font-semibold uppercase tracking-wider text-faint">Organisation</div>
           <NavItem to="/insights" icon={<LineChart className="h-4 w-4" />} label="Insights" />
+          <NavItem to="/feedback" icon={<BrainCircuit className="h-4 w-4" />} label="Model feedback" />
           <NavItem to="/team" icon={<Users className="h-4 w-4" />} label="Team" />
         </div>
       </nav>
@@ -136,6 +138,7 @@ const TITLES: [RegExp, string][] = [
   [/^\/decisions/, "Decisions"],
   [/^\/risks/, "Risks"],
   [/^\/insights/, "Insights"],
+  [/^\/feedback/, "Model feedback"],
   [/^\/team/, "Team"],
   [/^\/upload/, "New meeting"],
   [/^\/search/, "Search"],

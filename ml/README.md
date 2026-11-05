@@ -435,10 +435,16 @@ and treats every rule-made label as a suggestion for a person to confirm.
 ### 3.9 Human review and feedback
 
 Every task, decision and risk is stored as `suggested` or `confirmed`. People
-confirm or reject suggestions in the Review screen, and can relabel any
-transcript line (e.g. mark a missed request as a Task). Each rejection or
-relabel is written to the `label_feedback` table (text, predicted label,
-corrected label), which is the training data for the next model version.
+confirm or reject suggestions in the Review screen, and can add a task,
+decision or risk from any transcript line (e.g. a missed request). Each
+confirmation, rejection or added item is written to the `label_feedback` table
+(text, predicted label, corrected label): a confirmation means the label was
+right, a rejection means the line is Other, an added item gives the right type.
+A wrong type is fixed by rejecting the item and adding the right one from its
+line; the export keeps the latest decision on a sentence. (Changing a line's
+type in place was removed: people did it without rejecting, so the rejection
+signal was lost.) The Model feedback page in the app lists every row. Undoing a review removes its row again. This is the
+training data for the next model version (3.13).
 
 ### 3.10 Trying the model
 
@@ -543,6 +549,52 @@ used instead, which is what CI runs. Classifying 700 utterances (about a
 one-hour meeting) takes 12.5 s on the CPU (TF-IDF: 0.2 s); loading takes about
 10 s once per process.
 
+### 3.13 Retraining on review feedback: v7 and the deployment gate
+
+The loop: review in the app → export → retrain → compare → deploy only if not
+worse.
+
+```bash
+cd backend
+python -m app.export_feedback --out ../ml/data/labeled/feedback_v1.csv
+cd ..
+python -m meetops_ml.transformer train --version v7 --train ml/data/labeled/train_v3.csv ml/data/labeled/feedback_v1.csv --test ml/data/labeled/test_v1.csv ml/data/labeled/test_v2.csv ml/data/labeled/test_v1v2.csv ml/data/labeled/indomain_v1.csv --no-context
+python -m meetops_ml.compare --old ml/models/v6 --new ml/models/v7 --data ml/data/labeled/test_v1v2.csv ml/data/labeled/indomain_v1.csv
+```
+
+**Export** (`backend/app/export_feedback.py`). One label per sentence (the
+latest decision wins); sentences already in `train_v3` are skipped; and every
+sentence that also appears in a test set (`test_v1`, `test_v2`, `indomain_v1`)
+is dropped, otherwise the retrained model would be scored on sentences it was
+trained on. Of 57 feedback rows from reviewing the demo meetings, 28 were
+dropped this way (the demo meetings reuse sentences of the business test set):
+a real leakage risk the export catches. 29 sentences were exported, all
+confirmations: Task 10, Decision 8, Risk 11.
+
+**Training.** `--train` takes several files; when a sentence is in more than
+one, the later file's label wins. Same settings as v6; 2,625 rows (train_v3
+has four duplicate "Other" lines, counted once).
+
+**Gate** (`meetops_ml.compare`). Both models are scored on the same test sets.
+The new model passes when its "model + rules" macro-F1 is at most 0.01 below
+the old one on every set; otherwise a `REJECTED` file is written into its
+folder and `data.latest_model_dir()` skips it, so the backend keeps the old
+model without any manual step.
+
+| Test set | Variant | v6 | v7 | Change |
+|----------|---------|----|----|--------|
+| AMI `test_v1v2` (875) | model only | 0.557 | 0.547 | -0.010 |
+| AMI `test_v1v2` (875) | model + rules | 0.553 | 0.549 | -0.005 |
+| In-domain (89) | model only | 0.652 | 0.626 | -0.025 |
+| In-domain (89) | model + rules | 0.776 | 0.754 | -0.022 |
+
+**Result: v7 rejected, v6 stays.** 29 extra lines are 1 % more data, and the
+differences are the size of run-to-run noise (one seed; on the in-domain set
+0.02 is one or two sentences). The value of this step is the working, safe
+loop: feedback is collected, cleaned of test sentences, used for training, and
+a model that is not better cannot go live by accident. It becomes useful once
+real users have reviewed many meetings.
+
 ## 4. Extraction and organisation (owner, deadline, merged items)
 
 Implemented in the backend (`backend/app/services/extraction.py`, `nlp.py`,
@@ -603,6 +655,46 @@ compared by **cosine similarity**. At 0.35 or more, both risks are flagged
 *recurring* and appear in the Insights page and the Risk log filter.
 
 Limitation: the comparison is lexical. "The battery may die early" and "power
-runs out too soon" share no words and are not linked. Sentence embeddings
-(e.g. a small sentence-transformer model) would capture this and are planned
-for the next phase.
+runs out too soon" share no words and are not linked. Risk themes (section 6)
+use sentence embeddings, which capture this.
+
+## 6. Risk themes (clustering)
+
+Recurring-risk detection compares one new risk with each old one. Themes look
+at all risks together and answer "what keeps coming up?", the
+"recurring-issue clustering" of the proposal
+(`backend/app/services/clustering.py`, `GET /api/insights/risk-themes`, the
+Themes view of the Risks page and a panel in Insights).
+
+1. **Sentence vectors**: `all-MiniLM-L6-v2` (sentence-transformers), a small
+   model trained so that sentences with the same meaning get nearby vectors,
+   normalised to length 1. Without the package: TF-IDF reduced with LSA
+   (TruncatedSVD).
+2. **Clustering**: agglomerative clustering with Ward linkage. Average linkage
+   chained almost everything into one group.
+3. **Number of themes**: silhouette score (cosine) for k = 2 to
+   min(12, risks / 3); the smallest k within 0.02 of the best score is chosen,
+   so fewer, broader themes win unless more are clearly better.
+4. **Names**: class-based TF-IDF over the nouns of each group (spaCy): the
+   words frequent in one group and rare in the others, the labelling step of
+   BERTopic. Spoken fillers ("yeah", "thing", "week") are stop words.
+5. **One-off risks**: a group of one is not a theme; those are listed under
+   "Other risks".
+
+Measured on the 177 labelled AMI risks of `train_v3`:
+
+| Vectors | Themes | Silhouette | Largest group |
+|---------|--------|------------|---------------|
+| MiniLM + Ward (used) | 6 | 0.08 | 28 % |
+| TF-IDF + LSA + Ward (fallback) | 10 | 0.14 | 54 % |
+
+MiniLM themes: screen · information · buttons (50), budget · cost (41),
+remote control · battery (35), a mixed group named adaptation · banana (28),
+speech recognition · voice (12), titanium · rubber casing (11). Silhouette is
+low for both because short spoken sentences overlap in meaning; it is used to
+choose k, not as proof of quality. Judged by reading the groups, five of the
+six MiniLM themes are coherent design topics, while the fallback puts half of
+all risks into one group. Earlier tries with plain TF-IDF and with DistilBERT's
+own vectors (trained to separate the four classes, not topics) put 85-95 % of
+the risks into one group.
+

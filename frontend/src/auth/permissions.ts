@@ -11,6 +11,11 @@ export function canEditTask(user: User, task: Task): boolean {
   return task.owner?.id === user.id;
 }
 
+// Who does a task and by when: an administrator or the department's manager (backend: can_assign_task).
+export function canAssignTask(user: User, task: Task): boolean {
+  return (user.role === "admin" || user.role === "manager") && canEditTask(user, task);
+}
+
 export function canEditMeetingItems(user: User, meeting: Meeting): boolean {
   if (user.role === "admin") return true;
   if (user.role === "manager") return sameDept(user, meeting.department?.id);

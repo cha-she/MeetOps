@@ -35,6 +35,8 @@ flowchart LR
 | Persistence | SQLAlchemy 2 over PostgreSQL 16 (Docker) or SQLite (development) | Eleven tables, see [database-schema.md](database-schema.md) |
 | ML | scikit-learn, pandas, joblib | Utterance classifier (Task / Decision / Risk / Other), preprocessing shared with the backend |
 | Extraction | Rule-based (regex + dateparser) | Owner, deadline, risk severity, recurring-risk similarity, extractive summary |
+| Risk themes | sentence-transformers (all-MiniLM-L6-v2), scikit-learn agglomerative clustering, spaCy nouns + class-based TF-IDF | Groups all risks into named themes (`services/clustering.py`) |
+| Reports | reportlab | Meeting minutes and register PDFs (`services/reports.py`) |
 | Data | AMI Meeting Corpus (CC BY 4.0), Label Studio | Labelled training/test sets, see [annotation-guidelines.md](annotation-guidelines.md) |
 | Speech | faster-whisper (Whisper on CTranslate2), PyAV, sherpa-onnx (WeSpeaker ResNet34), scikit-learn clustering | Audio/video → text with timestamps and speaker numbers, locally on the CPU |
 | Transformer | PyTorch, Hugging Face transformers (DistilBERT) | Fine-tuned utterance classifier (v6), TF-IDF as fallback |
@@ -116,7 +118,7 @@ class distribution) is scored once. Results and error analysis are in
   own; the rules are reported as a separate row, and every rule change is
   visible on the transcript line it affected.
 - **People confirm, the system proposes.** Uncertain items are *suggestions*.
-  Confirming, rejecting or relabelling takes one click, and each correction is
+  Confirming, rejecting or adding a missed item from its line takes one click, and each correction is
   stored in `label_feedback`, the training data for the next model. Accuracy
   therefore improves on the organisation's own meetings over time.
 - **Accounts and roles.** Departments, one account per person, three roles
@@ -135,7 +137,7 @@ class distribution) is scored once. Results and error analysis are in
   explicit patterns that are transparent and testable; the labelled
   `owner_span` / `deadline_span` columns are its evaluation set and the path
   to a learned extractor later.
-- **Audit log.** Every create, update, review and relabel writes an
+- **Audit log.** Every create, update, review and item added from a line writes an
   `audit_logs` row with the acting user; it also feeds the activity stream.
 
 ## 6. Repository layout

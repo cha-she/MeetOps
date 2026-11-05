@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Check, ChevronDown, ChevronRight } from "lucide-react";
 import { api, type TaskPatch } from "../api/endpoints";
 import { useMe } from "../auth/AuthContext";
-import { canEditTask } from "../auth/permissions";
+import { canAssignTask, canEditTask } from "../auth/permissions";
 import { useMutation } from "../hooks/useMutation";
 import type { Meeting, Priority, Task, TaskStatus } from "../types";
 import {
@@ -90,6 +90,7 @@ function CompleteToggle({ task, disabled, onToggle }: { task: Task; disabled: bo
 function TaskRow({ task, showMeeting, compact }: { task: Task; showMeeting: boolean; compact: boolean }) {
   const me = useMe();
   const editable = canEditTask(me, task);
+  const assignable = canAssignTask(me, task);
   const { update, confirm, reject, busy } = useTaskActions();
   const done = task.status === "Completed";
   if (compact)
@@ -103,8 +104,8 @@ function TaskRow({ task, showMeeting, compact }: { task: Task; showMeeting: bool
           </div>
           <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
             <StatusMenu value={task.status} disabled={!editable} onChange={(s) => update(task, { status: s }, `Status: ${s}`)} />
-            <OwnerMenu value={task.owner} name={task.ownerName} disabled={!editable} onChange={(id) => update(task, { ownerId: id }, "Owner updated")} />
-            <DueDate deadline={task.deadline} time={task.deadlineTime} text={task.deadlineText} status={task.status} disabled={!editable} onChange={(d) => update(task, { deadline: d }, "Due date updated")} onTimeChange={(t) => update(task, { deadlineTime: t }, "Due time updated")} />
+            <OwnerMenu value={task.owner} name={task.ownerName} disabled={!assignable} onChange={(id) => update(task, { ownerId: id }, "Owner updated")} onName={(n) => update(task, { ownerName: n }, `Assigned to ${n}`)} />
+            <DueDate deadline={task.deadline} time={task.deadlineTime} text={task.deadlineText} status={task.status} disabled={!assignable} onChange={(d) => update(task, { deadline: d }, "Due date updated")} onTimeChange={(t) => update(task, { deadlineTime: t }, "Due time updated")} />
             <PriorityMenu value={task.priority} disabled={!editable} onChange={(p) => update(task, { priority: p })} />
             <EvidenceTime evidence={task.evidence} meetingId={task.meetingId} />
           </div>
@@ -142,10 +143,10 @@ function TaskRow({ task, showMeeting, compact }: { task: Task; showMeeting: bool
         <StatusMenu value={task.status} disabled={!editable} onChange={(s) => update(task, { status: s }, `Status: ${s}`)} />
       </div>
       <div className="col-start-2 flex min-w-0 items-center gap-2 md:col-start-auto">
-        <OwnerMenu value={task.owner} name={task.ownerName} disabled={!editable} onChange={(id) => update(task, { ownerId: id }, "Owner updated")} />
+        <OwnerMenu value={task.owner} name={task.ownerName} disabled={!assignable} onChange={(id) => update(task, { ownerId: id }, "Owner updated")} onName={(n) => update(task, { ownerName: n }, `Assigned to ${n}`)} />
       </div>
       <div className="col-start-2 md:col-start-auto">
-        <DueDate deadline={task.deadline} time={task.deadlineTime} text={task.deadlineText} status={task.status} disabled={!editable} onChange={(d) => update(task, { deadline: d }, "Due date updated")} onTimeChange={(t) => update(task, { deadlineTime: t }, "Due time updated")} />
+        <DueDate deadline={task.deadline} time={task.deadlineTime} text={task.deadlineText} status={task.status} disabled={!assignable} onChange={(d) => update(task, { deadline: d }, "Due date updated")} onTimeChange={(t) => update(task, { deadlineTime: t }, "Due time updated")} />
       </div>
       <div className="hidden md:block">
         <PriorityMenu value={task.priority} disabled={!editable} onChange={(p) => update(task, { priority: p })} />
@@ -265,12 +266,12 @@ export function TaskBoard({ tasks }: { tasks: Task[] }) {
 export function NewTaskDialog({ open, onClose, meetings, defaultMeetingId, segmentId, defaultDescription = "" }: { open: boolean; onClose: () => void; meetings: Meeting[]; defaultMeetingId?: number; segmentId?: number; defaultDescription?: string }) {
   const users = useUsers();
   const { run, busy } = useMutation();
-  const [form, setForm] = useState({ description: defaultDescription, meetingId: defaultMeetingId ?? meetings[0]?.id ?? 0, ownerId: 0, deadline: "", priority: "Medium" as Priority });
+  const [form, setForm] = useState({ description: defaultDescription, meetingId: defaultMeetingId ?? meetings[0]?.id ?? 0, ownerId: 0, ownerName: "", deadline: "", priority: "Medium" as Priority });
 
   async function submit(e: FormEvent) {
     e.preventDefault();
     const created = await run(
-      () => api.createTask({ description: form.description.trim(), meetingId: Number(form.meetingId), ownerId: form.ownerId || null, deadline: form.deadline || null, priority: form.priority, segmentId }),
+      () => api.createTask({ description: form.description.trim(), meetingId: Number(form.meetingId), ownerId: form.ownerId || null, ownerName: form.ownerId ? null : form.ownerName.trim() || null, deadline: form.deadline || null, priority: form.priority, segmentId }),
       { success: "Task added", refresh: TASK_REFRESH }
     );
     if (created) {
@@ -312,7 +313,7 @@ export function NewTaskDialog({ open, onClose, meetings, defaultMeetingId, segme
         <div className="grid grid-cols-3 gap-3">
           <Field label="Owner">
             <select className="field" value={form.ownerId} onChange={(e) => setForm({ ...form, ownerId: Number(e.target.value) })}>
-              <option value={0}>Unassigned</option>
+              <option value={0}>{form.ownerName.trim() ? "Typed name" : "Unassigned"}</option>
               {(users.data ?? []).map((u) => (
                 <option key={u.id} value={u.id}>
                   {u.name}
@@ -331,6 +332,11 @@ export function NewTaskDialog({ open, onClose, meetings, defaultMeetingId, segme
             </select>
           </Field>
         </div>
+        {!form.ownerId && (
+          <Field label="Owner without an account (optional)">
+            <input className="field" placeholder="Type a name, e.g. Priya from Finance" value={form.ownerName} maxLength={120} onChange={(e) => setForm({ ...form, ownerName: e.target.value })} />
+          </Field>
+        )}
       </form>
     </Dialog>
   );

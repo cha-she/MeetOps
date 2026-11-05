@@ -25,9 +25,12 @@ are generated automatically from the meetings they already hold.
 | Accounts, departments, role-based access, audit log | ✅ Done        |
 | Human review of extracted items, label feedback   | ✅ Done         |
 | Summaries, recurring risks, evidence links        | ✅ v1 (extractive / TF-IDF similarity) |
+| Risk clustering into themes                       | ✅ MiniLM sentence vectors + agglomerative clustering |
+| PDF export (meeting minutes, registers)           | ✅ Done (reportlab) |
+| Retraining on review feedback                     | ✅ Export, retrain, compare gate (v7 rejected, v6 kept) |
 | Audio/video pipeline (Whisper + speaker separation) | ✅ v1 (local, CPU) |
 | DistilBERT classifier (fine-tuned, deployed)      | ✅ v6, macro-F1 0.56 AMI / 0.65 in-domain |
-| Email reminders, PDF export                       | ⏳ Semester 2   |
+| Evidence audio clips, email reminders, speech evaluation on AMI | ⏳ Remaining weeks |
 
 ## Repository layout
 

@@ -1,4 +1,5 @@
-// Add a decision or a risk by hand: one the model missed, linked to its meeting.
+// Add a decision or a risk by hand: one the model missed, linked to its meeting and, when added
+// from a transcript line, to that line (the line is then saved as training feedback).
 import { useState, type FormEvent } from "react";
 import { api } from "../api/endpoints";
 import { useMutation } from "../hooks/useMutation";
@@ -39,14 +40,14 @@ function OwnerSelect({ value, empty, onChange }: { value: number; empty: string;
   );
 }
 
-export function NewDecisionDialog({ open, onClose, meetings, defaultMeetingId }: { open: boolean; onClose: () => void; meetings: Meeting[]; defaultMeetingId?: number }) {
+export function NewDecisionDialog({ open, onClose, meetings, defaultMeetingId, segmentId, defaultText = "" }: { open: boolean; onClose: () => void; meetings: Meeting[]; defaultMeetingId?: number; segmentId?: number; defaultText?: string }) {
   const { run, busy } = useMutation();
-  const [form, setForm] = useState({ statement: "", meetingId: defaultMeetingId ?? meetings[0]?.id ?? 0, ownerId: 0 });
+  const [form, setForm] = useState({ statement: defaultText, meetingId: defaultMeetingId ?? meetings[0]?.id ?? 0, ownerId: 0 });
 
   async function submit(e: FormEvent) {
     e.preventDefault();
     const created = await run(
-      () => api.createDecision({ statement: form.statement.trim(), meetingId: form.meetingId, ownerId: form.ownerId || null }),
+      () => api.createDecision({ statement: form.statement.trim(), meetingId: form.meetingId, ownerId: form.ownerId || null, segmentId }),
       { success: "Decision added", refresh: DECISION_REFRESH }
     );
     if (created) onClose();
@@ -80,14 +81,14 @@ export function NewDecisionDialog({ open, onClose, meetings, defaultMeetingId }:
   );
 }
 
-export function NewRiskDialog({ open, onClose, meetings, defaultMeetingId }: { open: boolean; onClose: () => void; meetings: Meeting[]; defaultMeetingId?: number }) {
+export function NewRiskDialog({ open, onClose, meetings, defaultMeetingId, segmentId, defaultText = "" }: { open: boolean; onClose: () => void; meetings: Meeting[]; defaultMeetingId?: number; segmentId?: number; defaultText?: string }) {
   const { run, busy } = useMutation();
-  const [form, setForm] = useState({ description: "", meetingId: defaultMeetingId ?? meetings[0]?.id ?? 0, ownerId: 0, severity: "Medium" as RiskSeverity });
+  const [form, setForm] = useState({ description: defaultText, meetingId: defaultMeetingId ?? meetings[0]?.id ?? 0, ownerId: 0, severity: "Medium" as RiskSeverity });
 
   async function submit(e: FormEvent) {
     e.preventDefault();
     const created = await run(
-      () => api.createRisk({ description: form.description.trim(), meetingId: form.meetingId, severity: form.severity, ownerId: form.ownerId || null }),
+      () => api.createRisk({ description: form.description.trim(), meetingId: form.meetingId, severity: form.severity, ownerId: form.ownerId || null, segmentId }),
       { success: "Risk added", refresh: RISK_REFRESH }
     );
     if (created) onClose();

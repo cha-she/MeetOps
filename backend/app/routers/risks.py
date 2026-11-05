@@ -65,6 +65,8 @@ def create_risk(body: schemas.RiskCreate, db: Session = Depends(get_db), user: m
                     reviewed_by_id=user.id, reviewed_at=datetime.now(timezone.utc))
     db.add(r)
     db.flush()
+    if seg is not None:
+        review.label_from_manual_item(db, seg, "Risk", user)
     if r.owner_id and r.owner_id != user.id:
         notifications.add(db, r.owner_id, "assigned", f"{user.name} made you the owner of the risk “{r.description}”.",
                           meeting_id=meeting.id)

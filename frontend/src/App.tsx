@@ -18,6 +18,7 @@ const Decisions = lazy(() => import("./pages/Decisions"));
 const Risks = lazy(() => import("./pages/Risks"));
 const Insights = lazy(() => import("./pages/Insights"));
 const Team = lazy(() => import("./pages/Team"));
+const ModelFeedbackPage = lazy(() => import("./pages/ModelFeedback"));
 const SearchPage = lazy(() => import("./pages/Search"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -44,6 +45,7 @@ function Gate() {
           <Route path="/risks" element={<Risks />} />
           <Route path="/insights" element={<Insights />} />
           <Route path="/team" element={<Team />} />
+          <Route path="/feedback" element={<ModelFeedbackPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

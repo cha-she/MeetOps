@@ -56,6 +56,8 @@ def create_decision(body: schemas.DecisionCreate, db: Session = Depends(get_db),
                         reviewed_by_id=user.id, reviewed_at=datetime.now(timezone.utc))
     db.add(d)
     db.flush()
+    if seg is not None:
+        review.label_from_manual_item(db, seg, "Decision", user)
     audit.log(db, "decision", d.id, "created", d.statement, actor_id=user.id, meeting_id=meeting.id)
     db.commit()
     db.refresh(d)

@@ -161,17 +161,3 @@ def delete_meeting(meeting_id: int, db: Session = Depends(get_db), user: models.
     db.delete(m)
     db.commit()
     return Response(status_code=204)
-
-
-@router.post("/segments/{segment_id}/category", response_model=schemas.SegmentOut)
-def reclassify(segment_id: int, body: schemas.ReclassifyIn, db: Session = Depends(get_db),
-               user: models.User = Depends(current_user)):
-    """Correct the label of one transcript line; creates or removes the matching register entry."""
-    seg = db.get(models.Segment, segment_id)
-    if not seg:
-        raise HTTPException(404, "Segment not found")
-    ensure(can_edit_meeting_items(user, seg.meeting))
-    review.reclassify_segment(db, seg, body.category, user)
-    db.commit()
-    db.refresh(seg)
-    return segment_out(seg)

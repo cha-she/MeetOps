@@ -131,6 +131,12 @@ def can_edit_task(user: models.User, task: models.Task) -> bool:
     return task.owner_id == user.id
 
 
+def can_assign_task(user: models.User, task: models.Task) -> bool:
+    """Who does the task and by when: decided by an administrator or the department's manager,
+    not by the person who has the task."""
+    return user.role in ("admin", "manager") and can_edit_task(user, task)
+
+
 def can_edit_meeting_items(user: models.User, meeting: models.Meeting) -> bool:
     """Decisions, risks and transcript labels of a meeting."""
     if user.role == "admin":

@@ -78,7 +78,7 @@ erDiagram
         float confidence
         string model_label "model alone"
         string rule "rule that changed it"
-        bool corrected "relabelled by a person"
+        bool corrected "label set by a person"
     }
     TASKS {
         int id PK
@@ -164,7 +164,7 @@ erDiagram
 - **Review state.** Extracted items start as `suggested` unless the model
   alone was at least 0.8 confident (`confirmed`). A person confirms or
   rejects; rejected items are hidden from registers and counts but kept.
-- **Learning from corrections.** Every rejection and relabel writes a
+- **Learning from corrections.** Every confirmation, rejection and item added from a line writes a
   `label_feedback` row: the sentence, the predicted label and the corrected
   one. Exported, these rows extend the training set for the next model.
 - **Access control.** `users.role` and `department_id` drive the permission

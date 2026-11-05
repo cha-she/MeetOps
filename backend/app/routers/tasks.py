@@ -6,9 +6,9 @@ from sqlalchemy.orm import Session
 
 from .. import models, schemas
 from ..database import get_db
-from ..security import can_edit_meeting_items, can_edit_task, current_user, ensure
+from ..security import can_assign_task, can_edit_meeting_items, can_edit_task, current_user, ensure
 from ..serializers import task_out
-from ..services import audit, notifications, review
+from ..services import audit, extraction, notifications, review
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
@@ -95,17 +95,19 @@ def create_task(body: schemas.TaskCreate, db: Session = Depends(get_db), user: m
     ensure(can_edit_meeting_items(user, meeting), "You can only add tasks to meetings you attended or manage.")
     if body.owner_id and not db.get(models.User, body.owner_id):
         raise HTTPException(422, "Unknown owner")
-    if body.segment_id:
-        seg = db.get(models.Segment, body.segment_id)
-        if not seg or seg.meeting_id != meeting.id:
-            raise HTTPException(422, "The evidence line must belong to the same meeting")
+    owner_id, owner_name = body.owner_id, None
+    if not owner_id and body.owner_name and body.owner_name.strip():
+        owner_id, owner_name = _named_owner(db, body.owner_name)
+    seg = review.evidence_line(db, body.segment_id, meeting)
     t = models.Task(meeting_id=meeting.id, segment_id=body.segment_id, description=body.description.strip(),
-                    owner_id=body.owner_id, deadline=body.deadline,
+                    owner_id=owner_id, owner_name=owner_name, deadline=body.deadline,
                     deadline_time=body.deadline_time if body.deadline else None, priority=body.priority, status="Open",
                     review_status="confirmed", source="manual", reviewed_by_id=user.id,
                     reviewed_at=datetime.now(timezone.utc))
     db.add(t)
     db.flush()
+    if seg is not None:
+        review.label_from_manual_item(db, seg, "Task", user)
     if t.owner_id and t.owner_id != user.id:
         notifications.add(db, t.owner_id, "assigned", f"{user.name} assigned you “{t.description}”.",
                           task_id=t.id, meeting_id=meeting.id)
@@ -113,6 +115,13 @@ def create_task(body: schemas.TaskCreate, db: Session = Depends(get_db), user: m
     db.commit()
     db.refresh(t)
     return task_out(t)
+
+
+def _named_owner(db: Session, name: str) -> tuple[int | None, str | None]:
+    """(account id, None) when the typed name matches an active account, else (None, the name)."""
+    users = db.scalars(select(models.User).where(models.User.is_active.is_(True))).all()
+    match = extraction.match_user(name.strip(), users)
+    return (match.id, None) if match else (None, name.strip())
 
 
 @router.patch("/{task_id}", response_model=schemas.TaskOut)
@@ -127,6 +136,17 @@ def update_task(task_id: int, patch: schemas.TaskPatch, db: Session = Depends(ge
         raise HTTPException(422, "Nothing to update")
     if changes.get("owner_id") is not None and not db.get(models.User, changes["owner_id"]):
         raise HTTPException(422, "Unknown owner")
+    if {"owner_id", "owner_name", "deadline", "deadline_time"} & changes.keys():
+        ensure(can_assign_task(user, t), "Only an administrator or the department's manager can change "
+                                         "who does a task and when it is due.")
+    if "owner_name" in changes:   # a typed name: an account if one matches, otherwise the name itself
+        name = (changes.pop("owner_name") or "").strip()
+        if name and "owner_id" not in changes:
+            changes["owner_id"], typed_name = _named_owner(db, name)
+        else:
+            typed_name = None
+    else:
+        typed_name = None
 
     review_status = changes.pop("review_status", None)
     if "deadline" in changes and changes["deadline"] is None:
@@ -135,7 +155,7 @@ def update_task(task_id: int, patch: schemas.TaskPatch, db: Session = Depends(ge
     for key, value in changes.items():
         setattr(t, key, value)
     if "owner_id" in changes:
-        t.owner_name = None   # an explicit choice replaces the name heard in the meeting
+        t.owner_name = typed_name   # an explicit choice replaces the name heard in the meeting
 
     if "status" in changes and before["status"] != t.status:
         t.completed_at = datetime.now(timezone.utc) if t.status == "Completed" else None

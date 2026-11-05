@@ -11,8 +11,9 @@ prepared with `python -m app.seed --demo`, signed in as the administrator).
   person, sets the role, job title and department, resets passwords and
   deactivates people who leave.
 - **Roles:** *Admin* changes everything; *Manager* reviews and edits items from
-  their department's meetings; *Member* updates their own tasks and reviews
-  items from meetings they attended. The server enforces this on every
+  their department's meetings and decides who does a task and by when;
+  *Member* updates the status of their own tasks and reviews items from
+  meetings they attended. The server enforces this on every
   request; the interface hides actions a person may not take.
 - Speakers in a transcript are matched to accounts by name, so tasks are
   assigned to real people and appear in their *My work*.
@@ -63,7 +64,8 @@ What happens inside:
 Everything the system was not sure about, grouped by meeting, with the
 evidence line, owner, due date and the model's confidence (or *Rule* when a
 rule found it). Confirm or reject one item or a whole meeting; every
-rejection is stored as label feedback for retraining, and can be undone.
+confirmation and rejection is stored as label feedback for retraining, and can
+be undone.
 
 ## 5. Meeting page
 
@@ -72,9 +74,11 @@ rejection is stored as label feedback for retraining, and can be undone.
 - The transcript, one sentence per line, with its label and confidence. When
   the rule layer changed the model's label, the line says so ("model said
   Other · rule: request").
-- **Correct any line:** hover a line and mark it as Task, Decision, Risk or
-  Other. The register entry is created or removed immediately and the
-  correction is saved as feedback. This is how a missed task is added.
+- **Add from a line:** hover a line, **+**, *Add as task / decision / risk*.
+  The dialog is filled with the line's text and the item links to the line;
+  it is saved as manual and as feedback for that line. A wrong type is fixed
+  by rejecting the item and adding the right one this way, so every
+  correction goes through a rejection or an added item.
 - Extractive summary, and the meeting's tasks, decisions and risks with
   review buttons and owners. Every item links back to its line
   (`/meetings/{id}?segment=…`), which is highlighted on arrival.
@@ -89,8 +93,11 @@ rejection is stored as label feedback for retraining, and can be undone.
 - Filters: search, status, owner (*Me*, *Unassigned* or a person),
   department, meeting, review state, priority, overdue, due-date range,
   meeting-date range. Filters are kept in the URL.
-- Inline owner, due date (the phrase said in the meeting is kept, e.g.
-  "before the go-live"), status and priority; new task by hand; CSV export.
+- Inline status and priority; owner and due date (the phrase said in the
+  meeting is kept, e.g. "before the go-live") are changed by an admin or the
+  department's manager. The owner is a member, or any typed name for someone
+  without an account (a name that matches an account is linked to it).
+  New task by hand; CSV export.
 - Changing a status notifies the owner and the meeting's uploader and writes
   the audit log; completing a task records when, for on-time statistics.
 
@@ -110,7 +117,14 @@ Risk log: severity (High / Medium / Low, from cue words), status (Open /
 Mitigated / Closed), owner, who raised it, and a **Recurring** flag when a
 similar risk was raised in an earlier meeting (TF-IDF cosine similarity).
 Summary counts for open, high, recurring and unowned risks; filters; CSV
-export.
+and PDF export.
+
+**Themes view**: every risk from all meetings (or one department) grouped by
+meaning into themes, each named by its most typical words (for example
+"refund · flow · payment"), with how many risks and meetings it covers, how
+many are open or high, and when it was first and last raised. Uses MiniLM
+sentence vectors and agglomerative clustering (`ml/README.md` §6). The top
+themes also appear in Insights.
 
 ## 9. Insights
 
@@ -137,9 +151,33 @@ administrators add, edit, reset passwords and deactivate.
 - Lists refresh in the background, so changes made by colleagues appear
   without reloading.
 
-## 12. Planned for the next phase
+## 12. PDF export
 
-Risk clustering into themes across meetings, retraining DistilBERT on the
-collected label feedback, tracking deadline changes later in a meeting,
-learned owner/deadline extraction, email reminders for deadlines, PDF export of
-the registers.
+- **Minutes PDF** on a processed meeting: details (date, duration,
+  department, participants, source), summary, decisions, action items with
+  owner, due date and status, risks with severity, and the time each item was
+  said. Items still waiting for review are marked; rejected items are left out.
+- **PDF** on the Tasks, Decisions and Risks registers: the rows currently
+  shown (same filters), as a landscape table.
+- Generated on the server with reportlab, with the same permissions as the
+  API; register exports are written to the audit log.
+
+## 13. Learning from review
+
+Confirmations, rejections and items added from a line are saved as labels.
+The **Model feedback** page shows the counts, every correction (who, when,
+the model's label and the person's), whether it will be used for training
+(or why not: in a test set, already in training, replaced by a later
+decision), the model versions with the one in use and the rejected ones,
+and a *Training CSV* download. An export script
+drops sentences that are in a test set, the model is retrained, and a
+comparison script deploys the new model only if it is not worse on the test
+sets (`ml/README.md` §3.13). The first retraining (v7, 29 reviewed lines) was
+slightly worse on the business meetings and was rejected, so v6 stays.
+
+## 14. Planned for the next phase
+
+Evidence audio clips (play the recording at an item's time), tracking deadline
+changes later in a meeting, measured speech-to-text and speaker accuracy on
+AMI recordings, learned owner/deadline extraction, email reminders for
+deadlines.

@@ -25,7 +25,7 @@ backend/
 │       ├── organise.py        merges replies into one task, picks titles, sets review status
 │       ├── extraction.py      owner, deadline, action titles, risk severity (rules)
 │       ├── nlp.py             spaCy owner (dependency parse) and deadline (NER) extraction
-│       ├── review.py          confirm / reject, relabel transcript lines, label feedback
+│       ├── review.py          confirm / reject, items added from a line, label feedback
 │       ├── summary.py         extractive summary + recurring-risk similarity
 │       ├── insights.py        dashboard and analytics aggregates
 │       ├── notifications.py   per-user overdue / due-soon / assigned / status-change / review
@@ -80,8 +80,9 @@ requires it.
 |--------|-------|---------|--------|
 | View meetings and registers | ✓ | ✓ | ✓ |
 | Upload a meeting | ✓ | ✓ | ✓ |
-| Edit / review a task | any | own department's meetings and people | tasks they own |
-| Edit / review a decision or risk, relabel transcript lines | any | own department's meetings | meetings they attended or uploaded |
+| Edit / review a task (status, priority) | any | own department's meetings and people | tasks they own |
+| Change a task's owner or due date | any | own department's meetings and people | – |
+| Edit / review a decision or risk, add items from a transcript line | any | own department's meetings | meetings they attended or uploaded |
 | Delete a meeting | any | own department | meetings they uploaded |
 | Manage people and departments | ✓ | – | – |
 
@@ -151,17 +152,24 @@ the server. Try it with `samples/sprint8_planning.txt`.
 | GET / POST / PATCH / DELETE | `/api/departments`, `/api/departments/{id}` | list (all); manage (admin) |
 | GET | `/api/meetings` | `q`, `departmentId`, `participantId`, `status`, `from`, `to`, `limit` |
 | POST | `/api/meetings/upload` | multipart `file`, `title`, `date`, `departmentId`, `speakers` (recordings, optional) → 201 Meeting |
+| GET | `/api/meetings/{id}/speakers` | a recording's speakers with line counts, a sample line and a suggested name |
 | POST | `/api/meetings/{id}/speakers` | `{speaker, name}`: name a recording's speaker throughout the meeting (links the account if the name matches) |
 | GET / DELETE | `/api/meetings/{id}` | delete cascades to segments and extracted items |
 | GET | `/api/meetings/{id}/segments` | transcript with labels, confidence, model label and rule |
-| POST | `/api/segments/{id}/category` | relabel a transcript line; creates or removes the register entry and records feedback |
 | GET | `/api/tasks` | `status`, `meetingId`, `ownerId`, `mine`, `unassigned`, `departmentId`, `review`, `priority`, `q`, `overdue`, `dueFrom`, `dueTo`, `from`, `to`, `sort=deadline|created|priority`, `limit` |
-| POST | `/api/tasks` | add a task by hand |
-| PATCH | `/api/tasks/{id}` | `{status, deadline, deadlineTime, description, ownerId, priority, reviewStatus}`; editing a suggestion confirms it |
+| POST | `/api/tasks` | add a task by hand; `ownerId` or `ownerName` (someone without an account), optional `segmentId` (the line it came from, saved as feedback) |
+| PATCH | `/api/tasks/{id}` | `{status, deadline, deadlineTime, description, ownerId, ownerName, priority, reviewStatus}`; owner and due date only by an admin or the department's manager; a typed name that matches an account is linked to it; editing a suggestion confirms it |
 | GET / PATCH | `/api/decisions`, `/api/decisions/{id}` | filters `meetingId`, `ownerId`, `departmentId`, `review`, `from`, `to`, `q` |
+| POST | `/api/decisions` | add a decision by hand (meeting, owner, optional evidence line) |
 | GET / PATCH | `/api/risks`, `/api/risks/{id}` | filters `meetingId`, `severity`, `status`, `ownerId`, `departmentId`, `recurring`, `review`, `from`, `to`, `q` |
+| POST | `/api/risks` | add a risk by hand |
+| GET | `/api/feedback` | review feedback: counts, the latest corrections with their training status, model versions (in use / rejected) |
+| GET | `/api/feedback/export.csv` | the corrections ready for training, in the labelled-dataset layout (audited) |
 | GET | `/api/review` | everything still *suggested*, for the review inbox |
 | GET | `/api/insights/summary` | team and personal totals, weekly trend, workload, departments, recurring risks, on-time and review-acceptance rates |
+| GET | `/api/insights/risk-themes` | `departmentId`: all non-rejected risks grouped into themes (`services/clustering.py`), with counts, dates and the method used |
+| GET | `/api/meetings/{id}/report.pdf` | meeting minutes as a PDF (`services/reports.py`) |
+| POST | `/api/reports/{kind}` | `kind` = tasks, decisions or risks; body `{ids, title}` (the rows shown on screen) → register PDF; written to the audit log |
 | GET | `/api/activity` | recent audit entries |
 | GET | `/api/search?q=` | across meetings, tasks, decisions, risks and transcript text |
 | GET | `/api/notifications` | the signed-in user's notifications |
@@ -186,3 +194,27 @@ python -m app.services.transcribe path/to/recording.m4a --speakers 3 --names "Ka
 On a 12-core laptop CPU, `base.en` transcribes about three times faster than
 real time (a one-hour meeting takes roughly 20 minutes); `small.en` is more
 accurate but about real time.
+
+## 7. Retraining on review feedback
+
+Every confirmation, rejection and item added from a transcript line is stored in
+`label_feedback`; the Model feedback page shows them. Export
+it as a labelled CSV (sentences that are in a test set are dropped, and one
+label per sentence is kept):
+
+```bash
+cd backend
+python -m app.export_feedback --out ../ml/data/labeled/feedback_v1.csv
+```
+
+Then retrain and compare with the model in use (`ml/README.md` §3.13). A new
+model that is worse gets a `REJECTED` file and the backend keeps the previous
+one.
+
+## 8. Risk themes
+
+`services/clustering.py` uses `sentence-transformers` (`all-MiniLM-L6-v2`,
+about 90 MB, downloaded on first use and loaded in the background at
+start-up). It is optional: `pip install -e "../ml[transformer]"` installs it;
+without it, themes fall back to TF-IDF + LSA. Method and results:
+`ml/README.md` §6.
