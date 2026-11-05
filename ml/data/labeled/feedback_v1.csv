@@ -1,0 +1,30 @@
+segment_id,meeting_id,speaker,text,label,predicted,source,annotated_at
+feedback.1,meeting.7,Nethmi Fernando,"Kasun, could you build the new homepage by next Wednesday?",Task,Task,review,2026-11-04
+feedback.2,meeting.7,Kasun Silva,I'll set up the staging server by tomorrow.,Task,Task,review,2026-11-04
+feedback.3,meeting.7,Kasun Silva,I'll send a progress report to the client every Friday.,Task,Task,review,2026-11-04
+feedback.4,meeting.6,Dilini Wickrama,"Ravindu, can you find the cause of the login errors by Friday at 10am?",Task,Task,review,2026-11-04
+feedback.5,meeting.6,Ravindu Perera,I will also update the help article tomorrow.,Task,Task,review,2026-11-04
+feedback.6,meeting.5,Chanya,"Kasun, can you fix the refund bugs by Thursday at 3 pm?",Task,Task,review,2026-11-04
+feedback.7,meeting.5,Chanya,I will order two new test phones today.,Task,Task,review,2026-11-04
+feedback.8,meeting.5,Chanya,"Nethmi, please prepare the release test plan.",Task,Task,review,2026-11-04
+feedback.9,meeting.5,Ravindu,I'll send the final app icons before Wednesday.,Task,Task,review,2026-11-04
+feedback.21,meeting.7,Nethmi Fernando,"We agreed to use the company colors, blue and white.",Decision,Decision,review,2026-11-04
+feedback.22,meeting.7,Nethmi Fernando,The design will be frozen after the next review.,Decision,Decision,review,2026-11-04
+feedback.23,meeting.6,Dilini Wickrama,We decided to add a reset password button to the login page.,Decision,Decision,review,2026-11-04
+feedback.24,meeting.6,Dilini Wickrama,Hiring two part-time agents is approved.,Decision,Decision,review,2026-11-04
+feedback.25,meeting.5,Chanya,Let's go with the light theme as the default and keep dark mode as an option.,Decision,Decision,review,2026-11-04
+feedback.26,meeting.5,Chanya,So we decided that the launch date is the 20th of November.,Decision,Decision,review,2026-11-04
+feedback.27,meeting.5,Chanya,The request for a bigger marketing budget is approved.,Decision,Decision,review,2026-11-04
+feedback.28,meeting.5,Kasun,"The analytics feature is not ready, so we will remove it from this release.",Decision,Decision,review,2026-11-04
+feedback.36,meeting.7,Kasun Silva,The problem is that we still don't have the final content from the client.,Risk,Risk,review,2026-11-04
+feedback.37,meeting.7,Nethmi Fernando,"If the client changes the design again, we might not finish on time.",Risk,Risk,review,2026-11-04
+feedback.38,meeting.6,Ravindu Perera,"We received 40 tickets, and most of them were about login problems.",Risk,Risk,review,2026-11-04
+feedback.39,meeting.6,Dilini Wickrama,That's a serious problem.,Risk,Risk,review,2026-11-04
+feedback.40,meeting.6,Dilini Wickrama,Customers get angry when they cannot log in.,Risk,Risk,review,2026-11-04
+feedback.41,meeting.6,Ravindu Perera,The risk is that we will lose customers if this continues.,Risk,Risk,review,2026-11-04
+feedback.42,meeting.6,Dilini Wickrama,One concern is that the support team is too small for the holiday season.,Risk,Risk,review,2026-11-04
+feedback.43,meeting.5,Kasun,"The payment module is finished, but the refund screen still has two open bugs.",Risk,Risk,review,2026-11-04
+feedback.44,meeting.5,Nethmi,The problem is that our test devices are still on the old Android version.,Risk,Risk,review,2026-11-04
+feedback.45,meeting.5,Nethmi,"If we don't get new devices this week, we will miss the testing deadline.",Risk,Risk,review,2026-11-04
+feedback.46,meeting.5,Ravindu,I'm worried that the app store review might take longer than a week.,Risk,Risk,review,2026-11-04
+feedback.57,meeting.4,Dilini,We need the slide deck finished by the end of the week.,Task,Decision,review,2026-11-04

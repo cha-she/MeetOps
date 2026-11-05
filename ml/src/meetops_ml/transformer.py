@@ -245,6 +245,13 @@ class TransformerClassifier:
         return out
 
 
+def load_training(paths: list[Path]) -> pd.DataFrame:
+    """Labelled files joined; when the same sentence is in several, the last file's label is kept."""
+    df = pd.concat([load_labeled(p) for p in paths], ignore_index=True)
+    key = df["text"].str.lower().str.replace(r"[^a-z0-9]+", " ", regex=True).str.strip()
+    return df[~key.duplicated(keep="last")].reset_index(drop=True)
+
+
 def load(model_path: Path):
     with _LOAD_LOCK:
         from transformers import AutoModelForSequenceClassification, AutoTokenizer
@@ -261,7 +268,9 @@ def main(argv: list[str] | None = None) -> int:
     sub = ap.add_subparsers(dest="cmd", required=True)
     t = sub.add_parser("train", help="fine-tune DistilBERT and evaluate it")
     t.add_argument("--version", required=True, help="output folder under ml/models/, e.g. v5")
-    t.add_argument("--train", type=Path, required=True)
+    t.add_argument("--train", type=Path, nargs="+", required=True,
+                   help="one or more labelled files; a sentence in a later file replaces it in an earlier one "
+                        "(e.g. train_v3.csv feedback_v1.csv: review corrections win)")
     t.add_argument("--test", type=Path, nargs="+", required=True)
     t.add_argument("--epochs", type=int, default=4)
     t.add_argument("--batch-size", type=int, default=16)
@@ -281,7 +290,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     use_context = not args.no_context
-    train_df = add_context(load_labeled(args.train), lookup)
+    train_df = add_context(load_training(args.train), lookup)
     if args.limit:
         per_class = max(2, args.limit // len(LABELS))
         train_df = pd.concat(g.sample(min(len(g), per_class), random_state=args.seed)
@@ -302,7 +311,7 @@ def main(argv: list[str] | None = None) -> int:
     (out / "reports").mkdir(parents=True, exist_ok=True)
     pd.DataFrame(rows).to_csv(out / "reports" / "test_results.csv", index=False, float_format="%.4f")
     meta = {"version": args.version, "model": f"distilbert{'+context' if use_context else ''}", "base": BASE_MODEL,
-            "context": use_context, "labels": LABELS, "train_file": str(args.train), "train_rows": len(train_df),
+            "context": use_context, "labels": LABELS, "train_files": [str(p) for p in args.train], "train_rows": len(train_df),
             "epochs": args.epochs, "batch_size": args.batch_size, "lr": args.lr, "seed": args.seed,
             "max_length": MAX_LENGTH, "history": history}
     (out / "metadata.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")

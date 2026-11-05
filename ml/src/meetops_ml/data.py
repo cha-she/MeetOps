@@ -25,9 +25,10 @@ def model_dir(version: str) -> Path:
 def latest_model_dir(transformers: bool = True) -> Path:
     """Highest version folder that contains a trained classifier (v1 < v2 < v10).
 
-    ``transformers=False`` skips DistilBERT folders (when PyTorch is not installed)."""
-    candidates = [p for p in MODELS_ROOT.glob("v*")
-                  if (p / MODEL_FILENAME).exists() or (transformers and (p / TRANSFORMER_DIR / "config.json").exists())]
+    ``transformers=False`` skips DistilBERT folders (when PyTorch is not installed). A folder with a
+    ``REJECTED`` file failed the comparison with the model in use (compare.py) and is skipped."""
+    candidates = [p for p in MODELS_ROOT.glob("v*") if not (p / "REJECTED").exists() and (
+                  (p / MODEL_FILENAME).exists() or (transformers and (p / TRANSFORMER_DIR / "config.json").exists()))]
     if not candidates:
         raise FileNotFoundError(f"no trained model under {MODELS_ROOT}; run `python -m meetops_ml.train`")
     return max(candidates, key=lambda p: int(p.name[1:]) if p.name[1:].isdigit() else -1)

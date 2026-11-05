@@ -3,10 +3,9 @@ Human review of extracted items, and corrections of the classifier.
 
 * ``set_review`` confirms or rejects a task / decision / risk. A rejection is
   also stored as label feedback ("the model said Task, a person says Other").
-* ``reclassify_segment`` lets a person mark any transcript line as Task,
-  Decision, Risk or Other. The item linked to that line is replaced by one of
-  the new type (confirmed, because a person chose it) and the correction is
-  stored as label feedback.
+* ``label_from_manual_item``: a task, decision or risk added by hand from a
+  transcript line is stored as label feedback for that line. To change a type,
+  a person rejects the extracted item and adds the right one from the line.
 * ``rename_speaker`` replaces a speaker label from a recording ("Speaker 2")
   with the person's name throughout the meeting.
 
@@ -33,9 +32,15 @@ def set_review(db: Session, item, status: str, user: models.User) -> None:
     item.review_status = status
     item.reviewed_at = datetime.now(timezone.utc)
     item.reviewed_by_id = user.id
+    if item.source == "ai" and item.segment is not None:
+        # every decision on an extracted item is a checked label for retraining (export_feedback.py):
+        # confirmed = the label was right, rejected = the line is Other; undo removes it again
+        db.execute(delete(models.LabelFeedback).where(models.LabelFeedback.segment_id == item.segment_id,
+                                                      models.LabelFeedback.predicted == kind))
+        if status in ("confirmed", "rejected"):
+            db.add(models.LabelFeedback(segment_id=item.segment_id, text=item.segment.text, predicted=kind,
+                                        corrected=kind if status == "confirmed" else "Other", user_id=user.id))
     if status == "rejected" and item.source == "ai" and item.segment is not None:
-        db.add(models.LabelFeedback(segment_id=item.segment_id, text=item.segment.text, predicted=kind,
-                                    corrected="Other", user_id=user.id))
         others = [i for i in (*_items_for(db, item.segment_id),) if i is not item and i.review_status != "rejected"]
         if not others:
             item.segment.category = "Other"
@@ -52,43 +57,34 @@ def _items_for(db: Session, segment_id: int | None):
     return out
 
 
-def reclassify_segment(db: Session, seg: models.Segment, category: str, user: models.User):
-    """Return the new item (or None for Other)."""
-    before = seg.category
-    for model in (models.Task, models.Decision, models.Risk):
-        db.execute(delete(model).where(model.segment_id == seg.id))
-    db.add(models.LabelFeedback(segment_id=seg.id, text=seg.text, predicted=before, corrected=category,
-                                user_id=user.id))
-    seg.category = category
-    seg.corrected = True
+def label_from_manual_item(db: Session, seg: models.Segment, kind: str, user: models.User) -> None:
+    """A person added a task, decision or risk from a transcript line: that line is a ``kind``.
 
-    meeting = seg.meeting
-    users = db.scalars(select(models.User).where(models.User.is_active.is_(True))).all()
-    now = datetime.now(timezone.utc)
-    common = dict(meeting_id=meeting.id, segment_id=seg.id, review_status="confirmed", source="manual",
-                  confidence=None, reviewed_at=now)
-    item = None
-    if category == "Task":
-        f = extraction.task_fields(seg.text, seg.speaker, meeting.date, users)
-        speakers = {s.speaker for s in meeting.segments if s.speaker}
-        owner_user, owner_name = extraction.find_owner_name(seg.text, seg.speaker, users, speakers)
-        item = models.Task(description=extraction.task_title(seg.text, users) or extraction.tidy(seg.text),
-                           owner_id=owner_user.id if owner_user else None, owner_name=owner_name, deadline=f.deadline,
-                           deadline_time=extraction.deadline_time(f.deadline_text) if f.deadline else None,
-                           deadline_text=f.deadline_text, status="Open", reviewed_by_id=user.id, **common)
-    elif category == "Decision":
-        owner = extraction.match_user(seg.speaker, users)
-        item = models.Decision(statement=extraction.tidy(seg.text), owner_id=owner.id if owner else None,
-                               owner_name=owner.name if owner else (seg.speaker if seg.speaker != "Unknown" else None),
-                               decided_at=meeting.date, reviewed_by_id=user.id, **common)
-    elif category == "Risk":
-        item = models.Risk(description=extraction.tidy(seg.text), severity=extraction.risk_severity(seg.text),
-                           raised_at=meeting.date, raised_by=seg.speaker, reviewed_by_id=user.id, **common)
-    if item is not None:
-        db.add(item)
-    audit.log(db, "segment", seg.id, "reclassified", f"{before} -> {category}: {seg.text[:80]}",
-              actor_id=user.id, meeting_id=meeting.id)
-    return item
+    This is how a wrong type is fixed: reject the extracted item (stored as "the model's label
+    -> Other"), then add the right item from the same line (stored as "the model's label -> kind";
+    the export keeps the latest decision on a sentence). A line the model missed (Other -> Task)
+    becomes training data the same way. Changing the type in place was removed, so every
+    correction goes through a rejection or an added item and is recorded."""
+    predicted = seg.model_label or seg.category
+    db.add(models.LabelFeedback(segment_id=seg.id, text=seg.text, predicted=predicted, corrected=kind,
+                                user_id=user.id))
+    before = seg.category
+    seg.category = kind
+    seg.corrected = True
+    audit.log(db, "segment", seg.id, "labelled", f"{before} -> {kind} (added by hand): {seg.text[:80]}",
+              actor_id=user.id, meeting_id=seg.meeting_id)
+
+
+def evidence_line(db: Session, segment_id: int | None, meeting: models.Meeting) -> models.Segment | None:
+    """The transcript line an item added by hand was taken from (it must belong to the same meeting)."""
+    from fastapi import HTTPException
+
+    if not segment_id:
+        return None
+    seg = db.get(models.Segment, segment_id)
+    if not seg or seg.meeting_id != meeting.id:
+        raise HTTPException(422, "The evidence line must belong to the same meeting")
+    return seg
 
 
 def rename_speaker(db: Session, meeting: models.Meeting, speaker: str, name: str, user: models.User) -> int:
@@ -136,9 +132,4 @@ def manual_item_context(db: Session, meeting_id: int, owner_id: int | None, segm
     ensure(can_edit_meeting_items(user, meeting), f"You can only add {kind} to meetings you attended or manage.")
     if owner_id and not db.get(models.User, owner_id):
         raise HTTPException(422, "Unknown owner")
-    seg = None
-    if segment_id:
-        seg = db.get(models.Segment, segment_id)
-        if not seg or seg.meeting_id != meeting.id:
-            raise HTTPException(422, "The evidence line must belong to the same meeting")
-    return meeting, seg
+    return meeting, evidence_line(db, segment_id, meeting)
