@@ -9,7 +9,6 @@ import {
   Clock,
   Gavel,
   ListChecks,
-  MoreHorizontal,
   Plus,
   Repeat,
   ShieldAlert,
@@ -24,6 +23,7 @@ import { useMe } from "../auth/AuthContext";
 import { canDeleteMeeting, canEditMeetingItems } from "../auth/permissions";
 import { CategoryChip, ConfidenceMeter, EvidenceTime, OwnerMenu, ReviewBadge, ReviewButtons, SeverityBadge, categoryTone, useUsers } from "../components/items";
 import { NewDecisionDialog, NewRiskDialog } from "../components/newItems";
+import { MeetingPdfButton } from "../components/pdf";
 import { NewTaskDialog, TASK_REFRESH, TaskList } from "../components/tasks";
 import {
   AvatarStack,
@@ -44,7 +44,7 @@ import {
   formatDuration,
 } from "../components/ui";
 import { useMutation } from "../hooks/useMutation";
-import type { Category, Decision, Meeting, Risk, SpeakerInfo, Task, TranscriptSegment } from "../types";
+import type { Decision, Meeting, Risk, SpeakerInfo, Task, TranscriptSegment } from "../types";
 
 const RULE_TEXT: Record<string, string> = {
   request: "a request with a follow-up action",
@@ -60,7 +60,7 @@ const RULE_TEXT: Record<string, string> = {
 
 const REFRESH = [...TASK_REFRESH, "decisions", "risks", "segments", "speakers"];
 
-function TranscriptLine({ seg, highlighted, editable, onReclassify }: { seg: TranscriptSegment; highlighted: boolean; editable: boolean; onReclassify: (c: Category) => void }) {
+function TranscriptLine({ seg, highlighted, editable, onAdd }: { seg: TranscriptSegment; highlighted: boolean; editable: boolean; onAdd: (c: "Task" | "Decision" | "Risk") => void }) {
   const changed = seg.rule && seg.modelLabel && seg.modelLabel !== seg.category;
   return (
     <div id={`seg-${seg.id}`} className={cn("group flex gap-3 rounded-md px-3 py-2 transition", highlighted ? "animate-flash bg-accent-soft ring-1 ring-accent/30" : "hover:bg-hover/50")}>
@@ -92,19 +92,17 @@ function TranscriptLine({ seg, highlighted, editable, onReclassify }: { seg: Tra
         <div className="opacity-0 transition group-hover:opacity-100 focus-within:opacity-100">
           <Menu
             align="right"
-            width={190}
-            header="This line is a…"
+            width={210}
+            header="Add from this line"
             trigger={() => (
-              <button className="icon-btn h-7 w-7" aria-label="Correct the label">
-                <MoreHorizontal className="h-4 w-4" />
+              <button className="icon-btn h-7 w-7" aria-label="Add a task, decision or risk from this line" title="Add a task, decision or risk from this line">
+                <Plus className="h-4 w-4" />
               </button>
             )}
-            items={(["Task", "Decision", "Risk", "Other"] as Category[]).map((c) => ({
-              label: c === "Other" ? "Nothing to record (Other)" : c,
+            items={(["Task", "Decision", "Risk"] as const).map((c) => ({
+              label: `Add as ${c.toLowerCase()}`,
               icon: <span className={cn("h-2 w-2 rounded-full", dotClass[categoryTone[c]])} />,
-              checked: c === seg.category,
-              disabled: c === seg.category,
-              onSelect: () => onReclassify(c),
+              onSelect: () => onAdd(c),
             }))}
           />
         </div>
@@ -327,6 +325,7 @@ function Header({ m }: { m: Meeting }) {
               <Sparkles className="h-4 w-4 text-amber-500" /> Review {m.suggestedCount}
             </Link>
           )}
+          {m.status === "Processed" && <MeetingPdfButton meetingId={m.id} title={m.title} />}
           {canDeleteMeeting(me, m) && (
             <button className="icon-btn" title="Delete meeting" onClick={() => setConfirmDelete(true)}>
               <Trash2 className="h-4 w-4" />
@@ -359,7 +358,7 @@ export default function MeetingDetail() {
   const [tab, setTab] = useState<"tasks" | "decisions" | "risks">("tasks");
   const [filter, setFilter] = useState<"all" | "items">("all");
   const [adding, setAdding] = useState<"tasks" | "decisions" | "risks" | null>(null);
-  const { run } = useMutation();
+  const [fromLine, setFromLine] = useState<{ seg: TranscriptSegment; kind: "Task" | "Decision" | "Risk" } | null>(null);
 
   const meeting = useQuery(`meetings:detail:${id}`, () => api.getMeeting(id), { refreshMs: 15000 });
   const segments = useQuery(`segments:${id}`, () => api.getSegments(id));
@@ -387,8 +386,6 @@ export default function MeetingDetail() {
   if (!m) return <div className="space-y-3"><Skeleton className="h-7 w-1/3" /><Skeleton className="h-4 w-1/2" /><div className="panel"><RowsSkeleton rows={8} /></div></div>;
 
   const editable = canEditMeetingItems(me, m);
-  const reclassify = (seg: TranscriptSegment, c: Category) =>
-    run(() => api.reclassifySegment(seg.id, c), { success: c === "Other" ? "Removed from the registers" : `Marked as ${c} and added to the register`, refresh: REFRESH });
 
   return (
     <div>
@@ -428,7 +425,7 @@ export default function MeetingDetail() {
                     seg={s}
                     highlighted={String(s.id) === highlight}
                     editable={editable}
-                    onReclassify={(c) => reclassify(s, c)}
+                    onAdd={(c) => setFromLine({ seg: s, kind: c })}
                   />
                 ))}
               </div>
@@ -439,7 +436,7 @@ export default function MeetingDetail() {
             <RowsSkeleton rows={8} />
           )}
           {editable && segments.data && segments.data.length > 0 && (
-            <div className="border-t border-line px-4 py-2 text-2xs text-faint">Hover a line and use ⋯ to correct its label. Corrections update the registers and are saved for retraining.</div>
+            <div className="border-t border-line px-4 py-2 text-2xs text-faint">Wrong type? Reject the item, then hover its line and use + to add the right one. Rejections and items added from a line are saved for retraining.</div>
           )}
         </Panel>
 
@@ -475,6 +472,9 @@ export default function MeetingDetail() {
       {adding === "tasks" && <NewTaskDialog open onClose={() => setAdding(null)} meetings={[m]} defaultMeetingId={m.id} />}
       {adding === "decisions" && <NewDecisionDialog open onClose={() => setAdding(null)} meetings={[m]} defaultMeetingId={m.id} />}
       {adding === "risks" && <NewRiskDialog open onClose={() => setAdding(null)} meetings={[m]} defaultMeetingId={m.id} />}
+      {fromLine?.kind === "Task" && <NewTaskDialog open onClose={() => setFromLine(null)} meetings={[m]} defaultMeetingId={m.id} segmentId={fromLine.seg.id} defaultDescription={fromLine.seg.text} />}
+      {fromLine?.kind === "Decision" && <NewDecisionDialog open onClose={() => setFromLine(null)} meetings={[m]} defaultMeetingId={m.id} segmentId={fromLine.seg.id} defaultText={fromLine.seg.text} />}
+      {fromLine?.kind === "Risk" && <NewRiskDialog open onClose={() => setFromLine(null)} meetings={[m]} defaultMeetingId={m.id} segmentId={fromLine.seg.id} defaultText={fromLine.seg.text} />}
     </div>
   );
 }

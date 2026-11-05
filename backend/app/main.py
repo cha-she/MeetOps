@@ -17,7 +17,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from . import __version__, schemas
 from .config import settings
 from .database import init_db
-from .routers import auth, decisions, insights, meetings, notifications, risks, search, tasks, users
+from .routers import auth, decisions, feedback, insights, meetings, notifications, reports, risks, search, tasks, users
+from .services import clustering
 from .services.classifier import get_classifier, model_name
 
 
@@ -29,6 +30,7 @@ async def lifespan(_app: FastAPI):
         get_classifier()        # load the model now, not during the first upload
     except FileNotFoundError:
         logging.getLogger("meetops").warning("no trained classifier under ml/models/: train one first")
+    clustering.warm_up()        # risk themes model, in the background
     yield
 
 
@@ -36,7 +38,7 @@ app = FastAPI(title=settings.app_name, version=__version__, lifespan=lifespan)
 app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins, allow_credentials=True,
                    allow_methods=["*"], allow_headers=["*"])
 
-for r in (auth, meetings, tasks, decisions, risks, users, insights, search, notifications):
+for r in (auth, meetings, tasks, decisions, risks, users, insights, search, notifications, reports, feedback):
     app.include_router(r.router, prefix="/api")
 
 

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { AlertTriangle, Download, KanbanSquare, List, ListChecks, Plus } from "lucide-react";
 import { api, type TaskFilters } from "../api/endpoints";
+import { RegisterPdfButton } from "../components/pdf";
 import { useQuery } from "../api/hooks";
 import { useMe } from "../auth/AuthContext";
 import { ReviewSwitch, filterByReview, reviewViewOf, useUsers } from "../components/items";
@@ -93,6 +94,7 @@ export default function Tasks() {
             <button className="btn-secondary" onClick={exportCsv} disabled={!tasks.data?.length}>
               <Download className="h-4 w-4" /> Export
             </button>
+            <RegisterPdfButton kind="tasks" ids={shown.map((t) => t.id)} />
             <button className="btn-primary" onClick={() => setNewTask(true)} disabled={!meetings.data?.length}>
               <Plus className="h-4 w-4" /> New task
             </button>

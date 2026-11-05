@@ -78,17 +78,46 @@ def test_reject_records_feedback_and_hides_item(client, admin):
     assert decision["id"] not in ids
     activity = client.get("/api/activity", headers=admin).json()
     assert any(a["action"] == "rejected" and a["entityId"] == decision["id"] for a in activity)
+    # the rejection is visible on the Model feedback page and in the training download
+    fb = client.get("/api/feedback", headers=admin).json()
+    mine = next(i for i in fb["items"] if i["action"] == "rejected" and i["predicted"] == "Decision")
+    assert mine["corrected"] == "Other" and mine["by"] and mine["trainingStatus"] in {"ready", "in test set", "already in training"}
+    assert fb["totals"]["all"] >= 1 and fb["totals"]["changed"] >= 1
+    csv = client.get("/api/feedback/export.csv", headers=admin)
+    assert csv.status_code == 200 and csv.text.startswith("segment_id,meeting_id,speaker,text,label")
+    assert client.get("/api/feedback").status_code == 401
 
 
-def test_reclassify_segment_creates_confirmed_task(client, admin):
+def test_wrong_type_is_fixed_by_rejecting_and_adding_from_the_line(client, admin):
     meeting = next(m for m in client.get("/api/meetings", headers=admin).json() if m["title"] == "Sprint 8 Planning")
     segs = client.get(f"/api/meetings/{meeting['id']}/segments", headers=admin).json()
     seg = next(s for s in segs if "slide deck" in s["text"])
-    r = client.post(f"/api/segments/{seg['id']}/category", json={"category": "Task"}, headers=admin)
-    assert r.status_code == 200 and r.json()["category"] == "Task" and r.json()["corrected"]
-    tasks = client.get("/api/tasks", params={"meetingId": meeting["id"]}, headers=admin).json()
-    new = next(t for t in tasks if t["evidence"] and t["evidence"]["segmentId"] == seg["id"])
-    assert new["reviewStatus"] == "confirmed" and new["source"] == "manual" and new["deadline"]
+    for kind in ("tasks", "decisions", "risks"):          # reject whatever was extracted from this line
+        for item in client.get(f"/api/{kind}", params={"meetingId": meeting["id"], "review": "all"}, headers=admin).json():
+            if item["evidence"] and item["evidence"]["segmentId"] == seg["id"]:
+                client.patch(f"/api/{kind}/{item['id']}", json={"reviewStatus": "rejected"}, headers=admin)
+    assert client.post(f"/api/segments/{seg['id']}/category", json={"category": "Task"}, headers=admin).status_code in (404, 405)
+    r = client.post("/api/tasks", json={"description": "Finish the slide deck", "meetingId": meeting["id"],
+                                        "segmentId": seg["id"], "ownerName": "Jon Doe"}, headers=admin)
+    assert r.status_code == 201
+    new = r.json()
+    assert new["source"] == "manual" and new["reviewStatus"] == "confirmed" and new["owner"] is None
+    assert new["ownerName"] == "Jon Doe"
+    line = next(s for s in client.get(f"/api/meetings/{meeting['id']}/segments", headers=admin).json() if s["id"] == seg["id"])
+    assert line["category"] == "Task" and line["corrected"]
+    fb = client.get("/api/feedback", headers=admin).json()
+    latest = next(i for i in fb["items"] if i["text"] == seg["text"])     # newest first
+    assert latest["corrected"] == "Task"
+
+
+def test_only_managers_and_admins_assign_tasks(client, member, manager):
+    mine = next(t for t in client.get("/api/tasks", params={"mine": "true"}, headers=member).json())
+    assert client.patch(f"/api/tasks/{mine['id']}", json={"ownerName": "Someone Else"}, headers=member).status_code == 403
+    assert client.patch(f"/api/tasks/{mine['id']}", json={"status": "In Progress"}, headers=member).status_code == 200
+    r = client.patch(f"/api/tasks/{mine['id']}", json={"ownerName": "Priya from Finance"}, headers=manager)
+    assert r.status_code == 200 and r.json()["owner"] is None and r.json()["ownerName"] == "Priya from Finance"
+    r = client.patch(f"/api/tasks/{mine['id']}", json={"ownerName": "Kasun Silva"}, headers=manager)   # an account matches
+    assert r.json()["owner"]["name"] == "Kasun Silva"
 
 
 def test_manual_task(client, manager):
@@ -142,7 +171,7 @@ def test_upload_transcript(client, member):
     assert tasks[0]["description"] == "Fix the login bug"
 
 
-def test_deadline_keeps_time_of_day(client, member):
+def test_deadline_keeps_time_of_day(client, member, admin):
     text = ("[00:00:20] Ravindu: Kasun, can you send the release notes by Friday at 2 pm?\n"
             "[00:00:40] Kasun: Sure, I'll do it.\n")
     r = client.post("/api/meetings/upload", data={"title": "Release check", "date": "2026-10-29"},
@@ -151,9 +180,11 @@ def test_deadline_keeps_time_of_day(client, member):
     assert len(tasks) == 1
     t = tasks[0]
     assert t["deadline"] == "2026-10-30" and t["deadlineTime"] == "14:00:00"
-    r = client.patch(f"/api/tasks/{t['id']}", json={"deadlineTime": "16:30:00"}, headers=member)
+    # the owner cannot move the date; an administrator or the department's manager can
+    assert client.patch(f"/api/tasks/{t['id']}", json={"deadlineTime": "16:30:00"}, headers=member).status_code == 403
+    r = client.patch(f"/api/tasks/{t['id']}", json={"deadlineTime": "16:30:00"}, headers=admin)
     assert r.json()["deadlineTime"] == "16:30:00"
-    r = client.patch(f"/api/tasks/{t['id']}", json={"deadline": None}, headers=member)
+    r = client.patch(f"/api/tasks/{t['id']}", json={"deadline": None}, headers=admin)
     assert r.json()["deadline"] is None and r.json()["deadlineTime"] is None   # no day, no time
 
 
@@ -254,3 +285,24 @@ def test_model_is_loaded_once_when_requests_arrive_together(client):
     [t.join() for t in threads]
     assert not errors and len(set(seen)) == 1
     assert classifier.get_classifier().predict(["We decided to go with the rubber buttons."])[0].label
+
+
+def test_pdf_minutes_and_registers(client, member):
+    meeting = client.get("/api/meetings", headers=member).json()[0]
+    r = client.get(f"/api/meetings/{meeting['id']}/report.pdf", headers=member)
+    assert r.status_code == 200 and r.headers["content-type"] == "application/pdf" and r.content.startswith(b"%PDF")
+    assert "attachment" in r.headers["content-disposition"]
+    ids = [t["id"] for t in client.get("/api/tasks", headers=member).json()][:5]
+    r = client.post("/api/reports/tasks", json={"ids": ids}, headers=member)
+    assert r.status_code == 200 and r.content.startswith(b"%PDF")
+    assert client.post("/api/reports/tasks", json={"ids": ids}).status_code == 401
+    assert client.post("/api/reports/meetings", json={"ids": []}, headers=member).status_code == 422
+
+
+def test_risk_themes_endpoint(client, member):
+    r = client.get("/api/insights/risk-themes", headers=member)
+    assert r.status_code == 200
+    body = r.json()
+    assert body["totalRisks"] >= 4 and body["themes"]
+    assert sum(t["riskCount"] for t in body["themes"]) == body["totalRisks"]
+    assert all(t["risks"] and t["meetingCount"] >= 1 for t in body["themes"])

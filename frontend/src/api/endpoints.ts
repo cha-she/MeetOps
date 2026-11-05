@@ -2,7 +2,6 @@ import { http } from "./client";
 import type {
   Activity,
   AuthResponse,
-  Category,
   Decision,
   Department,
   InsightsSummary,
@@ -12,6 +11,7 @@ import type {
   ReviewQueue,
   ReviewStatus,
   Risk,
+  RiskThemes,
   RiskSeverity,
   RiskStatus,
   Role,
@@ -20,6 +20,7 @@ import type {
   Task,
   TaskStatus,
   TranscriptSegment,
+  ModelFeedback,
   User,
 } from "../types";
 
@@ -72,6 +73,7 @@ export interface MeetingFilters {
 
 export type TaskPatch = Partial<Pick<Task, "status" | "deadline" | "deadlineTime" | "description" | "priority" | "reviewStatus">> & {
   ownerId?: number | null;
+  ownerName?: string | null;   // someone without an account
 };
 
 export const api = {
@@ -90,15 +92,18 @@ export const api = {
   getSegments: (id: number | string) => http.get<TranscriptSegment[]>(`/meetings/${id}/segments`),
   uploadMeeting: (formData: FormData) => http.upload<Meeting>("/meetings/upload", formData),
   deleteMeeting: (id: number) => http.del<void>(`/meetings/${id}`),
+  riskThemes: (departmentId?: number) => http.get<RiskThemes>("/insights/risk-themes", { departmentId }),
+  meetingPdf: (meetingId: number) => http.file(`/meetings/${meetingId}/report.pdf`),
+  registerPdf: (kind: "tasks" | "decisions" | "risks", ids: number[], title?: string) => http.file(`/reports/${kind}`, { ids, title }),
+  modelFeedback: () => http.get<ModelFeedback>("/feedback"),
+  feedbackCsv: () => http.file("/feedback/export.csv"),
   listSpeakers: (meetingId: number) => http.get<SpeakerInfo[]>(`/meetings/${meetingId}/speakers`),
   renameSpeaker: (meetingId: number, speaker: string, name: string) =>
     http.post<Meeting>(`/meetings/${meetingId}/speakers`, { speaker, name }),
-  reclassifySegment: (segmentId: number, category: Category) =>
-    http.post<TranscriptSegment>(`/segments/${segmentId}/category`, { category }),
 
   // Registers
   listTasks: (params?: TaskFilters) => http.get<Task[]>("/tasks", { ...params }),
-  createTask: (body: { description: string; meetingId: number; ownerId?: number | null; deadline?: string | null; priority?: Priority; segmentId?: number }) =>
+  createTask: (body: { description: string; meetingId: number; ownerId?: number | null; ownerName?: string | null; deadline?: string | null; priority?: Priority; segmentId?: number }) =>
     http.post<Task>("/tasks", body),
   updateTask: (id: number, patch: TaskPatch) => http.patch<Task>(`/tasks/${id}`, patch),
   listDecisions: (params?: DecisionFilters) => http.get<Decision[]>("/decisions", { ...params }),

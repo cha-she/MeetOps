@@ -86,7 +86,7 @@ async function parseError(res: Response): Promise<string> {
 async function request<T>(
   method: string,
   path: string,
-  options: { query?: Query; body?: unknown; formData?: FormData } = {}
+  options: { query?: Query; body?: unknown; formData?: FormData; blob?: boolean } = {}
 ): Promise<T> {
   const headers: Record<string, string> = {};
   if (token) headers.Authorization = `Bearer ${token}`;
@@ -109,6 +109,7 @@ async function request<T>(
   if (res.status === 401 && token) unauthorizedListeners.forEach((fn) => fn());
   if (!res.ok) throw new ApiError(await parseError(res), res.status);
   if (res.status === 204) return undefined as T;
+  if (options.blob) return (await res.blob()) as T;
   return (await res.json()) as T;
 }
 
@@ -118,4 +119,6 @@ export const http = {
   patch: <T>(path: string, body?: unknown) => request<T>("PATCH", path, { body }),
   del: <T>(path: string) => request<T>("DELETE", path),
   upload: <T>(path: string, formData: FormData) => request<T>("POST", path, { formData }),
+  // files the server generates (PDF reports): GET, or POST with a JSON body
+  file: (path: string, body?: unknown) => request<Blob>(body === undefined ? "GET" : "POST", path, { body, blob: true }),
 };

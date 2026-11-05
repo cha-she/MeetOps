@@ -155,8 +155,38 @@ class SegmentOut(CamelModel):
     corrected: bool
 
 
-class ReclassifyIn(CamelModel):
-    category: Category
+class ThemeRisk(CamelModel):
+    id: int
+    description: str
+    severity: RiskSeverity
+    status: RiskStatus
+    meeting_id: int
+    meeting_title: str
+    raised_at: date | None
+
+
+class RiskTheme(CamelModel):
+    label: str                    # "budget · cost · price"
+    keywords: list[str]
+    risk_count: int
+    meeting_count: int
+    open_count: int
+    high_count: int
+    first_raised: date | None
+    last_raised: date | None
+    risks: list[ThemeRisk]
+
+
+class RiskThemes(CamelModel):
+    method: str                   # how risks were turned into vectors
+    silhouette: float | None      # quality of the grouping (higher = clearer themes)
+    total_risks: int
+    themes: list[RiskTheme]
+
+
+class ReportRequest(CamelModel):
+    ids: list[int] = Field(min_length=0, max_length=5000)   # rows shown on the page, in order
+    title: str | None = Field(default=None, max_length=200)
 
 
 class SpeakerOut(CamelModel):
@@ -200,6 +230,7 @@ class TaskCreate(CamelModel):
     description: str = Field(min_length=3, max_length=2000)
     meeting_id: int
     owner_id: int | None = None
+    owner_name: str | None = Field(default=None, max_length=120)   # someone without an account
     deadline: date | None = None
     deadline_time: time | None = None
     priority: Priority = "Medium"
@@ -212,6 +243,7 @@ class TaskPatch(CamelModel):
     deadline_time: time | None = None
     description: str | None = Field(default=None, min_length=1, max_length=2000)
     owner_id: int | None = None
+    owner_name: str | None = Field(default=None, max_length=120)   # someone without an account
     priority: Priority | None = None
     review_status: ReviewStatus | None = None
 

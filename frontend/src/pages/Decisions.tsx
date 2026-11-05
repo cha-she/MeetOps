@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Download, Gavel, Pencil, Plus } from "lucide-react";
 import { api, type DecisionFilters } from "../api/endpoints";
+import { RegisterPdfButton } from "../components/pdf";
 import { useQuery } from "../api/hooks";
 import { useMe } from "../auth/AuthContext";
 import { mayEditItem } from "../auth/permissions";
@@ -100,6 +101,7 @@ export default function Decisions() {
           >
             <Download className="h-4 w-4" /> Export
           </button>
+          <RegisterPdfButton kind="decisions" ids={shown.map((d) => d.id)} />
           <button className="btn-primary" onClick={() => setAdding(true)} disabled={!meetings.data?.length}>
             <Plus className="h-4 w-4" /> New decision
           </button>

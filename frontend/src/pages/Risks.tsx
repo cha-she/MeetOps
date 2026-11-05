@@ -2,12 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Download, Plus, Repeat, ShieldAlert } from "lucide-react";
 import { api, type RiskFilters } from "../api/endpoints";
+import { RegisterPdfButton } from "../components/pdf";
 import { useQuery } from "../api/hooks";
 import { useMe } from "../auth/AuthContext";
 import { mayEditItem } from "../auth/permissions";
 import { NewRiskDialog } from "../components/newItems";
+import { RiskThemesView } from "../components/riskThemes";
 import { ConfidenceMeter, EvidenceQuote, OwnerMenu, ReviewBadge, ReviewButtons, ReviewSwitch, filterByReview, reviewViewOf, riskStatusTone, severityTone, useUsers } from "../components/items";
-import { Badge, DateRange, EmptyState, FilterSelect, Menu, PageHeader, QueryView, RowsSkeleton, SearchInput, Stat, Toggle, downloadCsv, formatDate } from "../components/ui";
+import { Badge, DateRange, EmptyState, FilterSelect, Menu, PageHeader, QueryView, RowsSkeleton, SearchInput, Segmented, Stat, Toggle, downloadCsv, formatDate } from "../components/ui";
 import { LIST_REFRESH_INTERVAL_MS } from "../config";
 import { useMutation } from "../hooks/useMutation";
 import type { Risk, RiskSeverity, RiskStatus } from "../types";
@@ -82,6 +84,7 @@ export default function Risks() {
           >
             <Download className="h-4 w-4" /> Export
           </button>
+          <RegisterPdfButton kind="risks" ids={shown.map((r) => r.id)} />
           <button className="btn-primary" onClick={() => setAdding(true)} disabled={!meetings.data?.length}>
             <Plus className="h-4 w-4" /> New risk
           </button>
@@ -99,6 +102,24 @@ export default function Risks() {
         <Stat label="Without an owner" value={stats.unowned} tone="amber" />
       </div>
 
+      <div className="mb-3 flex items-center gap-3">
+        <Segmented
+          value={get("view") === "themes" ? "themes" : "list"}
+          onChange={(v) => set({ view: v === "themes" ? "themes" : "" })}
+          options={[
+            { value: "list", label: "List" },
+            { value: "themes", label: "Themes" },
+          ]}
+        />
+        {get("view") === "themes" && (
+          <FilterSelect label="Department" value={get("dept")} onChange={(v) => set({ dept: v })} options={(depts.data ?? []).map((d) => ({ value: String(d.id), label: d.name }))} />
+        )}
+      </div>
+
+      {get("view") === "themes" ? (
+        <RiskThemesView departmentId={get("dept") ? Number(get("dept")) : undefined} />
+      ) : (
+      <>
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <SearchInput value={q} onChange={setQ} placeholder="Search risks…" className="w-full sm:w-56" />
         <FilterSelect label="Severity" value={get("severity")} onChange={(v) => set({ severity: v })} options={["High", "Medium", "Low"].map((s) => ({ value: s, label: s }))} />
@@ -189,6 +210,8 @@ export default function Risks() {
           </div>
         )}
       </QueryView>
+      </>
+      )}
       {adding && meetings.data && <NewRiskDialog open onClose={() => setAdding(false)} meetings={meetings.data} defaultMeetingId={filters.meetingId} />}
     </div>
   );
