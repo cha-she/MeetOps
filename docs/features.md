@@ -5,6 +5,8 @@ prepared with `python -m app.seed --demo`, signed in as the administrator).
 
 ## 1. Accounts, departments and roles
 
+![Sign in](screenshots/login.png)
+
 - **First run:** on an empty database the app asks for the first
   administrator (name, email, department, password). No account is built in.
 - **Team page:** the administrator creates departments and one account per
@@ -42,6 +44,9 @@ minutes) are read directly. Audio and video (mp3, wav, m4a, mp4, mov …, up to
 Speaker 1, 2 … and named afterwards on the meeting page ("Who is who?", with
 names suggested from the conversation).
 
+![Transcribing a recording](screenshots/upload-transcribing.png)
+![Who is who: naming the speakers of a recording](screenshots/who-is-who.png)
+
 What happens inside:
 
 - **Classify:** the fine-tuned DistilBERT model labels every sentence (TF-IDF
@@ -69,7 +74,12 @@ be undone.
 
 ## 5. Meeting page
 
-![Meeting](screenshots/meeting-detail.png)
+![Meetings list](screenshots/meetings.png)
+![Meeting summary](screenshots/meeting-summary.png)
+![Meeting: evidence line highlighted](screenshots/meeting-detail.png)
+![Transcript, extracted lines: the label of every sentence, its confidence and the rule that changed it](screenshots/meeting-classification.png)
+![Evidence: opening an item highlights the line it came from](screenshots/meeting-evidence-full.png)
+![Meeting from an audio recording](screenshots/audio-meeting.png)
 
 - The transcript, one sentence per line, with its label and confidence. When
   the rule layer changed the model's label, the line says so ("model said
@@ -153,6 +163,10 @@ administrators add, edit, reset passwords and deactivate.
 
 ## 12. PDF export
 
+![Minutes PDF](screenshots/minutes-pdf.png)
+
+A full example: [docs/samples/minutes_sample.pdf](samples/minutes_sample.pdf).
+
 - **Minutes PDF** on a processed meeting: details (date, duration,
   department, participants, source), summary, decisions, action items with
   owner, due date and status, risks with severity, and the time each item was
@@ -163,6 +177,8 @@ administrators add, edit, reset passwords and deactivate.
   API; register exports are written to the audit log.
 
 ## 13. Learning from review
+
+![Model feedback](screenshots/model-feedback.png)
 
 Confirmations, rejections and items added from a line are saved as labels.
 The **Model feedback** page shows the counts, every correction (who, when,
