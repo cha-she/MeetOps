@@ -1,0 +1,23 @@
+[00:00:04] Chanya: Good morning everyone, thanks for joining the launch readiness meeting.
+[00:00:09] Kasun: Morning.
+[00:00:12] Chanya: Let's start with the status of the payment module.
+[00:00:18] Kasun: The payment module is finished, but the refund screen still has two open bugs.
+[00:00:26] Chanya: Kasun, can you fix the refund bugs by Thursday at 3 pm?
+[00:00:31] Kasun: Sure, I'll take care of it.
+[00:00:36] Nethmi: The problem is that our test devices are still on the old Android version.
+[00:00:43] Nethmi: If we don't get new devices this week, we will miss the testing deadline.
+[00:00:50] Chanya: Okay. I will order two new test phones today.
+[00:00:56] Ravindu: About the design, should we keep the dark theme or the light theme as the default?
+[00:01:03] Chanya: Let's go with the light theme as the default and keep dark mode as an option.
+[00:01:09] Kasun: Agreed.
+[00:01:12] Chanya: So we decided that the launch date is the 20th of November.
+[00:01:18] Ravindu: I'm worried that the app store review might take longer than a week.
+[00:01:25] Chanya: Nethmi, please prepare the release test plan.
+[00:01:29] Nethmi: Yes, I will do that.
+[00:01:33] Chanya: Can we have the test plan by Monday?
+[00:01:36] Nethmi: Confirmed.
+[00:01:40] Ravindu: I'll send the final app icons before Wednesday.
+[00:01:46] Chanya: The request for a bigger marketing budget is approved.
+[00:01:51] Kasun: The analytics feature is not ready, so we will remove it from this release.
+[00:01:58] Chanya: Okay, that's fine. Let's move to the next point.
+[00:02:03] Chanya: Thanks everyone, see you next week.
