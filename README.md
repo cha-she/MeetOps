@@ -9,7 +9,10 @@ deadline, and the exact transcript segment that produced it. The goal is to give
 small and medium enterprises a task tracker, decision register, and risk log that
 are generated automatically from the meetings they already hold.
 
-![MeetOps dashboard](docs/screenshots/dashboard.png)
+![MeetOps meeting page: summary, transcript and the evidence line of an item](docs/screenshots/meeting-detail.png)
+
+More screens: [docs/features.md](docs/features.md) (every page with a screenshot) and
+[docs/screenshots/](docs/screenshots/).
 
 ## Project status
 
@@ -29,7 +32,7 @@ are generated automatically from the meetings they already hold.
 | PDF export (meeting minutes, registers)           | ✅ Done (reportlab) |
 | Retraining on review feedback                     | ✅ Export, retrain, compare gate (v7 rejected, v6 kept) |
 | Audio/video pipeline (Whisper + speaker separation) | ✅ v1 (local, CPU) |
-| DistilBERT classifier (fine-tuned, deployed)      | ✅ v6, macro-F1 0.56 AMI / 0.65 in-domain |
+| DistilBERT classifier (fine-tuned)                | ✅ v6, macro-F1 0.56 AMI / 0.65 business meetings, 0.78 with the rule layer |
 | Evidence audio clips, email reminders, speech evaluation on AMI | ⏳ Remaining weeks |
 
 ## Repository layout
@@ -52,8 +55,10 @@ Requires Node.js 18+ and Python 3.11.
 ```bash
 python -m venv .venv
 .venv\Scripts\activate                      # Windows; on macOS/Linux: source .venv/bin/activate
-python -m pip install -e ml -r backend/requirements.txt
-python -m meetops_ml.train --version v3 --train ml/data/labeled/train_v2.csv --features full
+python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+python -m pip install -e "ml[transformer]" -r backend/requirements.txt
+# train the classifier used by the app (fine-tuned DistilBERT, about 25 minutes on a laptop CPU)
+python -m meetops_ml.transformer train --version v6 --train ml/data/labeled/train_v3.csv --test ml/data/labeled/test_v1v2.csv ml/data/labeled/indomain_v1.csv --no-context
 cd backend
 python -m app.seed --empty                  # empty database (or --demo for a demo organisation)
 python -m uvicorn app.main:app --reload --port 8000
@@ -75,7 +80,16 @@ the real pipeline. The dashboard only shows data from the backend; if the API
 is not running it says so instead of showing sample data.
 
 Upload `backend/samples/sprint8_planning.txt` on the New meeting page to watch
-the pipeline classify a transcript and extract tasks, decisions and risks.
+the pipeline classify a transcript and extract tasks, decisions and risks
+(more sample meetings in `backend/samples/`).
+Audio and video files are transcribed on the server; the first recording
+downloads the Whisper model (`base.en`, about 140 MB) and the speaker model
+(26 MB) once (see `backend/README.md`, section 6).
+
+A faster setup without PyTorch: `python -m pip install -e ml -r backend/requirements.txt`
+and `python -m meetops_ml.train --version v4 --train ml/data/labeled/train_v3.csv --features full`
+trains the TF-IDF model instead; the backend uses it automatically when PyTorch
+is not installed.
 PostgreSQL instead of SQLite: `docker compose up -d` in `backend/` and set
 `DATABASE_URL` (see `backend/README.md`).
 
@@ -94,13 +108,13 @@ Audio / Video / Transcript
                                      Preprocessing: cleaning + utterance segmentation
                                                               │
                                                               ▼
-                Classification: TF-IDF model ──► rule layer ──► Task / Decision / Risk / Other
+         Classification: fine-tuned DistilBERT ──► rule layer ──► Task / Decision / Risk / Other
                                                               │
                                                               ▼
               Extraction + organising: owner, deadline, titles, merged replies, severity
                                                               │
                                                               ▼
-              Review: confident items confirmed, the rest suggested for a person
+              Review: every item is a suggestion that a person confirms or rejects
                                                               │
                                                               ▼
                                    PostgreSQL ──► FastAPI ──► React dashboard
